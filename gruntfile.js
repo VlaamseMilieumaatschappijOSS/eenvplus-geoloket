@@ -19,10 +19,25 @@ module.exports = function (grunt) {
             dev: {
                 dest: 'src/deps.js'
             }
+        },
+
+        less: {
+            options: {
+                relativeUrls: true
+            },
+            dev: {
+                files: {
+                    'src/style/app.css': 'src/style/app.less'
+                }
+            }
         }
     });
 
-    grunt.registerTask('dev', 'Builds the files required for development', ['closureDepsWriter:dev']);
+    grunt.registerTask(
+        'dev',
+        'Builds the files required for development',
+        ['closureDepsWriter:dev', 'less:dev']
+    );
     grunt.registerTask('default', 'Default task: build dev environment', ['dev']);
 
 };
