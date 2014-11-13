@@ -1,6 +1,29 @@
 var nunjucks = require('nunjucks'),
     path = require('path');
 
+var dir = {
+        build: 'src/',
+        comp: 'src/components/',
+        html: 'src/',
+        js: 'src/js/',
+        less: 'src/style/'
+    },
+    file = {
+        dependency: dir.build + 'deps.js',
+        depsWriter: 'node_modules/closure-tools/closure-bin/build/depswriter.py',
+        htmlIn: dir.html + 'index.mako.html',
+        htmlOut: dir.build + 'index.html',
+        htmlOutMobile: dir.build + 'mobile.html',
+        lessIn: dir.less + 'app.less',
+        lessOut: dir.build + 'style/app.css'
+    },
+    src = {
+        html: file.htmlIn,
+        js: [dir.js + '**/*.js', dir.comp + '**/*.js'],
+        less: [dir.less + '**/*.less', dir.comp + '**/*.less']
+    };
+
+
 module.exports = function (grunt) {
 
     /**
@@ -9,48 +32,49 @@ module.exports = function (grunt) {
     require('time-grunt')(grunt);
 
     /*
-     * Load NPM grunt tasks.
+     * Load all NPM grunt tasks.
      */
     require('load-grunt-tasks')(grunt, {pattern: ['grunt-*']});
 
     function nunjucksTask() {
         var options = this.options();
 
-        this.files.forEach(function (f) {
-            var filepath = path.resolve(__dirname, f.src[0]);
+        this.files.forEach(function (file) {
+            var filepath = path.resolve(__dirname, file.src[0]);
 
             if (!grunt.file.exists(filepath)) {
-                grunt.log.warn('Template`s file "' + filepath + '" not found.');
+                grunt.log.warn('Template\'s file "' + filepath + '" not found.');
                 return false;
             }
 
-            if (!options.data) {
-                grunt.log.warn('Template`s data is empty. Guess you forget to specify data option');
-            }
+            if (!options.data) grunt.log.warn('Template\'s data is empty. Guess you forget to specify data option');
 
-            var data = (typeof options.preprocessData === 'function')
-                ? options.preprocessData.call(f, options.data || {})
-                : options.data || {};
+            var data = options.data || {},
+                process = options.preprocessData;
+            if (typeof process === 'function') data = process.call(file, data);
 
-            var template = grunt.file.read(filepath);
+            var template = grunt.file.read(filepath),
+                compiledHtml = nunjucks
+                    .configure(options.paths || '', options)
+                    .renderString(template, data);
 
-            nunjucks.configure(options.paths || '', options);
-
-            var compiledHtml = nunjucks.renderString(template, data);
-
-            grunt.file.write(f.dest, compiledHtml);
-            grunt.log.writeln('File "' + f.dest + '" created.');
+            grunt.file.write(file.dest, compiledHtml);
+            grunt.log.writeln('File "' + file.dest + '" created.');
         });
     }
 
     grunt.initConfig({
+        dir: dir,
+        file: file,
+        src: src,
+
         closureDepsWriter: {
             options: {
-                depswriter: 'node_modules/closure-tools/closure-bin/build/depswriter.py',
-                root_with_prefix: ['"src/components components"', '"src/js js"']
+                depswriter: file.depsWriter,
+                root_with_prefix: ['"' + dir.comp + ' components"', '"' + dir.js + ' js"']
             },
             dev: {
-                dest: 'src/deps.js'
+                dest: file.dependency
             }
         },
 
@@ -60,7 +84,7 @@ module.exports = function (grunt) {
             },
             dev: {
                 files: {
-                    'src/style/app.css': 'src/style/app.less'
+                    '<%= file.lessOut %>': file.lessIn
                 }
             }
         },
@@ -83,7 +107,7 @@ module.exports = function (grunt) {
                     }
                 },
                 files: {
-                    'src/index.html': 'src/index.mako.html'
+                    '<%= file.htmlOut %>': file.htmlIn
                 }
             },
             devMobile: {
@@ -97,17 +121,40 @@ module.exports = function (grunt) {
                     }
                 },
                 files: {
-                    'src/mobile.html': 'src/index.mako.html'
+                    '<%= file.htmlOutMobile %>': file.htmlIn
                 }
+            }
+        },
+
+        watch: {
+            options: {
+                spawn: false
+            },
+            html: {
+                files: src.html,
+                tasks: ['nunjucks:dev', 'nunjucks:devMobile']
+            },
+            js: {
+                files: src.js,
+                tasks: ['closureDepsWriter:dev']
+            },
+            less: {
+                files: src.less,
+                tasks: ['less:dev']
             }
         }
     });
 
     grunt.registerMultiTask('nunjucks', 'Renders nunjucks template to HTML', nunjucksTask);
     grunt.registerTask(
-        'dev',
+        'build-dev',
         'Builds the files required for development',
         ['closureDepsWriter:dev', 'less:dev', 'nunjucks:dev', 'nunjucks:devMobile']
+    );
+    grunt.registerTask(
+        'dev',
+        'Monitors source html, js and less files and executes their corresponding dev build tasks when needed',
+        ['build-dev', 'watch']
     );
     grunt.registerTask('default', 'Default task: build dev environment', ['dev']);
 
