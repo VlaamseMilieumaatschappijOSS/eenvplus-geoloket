@@ -68,6 +68,10 @@ module.exports = function (grunt) {
         file: file,
         src: src,
 
+        clean: {
+            dev: [file.dependency, file.htmlOut, file.htmlOutMobile, file.lessOut]
+        },
+
         closureDepsWriter: {
             options: {
                 depswriter: file.depsWriter,
