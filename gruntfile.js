@@ -105,7 +105,7 @@ module.exports = function (grunt) {
                     data: {
                         "versionslashed": "",
                         "apache_base_path": "localhost/",
-                        "api_url": "//mf-chsdi3.dev.bgdi.ch",
+                        "api_url": "//localhost:8888",
                         "device": "desktop",
                         "mode": "dev"
                     }
@@ -119,7 +119,7 @@ module.exports = function (grunt) {
                     data: {
                         "versionslashed": "",
                         "apache_base_path": "localhost/",
-                        "api_url": "//mf-chsdi3.dev.bgdi.ch",
+                        "api_url": "//localhost:8888",
                         "device": "mobile",
                         "mode": "dev"
                     }
