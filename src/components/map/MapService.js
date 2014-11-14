@@ -5,6 +5,7 @@
   goog.require('ga_offline_service');
   goog.require('ga_storage_service');
   goog.require('ga_styles_service');
+  goog.require('ga_srs_name_service');
   goog.require('ga_urlutils_service');
 
   var module = angular.module('ga_map_service', [
@@ -13,6 +14,7 @@
     'ga_offline_service',
     'ga_storage_service',
     'ga_styles_service',
+    'ga_srs_name_service',
     'ga_urlutils_service'
   ]);
 
@@ -595,7 +597,7 @@
 
     this.$get = function($http, $q, $rootScope, $translate, $window,
         gaBrowserSniffer, gaDefinePropertiesForLayer, gaMapUtils,
-        gaNetworkStatus, gaStorage, gaTileGrid, gaUrlUtils) {
+        gaNetworkStatus, gaSRSName, gaStorage, gaTileGrid, gaUrlUtils) {
 
       var Layers = function(wmtsGetTileUrlTemplate,
           layersConfigUrlTemplate, legendUrlTemplate) {
@@ -718,7 +720,7 @@
                 dimensions: {
                   'Time': timestamp
                 },
-                projection: 'EPSG:21781',
+                projection: gaSRSName.default.code,
                 requestEncoding: 'REST',
                 tileGrid: gaTileGrid.get(layer.resolutions,
                     layer.minResolution),

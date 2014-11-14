@@ -1,7 +1,10 @@
 (function() {
   goog.provide('ga_search_service');
 
+  goog.require('ga_srs_name_service');
+
   var module = angular.module('ga_search_service', [
+    'ga_srs_name_service'
   ]);
 
   var DMSDegree = '[0-9]{1,2}[°|º]\\s*';
@@ -23,7 +26,7 @@
     '([\\d\\.\']+)[\\s,]+([\\d\\.\']+)');
 
   module.provider('gaGetCoordinate', function() {
-    this.$get = function() {
+    this.$get = function(gaSRSName) {
       return function(extent, query) {
         var position;
         var valid = false;
@@ -60,7 +63,7 @@
             .replace('\'\'' , '').replace('′′' , '')
             .replace('″' , '')) / 3600;
           position = ol.proj.transform([easting, northing],
-                'EPSG:4326', 'EPSG:21781');
+                'EPSG:4326', gaSRSName.default.code);
           if (ol.extent.containsCoordinate(
             extent, position)) {
               valid = true;
@@ -80,7 +83,7 @@
             valid = true;
           } else {
             position = ol.proj.transform(position,
-              'EPSG:2056', 'EPSG:21781');
+              'EPSG:2056', gaSRSName.default.code);
             if (ol.extent.containsCoordinate(
                 extent, position)) {
               valid = true;
@@ -89,7 +92,7 @@
                 [left < right ? left : right,
                   right > left ? right : left];
               position = ol.proj.transform(position,
-                'EPSG:4326', 'EPSG:21781');
+                'EPSG:4326', gaSRSName.default.code);
               if (ol.extent.containsCoordinate(
                 extent, position)) {
                 valid = true;

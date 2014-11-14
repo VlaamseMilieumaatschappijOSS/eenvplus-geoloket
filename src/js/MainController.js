@@ -3,13 +3,14 @@
 
   goog.require('ga_map');
   goog.require('ga_networkstatus_service');
+  goog.require('ga_srs_name_service');
   goog.require('ga_storage_service');
-
 
   var module = angular.module('ga_main_controller', [
     'pascalprecht.translate',
     'ga_map',
     'ga_networkstatus_service',
+    'ga_srs_name_service',
     'ga_storage_service'
   ]);
 
@@ -19,11 +20,11 @@
   module.controller('GaMainController',
     function($rootScope, $scope, $timeout, $translate, $window, gaBrowserSniffer,
         gaFeaturesPermalinkManager, gaLayersPermalinkManager, gaMapUtils,
-        gaNetworkStatus, gaPermalink, gaStorage) {
+        gaNetworkStatus, gaPermalink, gaSRSName, gaStorage) {
 
       var createMap = function() {
         var toolbar = $('#zoomButtons')[0];
-        var swissProjection = ol.proj.get('EPSG:21781');
+        var swissProjection = ol.proj.get(gaSRSName.default.code);
         swissProjection.setExtent(gaMapUtils.swissExtent);
 
         var map = new ol.Map({
@@ -80,7 +81,7 @@
 
       var mobile = (gaBrowserSniffer.mobile) ? 'false' : 'true',
         dismiss = 'none';
-  
+
       // The main controller creates the OpenLayers map object. The map object
       // is central, as most directives/components need a reference to it.
       $scope.map = createMap();
@@ -159,18 +160,18 @@
           gaStorage.setItem('homescreen', dismiss);
         });
       }, 2000);
-     
+
       // Try to manage the menu correctly when height is too small,
       // only on desktop.
       if (!gaBrowserSniffer.mobile) {
-      
+
         $($window).on('resize', function() {
           if(isWindowTooSmall()) {
             $rootScope.$broadcast('catalogCollapse', 'hide');
           }
         });
-        
-        // Hide a panel clicking on its heading    
+
+        // Hide a panel clicking on its heading
         var hidePanel = function(id) {
           if (!$('#' + id ).hasClass('collapse')) {
             $('#' + id + 'Heading').click();
@@ -185,9 +186,9 @@
 
         $('#catalog').on('shown.bs.collapse', function() {
           // Close accordion
-          hideAccordionPanels(); 
-          
-          if (isWindowTooSmall()) { 
+          hideAccordionPanels();
+
+          if (isWindowTooSmall()) {
             // Close selection
             hidePanel('selection');
           }
@@ -195,22 +196,22 @@
 
         $('#selection').on('shown.bs.collapse', function() {
           // Close accordion
-          hideAccordionPanels(); 
-          
-          if (isWindowTooSmall()) { 
+          hideAccordionPanels();
+
+          if (isWindowTooSmall()) {
             // Close catalog
             hidePanel('catalog');
           }
         });
       }
-     
+
       // When a menu of accordion (tools, share, print) is shown, the others
       // panels (catalog and selection) are collapsed but their headings
       // haven't the 'collapsed' css applied. So we force it.
       $('#catalog').on('hidden.bs.collapse', function() {
         $('#catalogHeading').addClass('collapsed');
       });
-    
+
       $('#selection').on('hidden.bs.collapse', function() {
         $('#selectionHeading').addClass('collapsed');
       });

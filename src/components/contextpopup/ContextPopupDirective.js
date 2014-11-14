@@ -3,15 +3,17 @@
 
   goog.require('ga_networkstatus_service');
   goog.require('ga_permalink');
+  goog.require('ga_srs_name_service');
 
   var module = angular.module('ga_contextpopup_directive', [
     'ga_networkstatus_service',
-    'ga_permalink'
+    'ga_permalink',
+    'ga_srs_name_service'
   ]);
 
   module.directive('gaContextPopup',
       function($http, $q, $timeout, $window, gaBrowserSniffer, gaNetworkStatus,
-          gaPermalink) {
+          gaPermalink, gaSRSName) {
         return {
           restrict: 'A',
           replace: true,
@@ -31,7 +33,7 @@
             var map = scope.map;
             var view = map.getView();
 
-            var coord21781;
+            var coordDefault;
             var popoverShown = false;
 
             var overlay = new ol.Overlay({
@@ -74,13 +76,13 @@
               var pixel = (event.originalEvent) ?
                   map.getEventPixel(event.originalEvent) :
                   event.pixel;
-              coord21781 = (event.originalEvent) ?
+              coordDefault = (event.originalEvent) ?
                   map.getEventCoordinate(event.originalEvent) :
                   event.coordinate;
-              var coord4326 = ol.proj.transform(coord21781,
-                  'EPSG:21781', 'EPSG:4326');
-              var coord2056 = ol.proj.transform(coord21781,
-                  'EPSG:21781', 'EPSG:2056');
+              var coord4326 = ol.proj.transform(coordDefault,
+                  gaSRSName.default.code, 'EPSG:4326');
+              var coord2056 = ol.proj.transform(coordDefault,
+                  gaSRSName.default.code, 'EPSG:2056');
 
               // recenter on phones
               if (gaBrowserSniffer.phone) {
@@ -89,10 +91,10 @@
                   source: view.getCenter()
                 });
                 map.beforeRender(pan);
-                view.setCenter(coord21781);
+                view.setCenter(coordDefault);
               }
 
-              scope.coord21781 = formatCoordinates(coord21781, 1);
+              scope.coordDefault = formatCoordinates(coordDefault, 1);
               scope.coord4326 = formatCoordinates(coord4326, 5, true);
               scope.coord2056 = formatCoordinates(coord2056, 2) + ' *';
               if (coord4326[0] < 6 && coord4326[0] >= 0) {
@@ -124,8 +126,8 @@
 
                 $http.get(heightUrl, {
                   params: {
-                    easting: coord21781[0],
-                    northing: coord21781[1],
+                    easting: coordDefault[0],
+                    northing: coordDefault[1],
                     elevation_model: 'COMB'
                   }
                 }).success(function(response) {
@@ -134,8 +136,8 @@
 
                 $http.get(lv03tolv95Url, {
                   params: {
-                    easting: coord21781[0],
-                    northing: coord21781[1]
+                    easting: coordDefault[0],
+                    northing: coordDefault[1]
                   }
                 }).success(function(response) {
                   coord2056 = response.coordinates;
@@ -150,7 +152,7 @@
                 hidePopover();
               });
 
-              overlay.setPosition(coord21781);
+              overlay.setPosition(coordDefault);
               showPopover();
             };
 
@@ -193,7 +195,7 @@
             }
             // Listen to permalink change events from the scope.
             scope.$on('gaPermalinkChange', function(event) {
-              if (angular.isDefined(coord21781) && popoverShown) {
+              if (angular.isDefined(coordDefault) && popoverShown) {
                 updatePopupLinks();
               }
             });
@@ -217,8 +219,8 @@
 
             function updatePopupLinks() {
               var p = {
-                X: Math.round(coord21781[1], 1),
-                Y: Math.round(coord21781[0], 1)
+                X: Math.round(coordDefault[1], 1),
+                Y: Math.round(coordDefault[0], 1)
               };
 
               var contextPermalink = gaPermalink.getHref(p);

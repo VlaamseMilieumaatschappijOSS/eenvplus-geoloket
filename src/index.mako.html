@@ -622,6 +622,7 @@ itemscope itemtype="http://schema.org/WebApplication"
     <script src="lib/bootstrap-3.0.0.js"></script>
     <script src="lib/typeahead-0.9.3.js"></script>
     <script src="lib/proj4js-compressed.js"></script>
+    <script src="lib/EPSG31370.js"></script>
     <script src="lib/EPSG21781.js"></script>
     <script src="lib/EPSG2056.js"></script>
     <script src="lib/EPSG32631.js"></script>
@@ -689,9 +690,11 @@ itemscope itemtype="http://schema.org/WebApplication"
           });
         });
 
-        module.config(function(gaLayersProvider, gaGlobalOptions) {
+        module.config(function(gaLayersProvider, gaGlobalOptions, gaSRSName) {
           gaLayersProvider.wmtsGetTileUrlTemplate =
-              '//wmts{5-9}.geo.admin.ch/1.0.0/{Layer}/default/{Time}/21781/{TileMatrix}/{TileRow}/{TileCol}.{Format}';
+              '//wmts{5-9}.geo.admin.ch/1.0.0/{Layer}/default/{Time}/' +
+              gaSRSName.default.srid +
+              '/{TileMatrix}/{TileRow}/{TileCol}.{Format}';
 
           gaLayersProvider.layersConfigUrlTemplate =
               gaGlobalOptions.cachedApiUrl + '/rest/services/all/MapServer/layersConfig?lang={Lang}';

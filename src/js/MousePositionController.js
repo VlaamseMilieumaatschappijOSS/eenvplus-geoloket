@@ -1,12 +1,15 @@
 (function() {
   goog.provide('ga_mouseposition_controller');
 
+  goog.require('ga_srs_name_service');
+
   var module = angular.module('ga_mouseposition_controller', [
-    'pascalprecht.translate'
+    'pascalprecht.translate',
+    'ga_srs_name_service'
   ]);
 
   module.controller('GaMousePositionController',
-      function($scope, $translate, $window) {
+      function($scope, $translate, $window, gaSRSName) {
         var coordinatesFormat = function(coordinates) {
           return $translate('coordinates_label') + ': ' +
               ol.coordinate.toStringXY(coordinates, 0).
@@ -24,8 +27,8 @@
           label: 'CH1903+ / LV95',
           format: coordinatesFormat
         }, {
-          value: 'EPSG:21781',
-          label: 'CH1903 / LV03',
+          value: gaSRSName.default.code,
+          label: gaSRSName.default.label,
           format: coordinatesFormat
         }, {
           value: 'EPSG:4326',

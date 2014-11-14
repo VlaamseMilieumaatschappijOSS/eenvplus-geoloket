@@ -1,14 +1,15 @@
 (function() {
   goog.provide('ga_print_directive');
   goog.require('ga_browsersniffer_service');
-
+  goog.require('ga_srs_name_service');
 
   var module = angular.module('ga_print_directive',
     ['ga_browsersniffer_service',
+     'ga_srs_name_service',
      'pascalprecht.translate']);
 
   module.controller('GaPrintDirectiveController', function($scope, $http,
-      $window, $translate, gaLayers, gaPermalink, gaBrowserSniffer) {
+      $window, $translate, gaLayers, gaPermalink, gaSRSName, gaBrowserSniffer) {
 
     var pdfLegendsToDownload = [];
     var pdfLegendString = '_big.pdf';
@@ -462,7 +463,7 @@
               customParams: {
                 'EXCEPTIONS': 'XML',
                 'TRANSPARENT': 'true',
-                'CRS': 'EPSG:21781',
+                'CRS': gaSRSName.default.code,
                 'TIME': params.TIME
               },
               singleTile: config.singleTile || false
@@ -490,7 +491,7 @@
               style: 'default',
               dimensions: ['TIME'],
               params: {'TIME': source.getDimensions().Time},
-              matrixSet: '21781'
+              matrixSet: gaSRSName.default.srid
           });
 
           return enc;
