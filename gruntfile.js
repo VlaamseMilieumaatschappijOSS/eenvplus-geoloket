@@ -82,6 +82,15 @@ module.exports = function (grunt) {
             }
         },
 
+        connect: {
+            dev: {
+                options: {
+                    port: 9000,
+                    base: './src'
+                }
+            }
+        },
+
         less: {
             options: {
                 relativeUrls: true
@@ -155,6 +164,7 @@ module.exports = function (grunt) {
         'Builds the files required for development',
         ['closureDepsWriter:dev', 'less:dev', 'nunjucks:dev', 'nunjucks:devMobile']
     );
+    grunt.registerTask('http', 'Run an http server on development files.', ['connect:dev:keepalive']);
     grunt.registerTask(
         'dev',
         'Monitors source html, js and less files and executes their corresponding dev build tasks when needed',
