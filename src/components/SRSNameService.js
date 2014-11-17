@@ -14,7 +14,7 @@
             default: {
                 srid: SRID.LAMBERT,
                 code: AUTHORITY + ':' + SRID.LAMBERT,
-                label: 'Belgian Lambert'
+                label: 'Lambert 72'
             }
         };
     }

@@ -13,7 +13,7 @@
         var coordinatesFormat = function(coordinates) {
           return $translate('coordinates_label') + ': ' +
               ol.coordinate.toStringXY(coordinates, 0).
-                replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+                replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         };
 
         var coordinatesFormatUTM = function(coordinates, zone) {
@@ -23,10 +23,6 @@
         };
 
         $scope.mousePositionProjections = [{
-          value: 'EPSG:2056',
-          label: 'CH1903+ / LV95',
-          format: coordinatesFormat
-        }, {
           value: gaSRSName.default.code,
           label: gaSRSName.default.label,
           format: coordinatesFormat
@@ -52,15 +48,6 @@
             } else {
               return '-';
             }
-          }
-        }, {
-          value: 'EPSG:4326',
-          label: 'MGRS',
-          format: function(coordinates) {
-            coordinates['lon'] = coordinates[0];
-            coordinates['lat'] = coordinates[1];
-            return $window.proj4.mgrs.forward(coordinates).
-                replace(/(.{5})/g, '$1 ');
           }
         }
         ];
