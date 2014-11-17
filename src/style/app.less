@@ -26,6 +26,7 @@
 @import "../components/draw/style/draw.less";
 @import "../components/help/style/help.less";
 @import "../components/offline/style/offline.less";
+@import "disabled";
 
 @header-height: 89;
 @footer-height: 26;
@@ -276,11 +277,6 @@ input[type=text][readonly] {
     font-size: .9em;
     color: #333;
   }
-
-  // VMM: hide problem reporting and mobile version
-  a:nth-child(2), a:nth-child(4) {
-    display: none;
-  }
 }
 
 // ***** FOOTER
@@ -421,6 +417,10 @@ a .ga-icon-separator {
     .panel-body {
       padding: 0;
     }
+  }
+
+  .panel-group {
+    margin-bottom: 0;
   }
 
   &.selection-and-catalog-shown {

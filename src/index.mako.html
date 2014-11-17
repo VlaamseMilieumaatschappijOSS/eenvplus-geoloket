@@ -244,7 +244,7 @@ itemscope itemtype="http://schema.org/WebApplication"
 
     <div id="pulldown" ng-show="!globals.offline" ng-class="{'selection-and-catalog-shown': (globals.catalogShown && globals.selectionShown)}">
       <div id="pulldown-content" class="panel-group content ${"in" if device == "desktop" else "collapse"}">
-        <div class="panel">
+        <div class="panel share">
           <a id="shareHeading" class="panel-heading accordion-toggle collapsed" data-toggle="collapse" data-parent="#pulldown-content" href="#share">
             <i class="visible-collapsed icon-caret-right spacer"></i>
             <i class="hidden-collapsed icon-caret-down"></i>
@@ -259,7 +259,7 @@ itemscope itemtype="http://schema.org/WebApplication"
         </div> <!-- .panel -->
 
 {% if device == 'desktop' %}
-        <div class="panel">
+        <div class="panel print">
           <a id="printHeading" class="panel-heading accordion-toggle collapsed" data-toggle="collapse" data-parent="#pulldown-content" href="#print">
             <i class="visible-collapsed icon-caret-right spacer"></i>
             <i class="hidden-collapsed icon-caret-down"></i>
@@ -288,7 +288,7 @@ itemscope itemtype="http://schema.org/WebApplication"
 
               <ul>
 
-                <li><!-- Import WMS -->
+                <li class="tool import-wms"><!-- Import WMS -->
                   <a href="" ng-click="globals.importWmsPopupShown = !globals.importWmsPopupShown"
                      data-original-title="{{'wmsimport_tooltip' | translate}}"
                      class="ga-custom-tooltip" data-placement="bottom"
@@ -296,7 +296,7 @@ itemscope itemtype="http://schema.org/WebApplication"
                     <span ng-class="{'selected': globals.importWmsPopupShown}" translate>import_wms</span>
                   </a>
                 </li>
-                <li><!-- Import KML -->
+                <li class="tool import-kml"><!-- Import KML -->
                   <a href=""  ng-click="globals.importKmlPopupShown = !globals.importKmlPopupShown"
                      data-original-title="{{'kmlimport_tooltip' | translate}}"
                      class="ga-custom-tooltip" data-placement="bottom"
@@ -304,7 +304,7 @@ itemscope itemtype="http://schema.org/WebApplication"
                     <span ng-class="{'selected': globals.importKmlPopupShown}" translate>import_kml</span>
                   </a>
                 </li>
-                <li><!-- Compare -->
+                <li class="tool compare"><!-- Compare -->
                   <a href=""  ng-click="globals.isSwipeActive = !globals.isSwipeActive"
                      data-original-title="{{'swipe_tooltip' | translate}}"
                      class="ga-custom-tooltip" data-placement="bottom"
@@ -312,7 +312,7 @@ itemscope itemtype="http://schema.org/WebApplication"
                     <span ng-class="{'selected': globals.isSwipeActive}" translate>swipe</span>
                   </a>
                 </li>
-                <li><!-- Measure -->
+                <li class="tool measure"><!-- Measure -->
                   <a href=""  ng-click="globals.isMeasureActive = !globals.isMeasureActive;globals.isDrawActive = false;"
                      data-original-title="{{'measure_tooltip' | translate}}"
                      class="ga-custom-tooltip" data-placement="bottom"
@@ -320,7 +320,7 @@ itemscope itemtype="http://schema.org/WebApplication"
                     <span  ng-class="{'selected': globals.isMeasureActive}" translate>measure</span>
                   </a>
                 </li>
-                <li><!-- Draw -->
+                <li class="tool draw"><!-- Draw -->
                   <a href=""  ng-click="globals.isDrawActive = !globals.isDrawActive;globals.isMeasureActive = false;"
                      data-original-title="{{'draw_tooltip' | translate}}"
                      class="ga-custom-tooltip" data-placement="bottom"
@@ -328,7 +328,7 @@ itemscope itemtype="http://schema.org/WebApplication"
                     <span  ng-class="{'selected': globals.isDrawActive}" translate>draw</span>
                   </a>
                 </li>
-                <li><!-- Feature Tree -->
+                <li class="tool object-info"><!-- Feature Tree -->
                   <a href=""  ng-click="globals.isFeatureTreeActive = !globals.isFeatureTreeActive"
                      data-original-title="{{'featuretree_tooltip' | translate}}"
                      class="ga-custom-tooltip" data-placement="top"
@@ -342,7 +342,7 @@ itemscope itemtype="http://schema.org/WebApplication"
         </div> <!-- .panel -->
 {% endif %}
 
-        <div class="panel">
+        <div class="panel geocatalog">
 {% if device == 'desktop' %}
           <div class="theme-toggle">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
