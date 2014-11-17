@@ -139,8 +139,10 @@ itemscope itemtype="http://schema.org/WebApplication"
     <div id="header" class="navbar navbar-fixed-top">
       <div id="logo" class="pull-left">
         <a ng-href="?topic={{topicId}}&lang={{langId}}">
-          <img ng-if="langId" ng-src="${versionslashed}img/logo.ch.{{langId}}.png" alt="big_logo" draggable="false"/>
-          <img src="${versionslashed}img/logo.vl.small.png" alt="small_logo" draggable="false"/>
+          <div>
+            <img ng-if="langId" ng-src="${versionslashed}img/logo.ch.{{langId}}.png" alt="big_logo" draggable="false"/>
+            <img src="${versionslashed}img/logo.vl.small.png" alt="small_logo" draggable="false"/>
+          </div>
           <span>Vlaanderen</span><span>.be</span>
         </a>
       </div>

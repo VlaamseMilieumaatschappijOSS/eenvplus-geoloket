@@ -29,6 +29,7 @@
 
 @body-bg:               #fff;
 @text-color:            @gray-dark;
+@text-color-inverted:   #b8b8b8;
 
 // Links
 // -------------------------
@@ -39,7 +40,21 @@
 // Typography
 // -------------------------
 
-@font-family-sans-serif:  Arial, "Helvetica Neue", Helvetica, sans-serif;
+@font-face {
+  font-family: "flanders-sans";
+  font-style: normal;
+  font-weight: normal;
+  src: url("font-flanders/flanders-sans-regular.eot?#iefix") format("embedded-opentype"), url("font-flanders/flanders-sans-regular.woff") format("woff"), url("font-flanders/flanders-sans-regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "flanders-sans";
+  font-style: normal;
+  font-weight: bold;
+  src: url("font-flanders/flanders-sans-medium.eot?#iefix") format("embedded-opentype"), url("font-flanders/flanders-sans-medium.woff") format("woff"), url("font-flanders/flanders-sans-medium.ttf") format("truetype");
+}
+
+@font-family-sans-serif:  flanders-sans, Arial, "Helvetica Neue", Helvetica, sans-serif;
 @font-family-serif:       Georgia, "Times New Roman", Times, serif;
 @font-family-monospace:   Monaco, Menlo, Consolas, "Courier New", monospace;
 @font-family-base:        @font-family-sans-serif;

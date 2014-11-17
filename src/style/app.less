@@ -40,12 +40,6 @@
 @control-btns-top: @control-btn-space;
 @control-btns-right: @control-btn-space;
 
-@font-face {
-  font-family: "flanders-sans-medium";
-  font-style: normal;
-  src: url("font-flanders/flanders-sans-medium.eot?#iefix") format("embedded-opentype"), url("font-flanders/flanders-sans-medium.woff") format("woff"), url("font-flanders/flanders-sans-medium.ttf") format("truetype");
-}
-
 [ng\:cloak], [ng-cloak], .ng-cloak {
   display: none;
 }
@@ -81,7 +75,7 @@ form {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  
+
   /* IE9+FontAwesome hack: https://github.com/FortAwesome/Font-Awesome/issues/1079*/
   &:before {
     content: "";
@@ -89,18 +83,18 @@ form {
 }
 
 .ga-full-screen {
-  
+
   #header {
     background-color: transparent;
     box-shadow: none;
-    
+
     .pull-right > div {
       display: none;
     }
   }
-  
-  &.ga-full-screen-no-inputs #search-container, 
-  #logo, #background-selection, 
+
+  &.ga-full-screen-no-inputs #search-container,
+  #logo, #background-selection,
   #toptools, #pulldown, #footer {
     display: none;
   }
@@ -147,7 +141,7 @@ input[type=text][readonly] {
   height: unit(@small-header-height, px);
   padding: 0 .7em 0 0;
   margin-right: 0; // Fix a long story bug of bootstrap  https://github.com/twbs/bootstrap/issues/10225
-  background-color: rgba(228, 228, 228, 0.9);
+  background-color: rgba(51, 51, 51, 0.9);
   .box-shadow(6px 6px 12px rgba(0, 0, 0, 0.175));
   .pull-right {
     margin: .7em 0 0;
@@ -155,6 +149,14 @@ input[type=text][readonly] {
     & > div {
       display: inline-block;
     }
+  }
+
+  input, select {
+    opacity: .8;
+  }
+
+  a:hover, a:focus {
+    color: white;
   }
 
   select {
@@ -191,7 +193,7 @@ input[type=text][readonly] {
     padding-left: 10px;
     line-height: 30px;
   }
-  
+
   @media (max-width: @screen-phone) {
     right: 50px;
     width: auto;
@@ -211,12 +213,12 @@ input[type=text][readonly] {
       width: 96%;
       margin-left: 2%;
     }
-    
+
     .twitter-typeahead:after {
       left: 1.2em;
       color: #666;
     }
-      
+
     .tt-dropdown-menu {
       top: 37px !important;
       border-width: 1px 0;
@@ -231,10 +233,17 @@ input[type=text][readonly] {
 }
 
 #logo {
-  padding: 13px 0 0 13px;
+  padding: 0;
   height: 50px;
   width: 320px;
   display: inline-block;
+
+  div {
+    display: inline-block;
+    width: unit(@small-header-height, px);
+    height: unit(@small-header-height, px);
+    background: #e4e4e4;
+  }
 
   img:first-of-type {
     display: none;
@@ -243,10 +252,15 @@ input[type=text][readonly] {
   img:last-of-type {
     width: 17px;
     height: 27px;
+    margin: 11px 0 0 15px;
   }
 
-  a {
-    font-family: flanders-sans-medium, sans-serif;
+  span {
+    display: inline-block;
+    vertical-align: top;
+    padding-top: 16px;
+    color: @text-color-inverted;
+    font-weight: bold;
   }
 
   a:hover {
@@ -273,17 +287,18 @@ input[type=text][readonly] {
   }
 
   a {
-    font-family: flanders-sans-medium, sans-serif;
+    color: @text-color-inverted;
     font-size: .9em;
-    color: #333;
+    font-weight: bold;
   }
 }
 
 // ***** FOOTER
 #footer {
+  color: @text-color-inverted;
   min-height: 0;
   font-size: 11px;
-  background-color: rgba(214, 214, 214, 0.9);
+  background-color: rgba(51, 51, 51, 0.9);
   padding-left: 12px;
   padding-right: 0;
 
@@ -292,21 +307,33 @@ input[type=text][readonly] {
     line-height: unit(@footer-height, px);
     margin-right: 1em;
   }
-  
+
+  a {
+    color: @text-color-inverted;
+  }
+
+  a:hover, a:focus {
+    color: white;
+  }
+
   [ga-scale-line] {
     line-height: 1.5em;
     height: 1.5em;
-    margin-top: .4em;  
+    margin-top: .4em;
+  }
+
+  .ol-scale-line-inner {
+    border-color: @text-color-inverted;
   }
 
   @media (max-width: @screen-tablet) {
     background: transparent;
     padding-left: 2px;
-    
+
     & > div {
       display: none;
     }
-      
+
     [ga-scale-line] {
       display: inline-block;
       position: absolute;
@@ -315,7 +342,7 @@ input[type=text][readonly] {
       height: auto;
       line-height: 1.4em;
       margin: 0;
-      
+
       .ol-scale-line-inner {
         background: rgba(255,255,255,.7);
         outline: 2px solid rgba(255,255,255,.7);
@@ -329,14 +356,18 @@ input[type=text][readonly] {
 
 #mouseposition {
   select {
-    height: auto;
+    height: 16px;
     min-height: inherit;
     width: auto;
     font-size: inherit;
-    padding: 5px;
+    padding: 0;
+    opacity: .8;
   }
   select, [ga-mouse-position] {
     display: inline-block;
+  }
+  .ol-mouse-position {
+    padding-left: 7px;
   }
 }
 
@@ -499,9 +530,8 @@ a .ga-icon-separator {
   border-top-right-radius: 0;
   margin-left: 12.5%;
   z-index: 1200;
-  background-color: #474949;
-  border-color: #474949;
-  color: #fff;
+  background-color: #e4e4e4;
+  border-color: #e4e4e4;
   .icon-reorder {
     display: none;
   }
@@ -509,9 +539,7 @@ a .ga-icon-separator {
     display: none;
   }
   &:hover, &:focus {
-    background-color: #3A3C3C;
-    border-color: #2E2F2F;
-    color: #fff;
+    outline: none;
   }
   @media (max-width: @screen-phone) {
     width: 58px;
@@ -584,7 +612,7 @@ a .ga-icon-separator {
 }
 // ****** SELECTION
 #selection {
-  
+
   .panel-body {
     padding: 0px 4px;
   }
@@ -613,7 +641,7 @@ a .ga-icon-separator {
   display: block;
   top: unit(@header-height, px);
   left: 2%;
-  right: 2%; 
+  right: 2%;
   margin: auto;
   max-width: 600px;
   max-height: none;
@@ -633,9 +661,9 @@ a .ga-icon-separator {
 }
 .modal-header {
   .border-top-radius(6px);
-  
+
   @media (max-width: @screen-phone) {
-    padding: 5px 15px; 
+    padding: 5px 15px;
   }
 }
 .modal-body {
@@ -643,7 +671,7 @@ a .ga-icon-separator {
   overflow-y: auto;
 
   @media (max-width: @screen-phone) {
-    padding: 10px; 
+    padding: 10px;
     max-height: 340px;
   }
 }
@@ -676,7 +704,7 @@ a .ga-icon-separator {
   max-width: none;
   max-height: none;
   display: none;
-  
+
   @media (max-width: @screen-tablet), (max-height: @screen-sm-max-height) {
     height: 435px;
   }
@@ -714,7 +742,7 @@ a .ga-icon-separator {
 
 #featuretree-popup {
   width: 320px;
- 
+
   .ga-popup-content {
     padding: 5px 9px 5px 5px;
 
@@ -774,11 +802,11 @@ ul.panel-body-wide {
   padding: .7em .7em 0;
   display: table;
   width: 100%;
-  
+
   select, span {
     display: table-cell;
   }
-  
+
   span {
     font-size: 13px;
     font-weight: normal;
@@ -1023,17 +1051,17 @@ input[type=range] {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  
+
   input[type=checkbox] {
     cursor: inherit;
   }
 }
 
 .no-webkit .ga-checkbox {
-    
+
   input[type=checkbox] {
     display: none;
-  
+
     & + span:before {
       font-family: "FontAwesome";
       font-size: 14px;
@@ -1041,7 +1069,7 @@ input[type=range] {
       letter-spacing: 4px;
       vertical-align: -0.1em;
     }
-    
+
     &:checked + span:before {
       content: "\f046";
       color: #000;
@@ -1051,21 +1079,21 @@ input[type=range] {
 }
 
 .webkit .ga-checkbox {
-    
+
   input[type=checkbox] {
     -webkit-appearance: none;
     -moz-appearance: none;
     -ms-appearance: none;
     border: 0;
     background: white;
-    
+
     &:after {
       font-size: 14px;
       content: "\f096";
       font-family: FontAwesome;
       letter-spacing: 2px;
     }
-    
+
     &:checked:after {
       content: "\f046";
       letter-spacing: 0px;
@@ -1100,7 +1128,7 @@ input[type=range] {
 @right-static-bt-col-3: unit(@right-col-1 * 3 + @control-btn-space, px);
 .static-bt-mixin(@bottom){
   position: fixed;
-  right: @right-static-bt-col-1;  
+  right: @right-static-bt-col-1;
   bottom: @bottom;
 }
 
@@ -1109,11 +1137,11 @@ input[type=range] {
   top: unit(@small-header-height, px);
   right: unit(@control-btns-right, px);
   z-index: 1000;
-  
+
   > div {
     display: block;
   }
-  
+
   button {
     padding: 0;
     background-color: transparent;
@@ -1127,51 +1155,51 @@ input[type=range] {
   > button {
     transition: right ease 1s;
   }
-   
+
   [ga-offline-bt] {
-    .static-bt-mixin(@bottom-static-bt); 
+    .static-bt-mixin(@bottom-static-bt);
     right: inherit;
-     
+
     @media (max-width: @screen-tablet), (max-height: @screen-sm-max-height) {
       bottom: @bottom-static-bt-screen-sm;
     }
-  } 
-  
+  }
+
   /* When the 3 optional buttons are displayed */
   .ga-time-selector-enabled + .ga-rotate-enabled + [ga-offline-bt] {
-    
+
     @media (max-height: 420px) {
       right: @right-static-bt-col-1;
-    }  
-    
-    @media (max-height: 370px) {
-      right: @right-static-bt-col-2; 
     }
-    
+
+    @media (max-height: 370px) {
+      right: @right-static-bt-col-2;
+    }
+
     @media (max-height: 320px) {
-      right: @right-static-bt-col-3;  
+      right: @right-static-bt-col-3;
     }
   }
-  
+
   /* When only 2 optional buttons are displayed */
   .ga-time-selector-enabled + .ga-rotate-enabled,
   .ga-time-selector-enabled ~ [ga-offline-bt],
-  .ga-rotate-enabled + [ga-offline-bt] { 
-    
+  .ga-rotate-enabled + [ga-offline-bt] {
+
     @media (max-height: 370px) {
       .static-bt-mixin(@bottom-static-bt-screen-sm);
     }
-    
+
     @media (max-height: 320px) {
        right: @right-static-bt-col-2;
     }
   }
-  
+
   /* When only 1 optional button is displayed */
   .ga-time-selector-enabled,
   .ga-rotate-enabled,
   [ga-offline-bt] {
-    
+
     @media (max-height: 320px) {
       .static-bt-mixin(@bottom-static-bt-screen-sm);
     }
