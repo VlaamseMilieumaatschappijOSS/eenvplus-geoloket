@@ -685,11 +685,11 @@
             var retVal = {id: bodId,
                           label: self.getLayerProperty(bodId, 'label')};
             // In the background selector, we don't want the standard labels
-            if (bodId == 'ch.swisstopo.swissimage') {
+            if (bodId == 'be.agiv.sat') {
               retVal.label = $translate('bg_luftbild');
-            } else if (bodId == 'ch.swisstopo.pixelkarte-farbe') {
+            } else if (bodId == 'be.agiv.color') {
               retVal.label = $translate('bg_pixel_color');
-            } else if (bodId == 'ch.swisstopo.pixelkarte-grau') {
+            } else if (bodId == 'be.agiv.grey') {
               retVal.label = $translate('bg_pixel_grey');
             }
             return retVal;
