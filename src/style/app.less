@@ -39,6 +39,12 @@
 @control-btns-top: @control-btn-space;
 @control-btns-right: @control-btn-space;
 
+@font-face {
+  font-family: "flanders-sans-medium";
+  font-style: normal;
+  src: url("font-flanders/flanders-sans-medium.eot?#iefix") format("embedded-opentype"), url("font-flanders/flanders-sans-medium.woff") format("woff"), url("font-flanders/flanders-sans-medium.ttf") format("truetype");
+}
+
 [ng\:cloak], [ng-cloak], .ng-cloak {
   display: none;
 }
@@ -137,27 +143,19 @@ input[type=text][readonly] {
 // ***** HEADER
 #header {
   overflow: visible; // ios bug fix (need to show the dropdown)
-  height: unit(@header-height, px);
-  padding: 0 .4em 0 0;
-  margin-right: 0px; // Fix a long story bug of bootstrap  https://github.com/twbs/bootstrap/issues/10225
-  background-color: rgba(255, 255, 255, 0.9);
+  height: unit(@small-header-height, px);
+  padding: 0 .7em 0 0;
+  margin-right: 0; // Fix a long story bug of bootstrap  https://github.com/twbs/bootstrap/issues/10225
+  background-color: rgba(228, 228, 228, 0.9);
   .box-shadow(6px 6px 12px rgba(0, 0, 0, 0.175));
   .pull-right {
-    margin: 29px 1.6em 0 0;
+    margin: .7em 0 0;
     padding: 0;
     & > div {
       display: inline-block;
     }
   }
-  @media (max-width: @screen-tablet), (max-height: @screen-sm-max-height) {
-    h4 {
-      display: none;
-    }
-    height: unit(@small-header-height, px);
-    .pull-right {
-      margin: .4em 0 0;
-    }
-  }
+
   select {
     width: auto;
     padding-left: .3em;
@@ -182,24 +180,15 @@ input[type=text][readonly] {
 
 #search-container {
   width: 25%;
-  min-width: 250px;
-  float: left;
-  left: 1.6em;
-  position: relative;
-  margin-top: 29px;
-  
+  min-width: 260px;
+  top: .7em;
+  left: 200px;
+  position: absolute;
+
   [ga-help] {
     position: absolute;
     padding-left: 10px;
     line-height: 30px;
-  }
-
-  @media (max-width: @screen-tablet), (max-height: @screen-sm-max-height) {
-    margin-top: 0;
-    width: 260px;
-    top: .7em;
-    left: 44px;
-    position: absolute;
   }
   
   @media (max-width: @screen-phone) {
@@ -241,29 +230,33 @@ input[type=text][readonly] {
 }
 
 #logo {
+  padding: 13px 0 0 13px;
+  height: 50px;
   width: 320px;
   display: inline-block;
-  background: white;
-  
-  img:last-of-type {
+
+  img:first-of-type {
     display: none;
-    width: 19px;
-    height: 19.5px;
   }
-  
-  @media (max-width: @screen-tablet), (max-height: @screen-sm-max-height) {
-    padding: 13px 0 0 13px;
-    height: 50px;
-    
-    img:last-of-type {
-      display: inline;
-    }
-    
-    img:first-of-type {
-      display: none;
-    }
+
+  img:last-of-type {
+    width: 17px;
+    height: 27px;
   }
-  
+
+  a {
+    font-family: flanders-sans-medium, sans-serif;
+  }
+
+  a:hover {
+    text-decoration: none;
+  }
+
+  span:first-of-type {
+    padding-left: 9px;
+    text-transform: uppercase;
+  }
+
   @media (max-width: @screen-phone) {
     width: 44px;
   }
@@ -271,25 +264,22 @@ input[type=text][readonly] {
 
 #toptools {
   position: absolute;
-  top: 0.2em;
-  right: 2em;
-  
-  @media (max-height: @screen-sm-max-height) {
-    right: 12em;
-    top: 1em;
-  }
+  top: .7em;
+  right: 12em;
 
   & > div {
     display: inline-block;
   }
-  select {
-    height: 20px;
-    line-height: 20px;
-    padding: 1px .3em;
-  }
+
   a {
-    font-size: 80%;
+    font-family: flanders-sans-medium, sans-serif;
+    font-size: .9em;
     color: #333;
+  }
+
+  // VMM: hide problem reporting and mobile version
+  a:nth-child(2), a:nth-child(4) {
+    display: none;
   }
 }
 
@@ -372,10 +362,8 @@ a .ga-icon-separator {
   left: 0;
   width: unit(@pulldown-width, px);
   z-index: 1000;
-  top: unit(@header-height, px);
-  @media (max-width: @screen-tablet), (max-height: @screen-sm-max-height) {
-    top: unit(@small-header-height, px);
-  }
+  top: unit(@small-header-height, px);
+
   @media (max-width: @screen-phone) {
     width: 100%;
     height: 0;
@@ -1118,7 +1106,7 @@ input[type=range] {
 
 #buttonGroup {
   position: absolute;
-  top: unit(@header-height, px);
+  top: unit(@small-header-height, px);
   right: unit(@control-btns-right, px);
   z-index: 1000;
   
@@ -1138,10 +1126,6 @@ input[type=range] {
 
   > button {
     transition: right ease 1s;
-  }
-  
-  @media (max-width: @screen-tablet), (max-height: @screen-sm-max-height) {
-    top: unit(@small-header-height, px);
   }
    
   [ga-offline-bt] {
