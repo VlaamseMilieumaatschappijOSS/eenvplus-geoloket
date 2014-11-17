@@ -19,16 +19,14 @@
   ]);
 
   module.provider('gaTileGrid', function() {
-    var origin = [420000, 350000];
-    var defaultResolutions = [4000, 3750, 3500, 3250, 3000, 2750, 2500, 2250,
-        2000, 1750, 1500, 1250, 1000, 750, 650, 500, 250, 100, 50, 20, 10, 5,
-        2.5, 2, 1.5, 1, 0.5];
-    var wmsResolutions = defaultResolutions.concat([0.25, 0.1]);
+    var origin = [9928, 329072];
+    var defaultResolutions = [1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125];
+    var wmsResolutions = defaultResolutions;
 
     function createTileGrid(resolutions, type) {
       if (type === 'wms') {
         return new ol.tilegrid.TileGrid({
-          tileSize: 512,
+          tileSize: 256,
           origin: origin,
           resolutions: resolutions
         });
@@ -926,10 +924,9 @@
   module.provider('gaMapUtils', function() {
     this.$get = function($window) {
       var attributions = {};
-      var resolutions = [650.0, 500.0, 250.0, 100.0, 50.0, 20.0, 10.0, 5.0,
-          2.5, 2.0, 1.0, 0.5, 0.25, 0.1];
+      var resolutions = [1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125];
       return {
-        swissExtent: [420000, 30000, 900000, 350000],
+        swissExtent: [9928, 66928, 272072, 329072],
         viewResolutions: resolutions,
         getViewResolutionForZoom: function(zoom) {
           return resolutions[zoom];

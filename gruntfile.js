@@ -115,6 +115,7 @@ module.exports = function (grunt) {
                         "versionslashed": "",
                         "apache_base_path": "localhost/",
                         "api_url": "//localhost:8888",
+                        "wmts_url": "//geo.api.agiv.be/geodiensten/raadpleegdiensten/geocache/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER=grb_bsk&STYLE=default&FORMAT=image/png&TILEMATRIXSET=BPL72VL&TILEMATRIX={TileMatrix}&TILEROW={TileRow}&TILECOL={TileCol}",
                         "device": "desktop",
                         "mode": "dev"
                     }
@@ -129,6 +130,7 @@ module.exports = function (grunt) {
                         "versionslashed": "",
                         "apache_base_path": "localhost/",
                         "api_url": "//localhost:8888",
+                        "wmts_url": "//geo.api.agiv.be/geodiensten/raadpleegdiensten/geocache/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER=grb_bsk&STYLE=default&FORMAT=image/png&TILEMATRIXSET=BPL72VL&TILEMATRIX={TileMatrix}&TILEROW={TileRow}&TILECOL={TileCol}",
                         "device": "mobile",
                         "mode": "dev"
                     }

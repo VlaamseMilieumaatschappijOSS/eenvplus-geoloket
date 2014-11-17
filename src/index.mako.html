@@ -690,11 +690,8 @@ itemscope itemtype="http://schema.org/WebApplication"
           });
         });
 
-        module.config(function(gaLayersProvider, gaGlobalOptions, gaSRSName) {
-          gaLayersProvider.wmtsGetTileUrlTemplate =
-              '//wmts{5-9}.geo.admin.ch/1.0.0/{Layer}/default/{Time}/' +
-              gaSRSName.default.srid +
-              '/{TileMatrix}/{TileRow}/{TileCol}.{Format}';
+        module.config(function(gaLayersProvider, gaGlobalOptions) {
+          gaLayersProvider.wmtsGetTileUrlTemplate = '${wmts_url}';
 
           gaLayersProvider.layersConfigUrlTemplate =
               gaGlobalOptions.cachedApiUrl + '/rest/services/all/MapServer/layersConfig?lang={Lang}';

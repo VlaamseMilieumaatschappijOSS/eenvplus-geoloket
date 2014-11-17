@@ -51,7 +51,7 @@
             projection: swissProjection,
             center: ol.extent.getCenter(gaMapUtils.swissExtent),
             extent: gaMapUtils.swissExtent,
-            resolution: 500.0,
+            resolution: 1024,
             resolutions: gaMapUtils.viewResolutions
           }),
           logo: false
