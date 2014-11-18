@@ -19,13 +19,13 @@
    */
   module.controller('GaMainController',
     function($rootScope, $scope, $timeout, $translate, $window, gaBrowserSniffer,
-        gaFeaturesPermalinkManager, gaLayersPermalinkManager, gaMapUtils,
+        gaFeaturesPermalinkManager, gaLayersPermalinkManager, MAP_CONFIG,
         gaNetworkStatus, gaPermalink, gaSRSName, gaStorage) {
 
       var createMap = function() {
         var toolbar = $('#zoomButtons')[0];
-        var swissProjection = ol.proj.get(gaSRSName.default.code);
-        swissProjection.setExtent(gaMapUtils.swissExtent);
+        var projection = ol.proj.get(gaSRSName.default.code);
+        projection.setExtent(MAP_CONFIG.extent);
 
         var map = new ol.Map({
           controls: ol.control.defaults({
@@ -48,11 +48,11 @@
           ]),
           renderer: 'canvas',
           view: new ol.View({
-            projection: swissProjection,
-            center: ol.extent.getCenter(gaMapUtils.swissExtent),
-            extent: gaMapUtils.swissExtent,
-            resolution: 1024,
-            resolutions: gaMapUtils.viewResolutions
+            projection: projection,
+            center: ol.extent.getCenter(MAP_CONFIG.extent),
+            extent: MAP_CONFIG.extent,
+            resolution: MAP_CONFIG.resolution,
+            resolutions: MAP_CONFIG.resolutions
           }),
           logo: false
         });

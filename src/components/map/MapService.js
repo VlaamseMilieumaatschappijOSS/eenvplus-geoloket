@@ -1,39 +1,35 @@
 (function() {
   goog.provide('ga_map_service');
 
+  goog.require('ga_config');
   goog.require('ga_networkstatus_service');
   goog.require('ga_offline_service');
   goog.require('ga_storage_service');
   goog.require('ga_styles_service');
-  goog.require('ga_srs_name_service');
   goog.require('ga_urlutils_service');
 
   var module = angular.module('ga_map_service', [
     'pascalprecht.translate',
+    'ga_config',
     'ga_networkstatus_service',
     'ga_offline_service',
     'ga_storage_service',
     'ga_styles_service',
-    'ga_srs_name_service',
     'ga_urlutils_service'
   ]);
 
-  module.provider('gaTileGrid', function() {
-    var origin = [9928, 329072];
-    var defaultResolutions = [1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125];
-    var wmsResolutions = defaultResolutions;
-
+  module.provider('gaTileGrid', function(MAP_CONFIG) {
     function createTileGrid(resolutions, type) {
       if (type === 'wms') {
         return new ol.tilegrid.TileGrid({
-          tileSize: 256,
-          origin: origin,
+          tileSize: MAP_CONFIG.tileSize,
+          origin: MAP_CONFIG.origin,
           resolutions: resolutions
         });
       }
       return new ol.tilegrid.WMTS({
           matrixIds: $.map(resolutions, function(r, i) { return i + ''; }),
-          origin: origin,
+          origin: MAP_CONFIG.origin,
           resolutions: resolutions
       });
     }
@@ -42,7 +38,7 @@
       return {
         get: function(resolutions, minResolution, type) {
           if (!resolutions) {
-            resolutions = (type == 'wms') ? wmsResolutions : defaultResolutions;
+            resolutions = MAP_CONFIG.resolutions.concat();
           }
           if (minResolution) { // we remove useless resolutions
             for (var i = 0, ii = resolutions.length; i < ii; i++) {
@@ -921,15 +917,12 @@
   /**
    * Service provides map util functions.
    */
-  module.provider('gaMapUtils', function() {
+  module.provider('gaMapUtils', function(MAP_CONFIG) {
     this.$get = function($window) {
       var attributions = {};
-      var resolutions = [1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125];
       return {
-        swissExtent: [9928, 66928, 272072, 329072],
-        viewResolutions: resolutions,
         getViewResolutionForZoom: function(zoom) {
-          return resolutions[zoom];
+          return MAP_CONFIG.resolutions[zoom];
         },
         // Example of a dataURI: 'data:image/png;base64,sdsdfdfsdfdf...'
         dataURIToBlob: function(dataURI) {

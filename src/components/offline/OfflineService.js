@@ -1,10 +1,12 @@
 (function() {
   goog.provide('ga_offline_service');
 
+  goog.require('ga_config');
   goog.require('ga_storage_service');
   goog.require('ga_styles_service');
 
   var module = angular.module('ga_offline_service', [
+    'ga_config',
     'ga_debounce_service',
     'ga_storage_service',
     'ga_styles_service'
@@ -99,7 +101,7 @@
 
     this.$get = function($rootScope, $timeout, $translate, $window,
         gaBrowserSniffer, gaDebounce, gaGlobalOptions, gaLayers, gaMapUtils,
-        gaStorage, gaStyleFactory, gaUrlUtils) {
+        gaStorage, gaStyleFactory, gaUrlUtils, MAP_CONFIG) {
       minRes = gaMapUtils.getViewResolutionForZoom(maxZoom);
       featureOverlay.setStyle(gaStyleFactory.getStyle('offline'));
 
@@ -414,7 +416,7 @@
 
 
               var tileExtent = (isBgLayer && zoom >= 0 && zoom <= 2) ?
-                  gaMapUtils.swissExtent : extent;
+                  MAP_CONFIG.extent : extent;
               var tileRange = tileGrid.getTileRangeForExtentAndZ(tileExtent, z);
               var centerTileCoord = [
                 z,
