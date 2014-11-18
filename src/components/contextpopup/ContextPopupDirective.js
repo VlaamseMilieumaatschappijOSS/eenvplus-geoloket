@@ -13,7 +13,7 @@
 
   module.directive('gaContextPopup',
       function($http, $q, $timeout, $window, gaBrowserSniffer, gaNetworkStatus,
-          gaPermalink, gaSRSName) {
+          gaPermalink, gaSRSName, SRID) {
         return {
           restrict: 'A',
           replace: true,
@@ -25,7 +25,6 @@
           link: function(scope, element, attrs) {
             var heightUrl = scope.options.heightUrl;
             var qrcodeUrl = scope.options.qrcodeUrl;
-            var lv03tolv95Url = scope.options.lv03tolv95Url;
 
             // The popup content is updated (a) on contextmenu events,
             // and (b) when the permalink is updated.
@@ -73,16 +72,16 @@
                 return;
               }
 
+              var wgs84 = gaSRSName.byId(SRID.WGS84),
+                  utm = gaSRSName.byId(SRID.UTM);
               var pixel = (event.originalEvent) ?
                   map.getEventPixel(event.originalEvent) :
                   event.pixel;
               coordDefault = (event.originalEvent) ?
                   map.getEventCoordinate(event.originalEvent) :
                   event.coordinate;
-              var coord4326 = ol.proj.transform(coordDefault,
-                  gaSRSName.default.code, 'EPSG:4326');
-              var coord2056 = ol.proj.transform(coordDefault,
-                  gaSRSName.default.code, 'EPSG:2056');
+              var coordWGS84 = ol.proj.transform(coordDefault,
+                  gaSRSName.default.code, wgs84.code);
 
               // recenter on phones
               if (gaBrowserSniffer.phone) {
@@ -95,23 +94,22 @@
               }
 
               scope.coordDefault = formatCoordinates(coordDefault, 1);
-              scope.coord4326 = formatCoordinates(coord4326, 5, true);
-              scope.coord2056 = formatCoordinates(coord2056, 2) + ' *';
-              if (coord4326[0] < 6 && coord4326[0] >= 0) {
-                var utm_31t = ol.proj.transform(coord4326,
-                  'EPSG:4326', 'EPSG:32631');
+              scope.coordWGS84 = formatCoordinates(coordWGS84, 5, true);
+              if (coordWGS84[0] < 6 && coordWGS84[0] >= 0) {
+                var utm_31t = ol.proj.transform(coordWGS84,
+                  wgs84.code, utm.code);
                 scope.coordutm = coordinatesFormatUTM(utm_31t, '(zone 31T)');
-              } else if (coord4326[0] < 12 && coord4326[0] >= 6) {
-                var utm_32t = ol.proj.transform(coord4326,
-                  'EPSG:4326', 'EPSG:32632');
+              } else if (coordWGS84[0] < 12 && coordWGS84[0] >= 6) {
+                var utm_32t = ol.proj.transform(coordWGS84,
+                  wgs84.code, utm.authority + ':' + (utm.srid + 1));
                 scope.coordutm = coordinatesFormatUTM(utm_32t, '(zone 32T)');
               } else {
                 return '-';
               }
 
-              coord4326['lon'] = coord4326[0];
-              coord4326['lat'] = coord4326[1];
-              scope.coordmgrs = $window.proj4.mgrs.forward(coord4326).
+              coordWGS84['lon'] = coordWGS84[0];
+              coordWGS84['lat'] = coordWGS84[1];
+              scope.coordmgrs = $window.proj4.mgrs.forward(coordWGS84).
                   replace(/(.{5})/g, '$1 ');
               scope.altitude = '-';
 
@@ -133,17 +131,6 @@
                 }).success(function(response) {
                   scope.altitude = parseFloat(response.height);
                 });
-
-                $http.get(lv03tolv95Url, {
-                  params: {
-                    easting: coordDefault[0],
-                    northing: coordDefault[1]
-                  }
-                }).success(function(response) {
-                  coord2056 = response.coordinates;
-                  scope.coord2056 = formatCoordinates(coord2056, 2);
-                });
-
               });
 
               updatePopupLinks();

@@ -1,16 +1,16 @@
 (function() {
   goog.provide('ga_main_controller');
 
+  goog.require('ga_config');
   goog.require('ga_map');
   goog.require('ga_networkstatus_service');
-  goog.require('ga_srs_name_service');
   goog.require('ga_storage_service');
 
   var module = angular.module('ga_main_controller', [
     'pascalprecht.translate',
+    'ga_config',
     'ga_map',
     'ga_networkstatus_service',
-    'ga_srs_name_service',
     'ga_storage_service'
   ]);
 

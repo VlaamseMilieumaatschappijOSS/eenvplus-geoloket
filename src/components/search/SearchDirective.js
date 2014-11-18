@@ -27,7 +27,7 @@
           gaLayerMetadataPopup, gaMapUtils, gaPermalink, gaUrlUtils,
           gaGetCoordinate, gaBrowserSniffer, gaLayerFilters, gaKml,
           gaPreviewLayers, gaLayers, gaPreviewFeatures, gaMarkerOverlay,
-          gaSwisssearch, gaDebounce, gaSRSName) {
+          gaSwisssearch, gaDebounce, gaSRSName, SRID) {
         var currentTopic,
             footer = [
           '<div class="ga-search-footer clearfix">',
@@ -264,7 +264,7 @@
               var label = getLocationLabel(attrs);
               var origin = attrs.origin;
               var center = ol.proj.transform([attrs.lon, attrs.lat],
-                  'EPSG:4326', gaSRSName.default.code);
+                  gaSRSName.byId(SRID.WGS84).code, gaSRSName.default.code);
               var extent = parseExtent(attrs.geom_st_box2d);
               var template = '<div class="tt-search" ' +
                   'ng-mouseenter="addOverlay([' +

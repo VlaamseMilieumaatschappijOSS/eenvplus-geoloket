@@ -26,11 +26,12 @@
     '([\\d\\.\']+)[\\s,]+([\\d\\.\']+)');
 
   module.provider('gaGetCoordinate', function() {
-    this.$get = function(gaSRSName) {
+    this.$get = function(gaSRSName, SRID) {
       return function(extent, query) {
         var position;
         var valid = false;
 
+        var wgs84 = gaSRSName.byId(SRID.WGS84);
         var matchDMSN = query.match(regexpDMSN);
         var matchDMSE = query.match(regexpDMSE);
         if (matchDMSN && matchDMSN.length == 1 &&
@@ -63,7 +64,7 @@
             .replace('\'\'' , '').replace('′′' , '')
             .replace('″' , '')) / 3600;
           position = ol.proj.transform([easting, northing],
-                'EPSG:4326', gaSRSName.default.code);
+                wgs84.code, gaSRSName.default.code);
           if (ol.extent.containsCoordinate(
             extent, position)) {
               valid = true;
@@ -82,21 +83,14 @@
               extent, position)) {
             valid = true;
           } else {
-            position = ol.proj.transform(position,
-              'EPSG:2056', gaSRSName.default.code);
-            if (ol.extent.containsCoordinate(
-                extent, position)) {
-              valid = true;
-            } else {
               position =
                 [left < right ? left : right,
                   right > left ? right : left];
               position = ol.proj.transform(position,
-                'EPSG:4326', gaSRSName.default.code);
+                wgs84.code, gaSRSName.default.code);
               if (ol.extent.containsCoordinate(
                 extent, position)) {
                 valid = true;
-              }
             }
           }
         }
