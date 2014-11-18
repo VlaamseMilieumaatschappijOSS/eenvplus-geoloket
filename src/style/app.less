@@ -385,7 +385,9 @@ input[type=text][readonly] {
 a .ga-icon-separator {
   .separator-mixin;
   display: inline-block;
-  width: 1.5em;
+  margin: 0 0.25em 0 0;
+  width: 1.65em;
+  border-color: #666;
 }
 
 // ****** PULLDOWN
@@ -459,16 +461,8 @@ a .ga-icon-separator {
     margin-bottom: 0;
   }
 
-  &.selection-and-catalog-shown {
-    .panel-body {
-      max-height: 250px;
-      @media (max-height: 800px) {
-        max-height: 150px;
-      }
-      @media (max-width: @screen-phone) {
-        max-height: 250px;
-      }
-    }
+  &.selection-and-catalog-shown .panel-body {
+    max-height: 250px;
   }
 
 }
@@ -619,7 +613,7 @@ a .ga-icon-separator {
 #selection {
 
   .panel-body {
-    padding: 0px 4px;
+    padding: 0;
   }
 
   .popover-content {
