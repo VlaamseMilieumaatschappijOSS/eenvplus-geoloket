@@ -128,7 +128,7 @@ input[type=search] {
 }
 select, input[type=text], input[type=email], input[type=search] {
   .form-control;
-  .input-sm;
+  height: 30px;
 }
 
 input[type=text][readonly] {
@@ -152,7 +152,12 @@ input[type=text][readonly] {
   }
 
   input, select {
-    opacity: .8;
+    background: #e4e4e4;
+
+    &:focus {
+      border-color: rgba(0, 0, 0, 0.6);
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(228, 228, 228, 0.6);
+    }
   }
 
   a:hover, a:focus {
