@@ -29,6 +29,7 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <phase>compile</phase>
                         <goals>
                             <goal>npm</goal>
                             <goal>grunt</goal>
@@ -43,7 +44,7 @@
                 <executions>
                     <execution>
                         <id>copy-resources</id>
-                        <phase>validate</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
