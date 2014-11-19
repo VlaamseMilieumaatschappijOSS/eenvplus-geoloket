@@ -9,12 +9,18 @@
     <packaging>war</packaging>
     <name>GeoLoket</name>
 
+    <properties>
+        <grunt.version>1.4.1</grunt.version>
+        <resources.version>2.7</resources.version>
+        <war.version>2.3</war.version>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>pl.allegro</groupId>
                 <artifactId>grunt-maven-plugin</artifactId>
-                <version>1.4.1</version>
+                <version>${grunt.version}</version>
                 <configuration>
                     <showColors>true</showColors>
                     <gruntOptions>
@@ -33,7 +39,7 @@
 
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.7</version>
+                <version>${resources.version}</version>
                 <executions>
                     <execution>
                         <id>copy-resources</id>
@@ -42,7 +48,8 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}</outputDirectory>
+                            <outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}
+                            </outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/</directory>
@@ -56,7 +63,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.3</version>
+                <version>${war.version}</version>
                 <configuration>
                     <archive>
                         <manifestEntries>
