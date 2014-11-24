@@ -3,24 +3,13 @@
 ///ts:ref=closure
 /// <reference path="../../../../../lib/ts/closure.d.ts"/> ///ts:ref:generated
 
-module be.vmm.eenvplus.editor {
+module be.vmm.eenvplus.editor.Module {
     'use strict';
 
-    export module Module {
-        export var EDITOR:string = 'ga_editor';
-        export var MASK:string = 'ga_editor_mask';
-    }
+    export var EDITOR:string = 'ga_editor';
 
-    export module Directive {
-        export var MASK:string = 'gaMask';
-    }
+    goog.provide(EDITOR);
 
-    goog.provide(Module.EDITOR);
-
-    goog.require(Module.MASK);
-
-    angular.module(Module.EDITOR, [
-        Module.MASK
-    ]);
+    angular.module(EDITOR, []);
 
 }

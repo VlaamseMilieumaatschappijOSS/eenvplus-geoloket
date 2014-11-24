@@ -4,7 +4,7 @@
 module be.vmm.eenvplus.editor.mask {
     'use strict';
 
-    goog.provide(Module.MASK);
+    export var NAME:string = 'gaMask';
 
     function configure():ng.IDirective {
         return {
@@ -16,10 +16,14 @@ module be.vmm.eenvplus.editor.mask {
 
     export class MaskController {
 
+        constructor() {
+            console.log('HELLO');
+        }
+
     }
 
     angular
-        .module(Module.MASK, [])
-        .directive(Directive.MASK, configure);
+        .module(Module.EDITOR)
+        .directive(NAME, configure);
 
 }
