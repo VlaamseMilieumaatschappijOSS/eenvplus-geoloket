@@ -57,6 +57,8 @@
   goog.require('ga_measure_controller');
   goog.require('ga_draw_controller');
 
+  goog.require('ga_editor');
+
 
   var module = angular.module('ga', [
     'ga_attribution',
@@ -113,7 +115,8 @@
     'ngAnimate',
     'ga_featuretree_controller',
     'ga_measure_controller',
-    'ga_draw_controller'
+    'ga_draw_controller',
+    'ga_editor'
   ]);
 
 })();

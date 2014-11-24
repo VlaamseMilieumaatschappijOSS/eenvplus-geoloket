@@ -102,7 +102,7 @@ itemscope itemtype="http://schema.org/WebApplication"
     <link rel="shortcut icon" type="image/x-icon" href="${versionslashed}img/favicon.ico"/>
   </head>
 
-  <body class="{{topicId}}"
+  <body class="{{topicId}} {{state}}" ga-state
         ng-class="{
           'search-focused': globals.searchFocused,
           'touch': globals.touch,
@@ -178,7 +178,7 @@ itemscope itemtype="http://schema.org/WebApplication"
       <div class="alert alert-danger" translate>offline_sorry</div>
     </div> <!-- #header -->
 
-    <div tabindex="1" ga-map ga-map-map="map">
+    <div tabindex="1" ga-map ga-mask ga-map-map="map">
       <div id="copyrightsdata">
         <div>
           <span >&copy;&nbsp;</span>
