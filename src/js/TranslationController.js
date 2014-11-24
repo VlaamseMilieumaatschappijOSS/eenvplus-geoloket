@@ -8,13 +8,10 @@
 
         $scope.options = {
           langs: [
-            {label: 'DE', value: 'de'},
-            {label: 'FR', value: 'fr'},
-            {label: 'IT', value: 'it'},
-            {label: 'RM', value: 'rm'},
+            {label: 'NL', value: 'nl'},
             {label: 'EN', value: 'en'}
           ],
-          fallbackCode: 'de'
+          fallbackCode: 'en'
         };
 
       });
