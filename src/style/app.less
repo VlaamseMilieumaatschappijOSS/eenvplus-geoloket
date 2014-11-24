@@ -245,9 +245,22 @@ input[type=text][readonly] {
 
   div {
     display: inline-block;
-    width: unit(@small-header-height, px);
+    vertical-align: top;
+    width: unit(@small-header-height - 15, px);
     height: unit(@small-header-height, px);
     background: #e4e4e4;
+  }
+
+  div:after {
+    position: absolute;
+    content: ' ';
+    top: -15px;
+    left: 33px;
+    width: 0;
+    height: 0;
+    border-style: inset;
+    border-width: 0 15px 65px 0;
+    border-color: transparent transparent #a4a4a4 transparent;
   }
 
   img:first-of-type {
@@ -260,21 +273,30 @@ input[type=text][readonly] {
     margin: 11px 0 0 15px;
   }
 
-  span {
-    display: inline-block;
-    vertical-align: top;
-    padding-top: 16px;
+  h1, h2 {
+    margin: 0;
     color: @text-color-inverted;
     font-weight: bold;
+  }
+
+  h1 {
+    padding: 12px 0 0 4px;
+    font-size: 1em;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    padding-left: 8px;
+    font-size: .8em;
   }
 
   a:hover {
     text-decoration: none;
   }
 
-  span:first-of-type {
+  span {
+    display: inline-block;
     padding-left: 12px;
-    text-transform: uppercase;
   }
 
   @media (max-width: @screen-phone) {
@@ -315,6 +337,7 @@ input[type=text][readonly] {
 
   a {
     color: @text-color-inverted;
+    text-transform: uppercase;
   }
 
   a:hover, a:focus {
