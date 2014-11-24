@@ -6,7 +6,9 @@ var dir = {
         comp: 'src/components/',
         html: 'src/',
         js: 'src/js/',
-        less: 'src/style/'
+        less: 'src/style/',
+        lib: 'src/lib/',
+        ts: 'src/ts/'
     },
     file = {
         dependency: dir.build + 'deps.js',
@@ -15,12 +17,15 @@ var dir = {
         htmlOut: dir.build + 'index.html',
         htmlOutMobile: dir.build + 'mobile.html',
         lessIn: dir.less + 'app.less',
-        lessOut: dir.build + 'style/app.css'
+        lessOut: dir.build + 'style/app.css',
+        tsOut: dir.build + 'eenvplus.js'
     },
     src = {
         html: file.htmlIn,
         js: [dir.js + '**/*.js', dir.comp + '**/*.js'],
-        less: [dir.less + '**/*.less', dir.comp + '**/*.less']
+        less: [dir.less + '**/*.less', dir.comp + '**/*.less'],
+        ts: [dir.ts + '**/*.ts'],
+        typeDefs: [dir.lib + '**/*.d.ts']
     };
 
 
@@ -69,13 +74,16 @@ module.exports = function (grunt) {
         src: src,
 
         clean: {
-            dev: [file.dependency, file.htmlOut, file.htmlOutMobile, file.lessOut]
+            dev: [file.dependency, file.tsOut + '*', file.htmlOut, file.htmlOutMobile, file.lessOut]
         },
 
         closureDepsWriter: {
             options: {
                 depswriter: file.depsWriter,
-                root_with_prefix: ['"' + dir.comp + ' components"', '"' + dir.js + ' js"']
+                root_with_prefix: [
+                    '"' + dir.comp + ' components"',
+                    '"' + dir.js + ' js"'
+                ]
             },
             dev: {
                 dest: file.dependency
@@ -141,6 +149,17 @@ module.exports = function (grunt) {
             }
         },
 
+        ts: {
+            dev: {
+                src: [src.typeDefs, src.ts],
+                out: file.tsOut,
+                options: {
+                    removeComments: false,
+                    sourceMap: true
+                }
+            }
+        },
+
         watch: {
             options: {
                 spawn: false
@@ -156,6 +175,10 @@ module.exports = function (grunt) {
             less: {
                 files: src.less,
                 tasks: ['less:dev']
+            },
+            ts: {
+                files: src.ts,
+                tasks: ['ts:dev']
             }
         }
     });
@@ -164,7 +187,7 @@ module.exports = function (grunt) {
     grunt.registerTask(
         'build-dev',
         'Builds the files required for development',
-        ['closureDepsWriter:dev', 'less:dev', 'nunjucks:dev', 'nunjucks:devMobile']
+        ['ts:dev', 'closureDepsWriter:dev', 'less:dev', 'nunjucks:dev', 'nunjucks:devMobile']
     );
     grunt.registerTask('http', 'Run an http server on development files.', ['connect:dev:keepalive']);
     grunt.registerTask(
