@@ -67,32 +67,50 @@ module be.vmm.eenvplus.editor.mask {
         }
 
         function draw(ctx:CanvasRenderingContext2D):void {
-            var size = map.getSize(),
-                height = size[1] * ol.has.DEVICE_PIXEL_RATIO,
-                width = size[0] * ol.has.DEVICE_PIXEL_RATIO,
-                coordinates = boxInteraction.getGeometry().getCoordinates()[0],
-                bl = map.getPixelFromCoordinate(coordinates[0]),
-                tl = map.getPixelFromCoordinate(coordinates[1]),
-                tr = map.getPixelFromCoordinate(coordinates[2]),
-                br = map.getPixelFromCoordinate(coordinates[3]);
-
             ctx.beginPath();
-            // Outside polygon, must be clockwise
-            ctx.moveTo(0, 0);
-            ctx.lineTo(width, 0);
-            ctx.lineTo(width, height);
-            ctx.lineTo(0, height);
-            ctx.lineTo(0, 0);
-            ctx.closePath();
-            // Inner polygon, must be counter-clockwise
-            ctx.moveTo(bl[0], bl[1]);
-            ctx.lineTo(tl[0], tl[1]);
-            ctx.lineTo(tr[0], tr[1]);
-            ctx.lineTo(br[0], br[1]);
-            ctx.lineTo(bl[0], bl[1]);
-            ctx.closePath();
+            drawRect(ctx, getScreenBox().reverse());
+            drawRect(ctx, getSelectionBox());
             ctx.fillStyle = 'rgba(' + style.fill.color.join(', ') + ')';
             ctx.fill();
+        }
+
+        function getScreenBox() {
+            var size = map.getSize(),
+                width = size[0] * ol.has.DEVICE_PIXEL_RATIO,
+                height = size[1] * ol.has.DEVICE_PIXEL_RATIO;
+
+            return [[0, 0], [0, height], [width, height], [width, 0]];
+        }
+
+        function getSelectionBox() {
+            var coordinates = boxInteraction.getGeometry().getCoordinates(),
+                normalized = normalize(coordinates[0]),
+                toPixel = _.bind(map.getPixelFromCoordinate, map);
+
+            return _.map(normalized, toPixel);
+        }
+
+        function normalize(coordinates) {
+            return [
+                [Math.min, Math.max],
+                [Math.min, Math.min],
+                [Math.max, Math.min],
+                [Math.max, Math.max]
+            ].map((fns) => {
+                    return fns.map((fn, xy) => {
+                        return fn.apply(null, _.map(coordinates, xy));
+                    });
+                });
+        }
+
+        function drawRect(ctx:CanvasRenderingContext2D, coordinates:ol.Coordinate[]):void {
+            var first = coordinates.shift(),
+                lineTo = _.bind(ctx.lineTo.apply, ctx.lineTo, ctx);
+
+            ctx.moveTo(first[0], first[1]);
+            coordinates.push(first);
+            _.each(coordinates, lineTo);
+            ctx.closePath();
         }
 
     }
