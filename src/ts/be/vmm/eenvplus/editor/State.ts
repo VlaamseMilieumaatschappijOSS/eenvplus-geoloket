@@ -10,7 +10,7 @@ module be.vmm.eenvplus.editor.state {
         change: 'stateChange'
     };
 
-    var state = {
+    export var STATE = {
         VIEW: 'view',
         EDIT: 'edit'
     };
@@ -36,7 +36,7 @@ module be.vmm.eenvplus.editor.state {
         $scope.$watch('globals.isDrawActive', toggle);
 
         function toggle(editActive) {
-            $scope.state = editActive ? state.EDIT : state.VIEW;
+            $scope.state = editActive ? STATE.EDIT : STATE.VIEW;
             $rootScope.$broadcast(EVENT.change, $scope.state);
         }
 

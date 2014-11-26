@@ -11,6 +11,7 @@ declare module ol {
         events:events.Static;
         geom:geometry.Static;
         interaction:interaction.Static;
+        render:render.Static;
         style:style.Static;
 
         Feature:Feature;
@@ -28,8 +29,8 @@ declare module ol {
     interface FeatureOverlay {
         new (config:any):FeatureOverlay;
 
-        setStyle(style:style.Style):void;
         setMap(map:any):void;
+        setStyle(style:style.Style):void;
 
     }
 
@@ -39,11 +40,14 @@ declare module ol {
         addInteraction(interaction:interaction.Interaction):void;
         getPixelFromCoordinate(coordinate:Coordinate):Pixel;
         getSize():Size;
+        render():void;
+        removeInteraction(interaction:interaction.Interaction):void;
     }
 
     interface Observable {
 
         on(type:string, listener:Function, scope?:any):void;
+        once(type:string, listener:Function, scope?:any):void;
         un(type:string, listener:Function, scope?:any):void;
 
     }
@@ -105,6 +109,22 @@ declare module ol {
         }
 
         interface Pointer extends Interaction {
+
+        }
+
+    }
+
+    module render {
+
+        interface Static {
+
+            Event:Event;
+
+        }
+
+        interface Event {
+
+            context:CanvasRenderingContext2D;
 
         }
 
