@@ -1,3 +1,7 @@
+///ts:ref=DragBox
+/// <reference path="../../../../ol/interaction/DragBox.ts"/> ///ts:ref:generated
+///ts:ref=Map
+/// <reference path="../../../../ol/Map.ts"/> ///ts:ref:generated
 ///ts:ref=Module
 /// <reference path="./Module.ts"/> ///ts:ref:generated
 
@@ -56,7 +60,7 @@ module be.vmm.eenvplus.editor.mask {
             })
         });
 
-        map.once('precompose', setContext);
+        map.once(ol.Map.EVENT.preCompose, setContext);
         $rootScope.$on(state.EVENT.change, handleStateChange);
 
         function setContext(event:ol.render.Event):void {
@@ -97,9 +101,9 @@ module be.vmm.eenvplus.editor.mask {
             draw(false);
 
             map.addInteraction(boxInteraction);
-            map.on('postcompose', draw);
+            map.on(ol.Map.EVENT.postCompose, draw);
 
-            boxInteraction.on('boxend', stopSelecting);
+            boxInteraction.on(ol.interaction.DragBox.EVENT.boxEnd, stopSelecting);
         }
 
         /**
@@ -107,12 +111,12 @@ module be.vmm.eenvplus.editor.mask {
          * When the selection is made, automatically hide the feature layers.
          */
         function stopSelecting():void {
-            boxInteraction.un('boxend', stopSelecting);
+            boxInteraction.un(ol.interaction.DragBox.EVENT.boxEnd, stopSelecting);
             map.removeInteraction(boxInteraction);
 
             _(map.getLayers().getArray())
                 .filter('displayInLayerManager')
-                .invoke('setVisible', false);
+                .invoke(ol.layer.Base.prototype.setVisible, false);
         }
 
         /**
@@ -123,7 +127,7 @@ module be.vmm.eenvplus.editor.mask {
 
             isActive = false;
 
-            map.un('postcompose', draw);
+            map.un(ol.Map.EVENT.postCompose, draw);
             map.render();
         }
 

@@ -11,11 +11,13 @@ declare module ol {
         events:events.Static;
         geom:geometry.Static;
         interaction:interaction.Static;
+        layer:layer.Static;
         render:render.Static;
         style:style.Static;
 
         Feature:Feature;
         FeatureOverlay:FeatureOverlay;
+        Map:Map;
 
     }
 
@@ -134,6 +136,7 @@ declare module ol {
         }
 
         interface Base {
+            prototype:Base;
 
             setVisible(value:boolean):void;
 
