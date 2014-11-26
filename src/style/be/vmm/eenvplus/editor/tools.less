@@ -1,0 +1,74 @@
+@import "../../../../app";
+
+.edit [ga-map] {
+  cursor: crosshair;
+}
+
+.view [ga-editor-tools],
+.edit #pulldown {
+  display: none;
+}
+
+.edit [ga-editor-tools] {
+  display: block;
+}
+
+.ga-full-screen [ga-editor-tools] {
+  top: 0;
+  bottom: 0;
+}
+
+[ga-editor-tools] {
+  display: none;
+  position: absolute;
+  top: unit(@small-header-height, px);
+  bottom: unit(@footer-height, px);
+  left: 0;
+  width: 300px;
+  background: white;
+  .box-shadow(6px 6px 12px rgba(0, 0, 0, 0.175));
+  border-right: 1px solid #bdbdbd;
+
+  .panel-body {
+    font-size: 12px;
+  }
+
+  a:hover {
+    text-decoration: none;
+  }
+
+  ul {
+    padding: 0;
+  }
+
+  .draw li,
+  .snapping li {
+    display: block;
+    cursor: pointer;
+    padding: 0 1.1em 0 1.1em;
+    height: 3em;
+
+    input {
+      display: inline-block;
+      margin: 0 10px 0 15px;
+    }
+
+    input[type=range] {
+      width: 140px;
+      vertical-align: top;
+      margin-top: 1px;
+    }
+
+    input[type=text] {
+      width: 50px;
+    }
+
+    i {
+      float: right;
+      width: 36px;
+      height: 36px;
+      font-size: 3em;
+      line-height: 36px;
+    }
+  }
+}
