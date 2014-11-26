@@ -19,6 +19,13 @@ declare module ol {
 
     }
 
+    interface Collection<T> {
+
+        forEach(fn:(value:T, index:number, array:T[]) => void, scope?:any):void;
+        getArray():T[];
+
+    }
+
     interface Coordinate extends Array<number> {
     }
 
@@ -34,14 +41,18 @@ declare module ol {
 
     }
 
-    interface Map extends Observable {
+    interface Map extends Object {
         new (config:any):Map;
 
         addInteraction(interaction:interaction.Interaction):void;
+        getLayers():ol.Collection<ol.layer.Base>;
         getPixelFromCoordinate(coordinate:Coordinate):Pixel;
         getSize():Size;
         render():void;
         removeInteraction(interaction:interaction.Interaction):void;
+    }
+
+    interface Object extends Observable {
     }
 
     interface Observable {
@@ -112,6 +123,21 @@ declare module ol {
 
         }
 
+    }
+
+    module layer {
+
+        interface Static {
+
+            Base:Base;
+
+        }
+
+        interface Base {
+
+            setVisible(value:boolean):void;
+
+        }
     }
 
     module render {

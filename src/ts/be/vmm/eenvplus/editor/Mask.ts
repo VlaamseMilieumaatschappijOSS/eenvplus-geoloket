@@ -104,10 +104,15 @@ module be.vmm.eenvplus.editor.mask {
 
         /**
          * The user can no longer draw a selection box, but keep rendering it.
+         * When the selection is made, automatically hide the feature layers.
          */
         function stopSelecting():void {
             boxInteraction.un('boxend', stopSelecting);
             map.removeInteraction(boxInteraction);
+
+            _(map.getLayers().getArray())
+                .filter('displayInLayerManager')
+                .invoke('setVisible', false);
         }
 
         /**
