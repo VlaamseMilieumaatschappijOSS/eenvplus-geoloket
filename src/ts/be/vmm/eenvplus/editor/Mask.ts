@@ -53,9 +53,6 @@ module be.vmm.eenvplus.editor.mask {
         /* ------------------ */
 
         var map:ol.Map = $scope.map,
-            ctx:CanvasRenderingContext2D,
-            rasterContexts:CanvasRenderingContext2D[] = [],
-            pixelRatio:number,
             currentState:State = State.OFF;
 
 
@@ -63,23 +60,17 @@ module be.vmm.eenvplus.editor.mask {
         /* --- construction --- */
         /* -------------------- */
 
+        var layer = new ol.layer.Vector({
+            source: new ol.source.Vector()
+        });
+
         var boxInteraction = new ol.interaction.DragBox({
             style: new ol.style.Style({
                 stroke: new ol.style.Stroke(style.stroke)
             })
         });
 
-        map.once(ol.Map.EVENT.preCompose, setContext);
         $rootScope.$on(state.EVENT.change, handleStateChange);
-
-        function setContext(event:ol.render.Event):void {
-            ctx = event.context;
-            pixelRatio = event.frameState.pixelRatio;
-        }
-
-        function addClippedContext(event:ol.render.Event):void {
-            rasterContexts.push(event.context);
-        }
 
 
         /* ---------------------- */
@@ -97,6 +88,18 @@ module be.vmm.eenvplus.editor.mask {
             editState === state.STATE.EDIT ? activate() : deactivate();
         }
 
+        function handleMaskComposition(event:ol.render.Event):void {
+            renderMask(event.context);
+        }
+
+        function handlePostComposition(event:ol.render.Event):void {
+            event.context.restore();
+        }
+
+        function handleRasterComposition(event:ol.render.Event):void {
+            clip(event.context);
+        }
+
 
         /* ----------------- */
         /* --- behaviour --- */
@@ -112,18 +115,15 @@ module be.vmm.eenvplus.editor.mask {
             if (currentState !== State.OFF) return;
 
             currentState = State.EMPTY;
-            render();
 
+            map.addLayer(layer);
             map.addInteraction(boxInteraction);
+
+            layer.on(ol.Map.EVENT.preCompose, handleMaskComposition);
+            layer.on(ol.Map.EVENT.postCompose, handlePostComposition);
+
             boxInteraction.once(ol.interaction.DragBox.EVENT.boxStart, startSelecting);
             boxInteraction.once(ol.interaction.DragBox.EVENT.boxEnd, stopSelecting);
-
-            map.on(ol.Map.EVENT.preCompose, render);
-            map.on(ol.Map.EVENT.postCompose, restore);
-
-            _(map.getLayers().getArray())
-                .filter('displayInLayerManager')
-                .invoke(ol.Observable.prototype.once, ol.Map.EVENT.postCompose, addClippedContext);
         }
 
         /**
@@ -135,11 +135,26 @@ module be.vmm.eenvplus.editor.mask {
 
         /**
          * The user can no longer draw a selection box, but keep rendering it.
-         * When the selection is made, automatically hide the feature layers.
+         * When the selection is made, clip the raster feature layers.
          */
         function stopSelecting():void {
             currentState = State.ON;
+
+            _(map.getLayers().getArray())
+                .filter('displayInLayerManager')
+                .each(startClipping);
+
             map.removeInteraction(boxInteraction);
+        }
+
+        function startClipping(layer:ol.Observable):void {
+            layer.on(ol.Map.EVENT.preCompose, handleRasterComposition);
+            layer.on(ol.Map.EVENT.postCompose, handlePostComposition);
+        }
+
+        function stopClipping(layer:ol.Observable):void {
+            layer.on(ol.Map.EVENT.preCompose, handleRasterComposition);
+            layer.on(ol.Map.EVENT.postCompose, handlePostComposition);
         }
 
         /**
@@ -150,9 +165,14 @@ module be.vmm.eenvplus.editor.mask {
 
             currentState = State.OFF;
 
-            map.un(ol.Map.EVENT.preCompose, render);
-            map.un(ol.Map.EVENT.postCompose, restore);
-            map.render();
+            layer.un(ol.Map.EVENT.preCompose, handleMaskComposition);
+            layer.un(ol.Map.EVENT.postCompose, handlePostComposition);
+
+            _(map.getLayers().getArray())
+                .filter('displayInLayerManager')
+                .each(stopClipping);
+
+            map.removeLayer(layer);
         }
 
 
@@ -163,65 +183,60 @@ module be.vmm.eenvplus.editor.mask {
         /**
          * Render the mask and clip the non-background raster layers when the selection is complete.
          */
-        function render():void {
-            renderMask();
-            if (currentState === State.ON) _.each(rasterContexts, clip);
+        //function render():void {
+        //    if (currentState === State.ON) _.each(rasterContexts, clip);
+        //}
 
-            /**
-             * Grey out the map except for the current selection box.
-             * If there is no selection box, the entire map is greyed out.
-             */
-            function renderMask() {
-                drawBoxes(ctx);
-                ctx.fillStyle = 'rgba(' + style.fill.color.join(', ') + ')';
-                ctx.fill();
-            }
-
-            /**
-             * Clip the Layer that corresponds to the given context so that it is only visible on the outside of the
-             * selection mask.
-             *
-             * @param ctx
-             */
-            function clip(ctx:CanvasRenderingContext2D):void {
-                drawBoxes(ctx);
-                ctx.clip();
-            }
-
-            /**
-             * Draw a rectangle covering the entire map counterclockwise.
-             * Draw a rectangle covering the selection area clockwise.
-             *
-             * @param ctx
-             */
-            function drawBoxes(ctx:CanvasRenderingContext2D):void {
-                ctx.save();
-                ctx.beginPath();
-                drawRect(getMapBox().reverse());
-                if (currentState !== State.EMPTY) drawRect(getSelectionBox());
-            }
-
-            /**
-             * Draw a rectangular shape on the map's Canvas.
-             *
-             * @param box A set of 4 Pixels describing the rectangle.
-             */
-            function drawRect(box:ol.Pixel[]):void {
-                var first = box.shift(),
-                    lineTo = _.bind(ctx.lineTo.apply, ctx.lineTo, ctx);
-
-                ctx.moveTo(first[0], first[1]);
-                box.push(first);
-                _.each(box, lineTo);
-                ctx.closePath();
-            }
+        /**
+         * Grey out the map except for the current selection box.
+         * If there is no selection box, the entire map is greyed out.
+         *
+         * @param ctx
+         */
+        function renderMask(ctx:CanvasRenderingContext2D) {
+            drawBoxes(ctx);
+            ctx.fillStyle = 'rgba(' + style.fill.color.join(', ') + ')';
+            ctx.fill();
         }
 
         /**
-         * Restore Canvas contexts after rendering.
+         * Clip the Layer that corresponds to the given context so that it is only visible on the outside of the
+         * selection mask.
+         *
+         * @param ctx
          */
-        function restore() {
-            _.invoke(rasterContexts.concat([ctx]), CanvasRenderingContext2D.prototype.restore);
+        function clip(ctx:CanvasRenderingContext2D):void {
+            drawBoxes(ctx);
+            ctx.clip();
+        }
+
+        /**
+         * Draw a rectangle covering the entire map counterclockwise.
+         * Draw a rectangle covering the selection area clockwise.
+         *
+         * @param ctx
+         */
+        function drawBoxes(ctx:CanvasRenderingContext2D):void {
+            ctx.save();
+            ctx.beginPath();
+            drawRect(ctx, getMapBox().reverse());
+            if (currentState !== State.EMPTY) drawRect(ctx, getSelectionBox());
+        }
+
+        /**
+         * Draw a rectangular shape on the map's Canvas.
+         *
+         * @param ctx
+         * @param box A set of 4 Pixels describing the rectangle.
+         */
+        function drawRect(ctx:CanvasRenderingContext2D, box:ol.Pixel[]):void {
+            var first = box.shift(),
+                lineTo = _.bind(ctx.lineTo.apply, ctx.lineTo, ctx);
+
+            ctx.moveTo(first[0], first[1]);
+            box.push(first);
+            _.each(box, lineTo);
+            ctx.closePath();
         }
 
         /**
@@ -230,8 +245,8 @@ module be.vmm.eenvplus.editor.mask {
          */
         function getMapBox():ol.Pixel[] {
             var size = map.getSize(),
-                width = size[0] * pixelRatio,
-                height = size[1] * pixelRatio;
+                width = size[0] * ol.has.DEVICE_PIXEL_RATIO,
+                height = size[1] * ol.has.DEVICE_PIXEL_RATIO;
 
             return [[0, 0], [0, height], [width, height], [width, 0]];
         }

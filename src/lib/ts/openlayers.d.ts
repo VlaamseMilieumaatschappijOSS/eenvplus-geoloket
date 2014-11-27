@@ -13,6 +13,7 @@ declare module ol {
         interaction:interaction.Static;
         layer:layer.Static;
         render:render.Static;
+        source:source.Static;
         style:style.Static;
 
         Feature:Feature;
@@ -48,11 +49,13 @@ declare module ol {
         new (config:any):Map;
 
         addInteraction(interaction:interaction.Interaction):void;
+        addLayer(layer:layer.Base):void;
         getLayers():ol.Collection<ol.layer.Base>;
         getPixelFromCoordinate(coordinate:Coordinate):Pixel;
         getSize():Size;
         render():void;
         removeInteraction(interaction:interaction.Interaction):void;
+        removeLayer(layer:layer.Base):void;
     }
 
     interface Object extends Observable {
@@ -134,6 +137,10 @@ declare module ol {
         interface Static {
 
             Base:Base;
+            Image:Image;
+            Layer:Layer;
+            Tile:Tile;
+            Vector:Vector;
 
         }
 
@@ -143,6 +150,26 @@ declare module ol {
             setVisible(value:boolean):void;
 
         }
+
+        interface Image extends Layer {
+            new (options?:LayerOptions):Image;
+        }
+
+        interface Layer extends Base {
+            new (options:LayerOptions):Layer;
+        }
+
+        interface LayerOptions {
+        }
+
+        interface Tile extends Layer {
+            new (options?:LayerOptions):Tile;
+        }
+
+        interface Vector extends Layer {
+            new (options?:LayerOptions):Vector;
+        }
+
     }
 
     module render {
@@ -166,6 +193,19 @@ declare module ol {
 
         }
 
+    }
+
+    module source {
+
+        interface Static{
+
+            Vector:Vector;
+
+        }
+
+        interface Vector {
+            new ():Vector;
+        }
     }
 
     module style {
