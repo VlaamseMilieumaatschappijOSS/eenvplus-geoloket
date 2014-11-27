@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html ng-app="test" ng-controller="TestController">
+  <head>
+    <!--![if !HTML5]>
+    <meta http-equiv="X-UA-Compatible" content="IE=9,IE=10,IE=edge,chrome=1"/>
+    <![endif]-->
+
+    <title translate="page_title">map.geo.admin.ch</title>
+
+    <meta charset="utf-8"/>
+
+    <link href="style/app.css" rel="stylesheet"/>
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
+  </head>
+
+  <body>
+	<script src="lib/jquery-2.0.3.js"></script>
+	<script src="lib/jQuery.XDomainRequest.js"></script>
+	<script src="lib/angular-1.2.9.js"></script>
+	<script src="lib/angular-translate-1.1.1.js"></script>
+	<script src="lib/angular-translate-loader-static-files-0.1.5.js"></script>
+	<script src="lib/d3-3.3.1.js"></script>
+	<script src="lib/angular-animate-1.2.9.js"></script>
+	<script src="lib/angular-resource-1.2.9.js"></script>
+	<script src="lib/bootstrap-3.0.0.js"></script>
+	<script src="lib/typeahead-0.9.3.js"></script>
+	<script src="lib/proj4js-compressed.js"></script>
+	<script src="lib/EPSG31370.js"></script>
+	<script src="lib/EPSG32631.js"></script>
+	<script src="lib/EPSG32632.js"></script>
+	<script src="lib/localforage.js"></script>
+	<script src="lib/blob.js"></script>
+	<script src="lib/filesaver.js"></script>
+    <script>
+      window.CLOSURE_NO_DEPS = true;
+    </script>
+    <script src="lib/ol-debug.js"></script>
+    <script src="deps.js"></script>
+    <script>
+		goog.require('ga_feature');
+	</script>
+	
+	<script>
+		(function() {
+			var app = angular.module('test', ['ga_feature']);
+
+			app.controller('TestController', function($scope, gaFeatureManager) {
+				$scope.test = "";
+				gaFeatureManager.pull().then(function(){
+					gaFeatureManager.query('be.vmm.eenvplus.sdi.model.KoppelPunt', [154200, 172800, 154300, 172900]).then(function(results) {
+						$scope.test = results.length;
+						$scope.$apply();
+					});
+				});
+			});
+		})();
+    </script>
+	
+	<div>
+	  {{ test }}
+	</div>
+	
+  </body>
+</html>
