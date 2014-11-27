@@ -44,10 +44,10 @@ declare module _ {
 
     /** Functions */
     interface Static {
-        bind(fn:Function, scope?:any, ...args:any[]):Function;
-        curry(fn:Function):Function;
-        partial(fn:Function, ...args:any[]):Function;
-        partialRight(fn:Function, ...args:any[]):Function;
+        bind(fn:Function, scope?:any, ...args:any[]):(...args:any[]) => any;
+        curry(fn:Function):(...args:any[]) => any;
+        partial(fn:Function, ...args:any[]):(...args:any[]) => any;
+        partialRight(fn:Function, ...args:any[]):(...args:any[]) => any;
     }
 
     /** Objects */

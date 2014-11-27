@@ -10,6 +10,10 @@ module be.vmm.eenvplus.editor.mask {
 
     export var NAME:string = 'gaMask';
 
+    export var EVENT = {
+        selected: 'selected'
+    };
+
     var style = {
         fill: {
             color: [0, 5, 25, 0.75]
@@ -38,21 +42,23 @@ module be.vmm.eenvplus.editor.mask {
         };
     }
 
+    MaskController.$inject = ['$scope', '$rootScope'];
+
     /**
      * Lets the user draw a selection mask on the map.
      * The non-selected area is greyed out.
      *
-     * @param $scope
-     * @param $rootScope
+     * @param scope
+     * @param rootScope
      * @constructor
      */
-    function MaskController($scope:Scope, $rootScope:ng.IScope) {
+    function MaskController(scope:Scope, rootScope:ng.IScope) {
 
         /* ------------------ */
         /* --- properties --- */
         /* ------------------ */
 
-        var map:ol.Map = $scope.map,
+        var map:ol.Map = scope.map,
             currentState:State = State.OFF;
 
 
@@ -70,7 +76,7 @@ module be.vmm.eenvplus.editor.mask {
             })
         });
 
-        $rootScope.$on(state.EVENT.change, handleStateChange);
+        rootScope.$on(state.EVENT.change, handleStateChange);
 
 
         /* ---------------------- */
@@ -145,6 +151,8 @@ module be.vmm.eenvplus.editor.mask {
                 .each(startClipping);
 
             map.removeInteraction(boxInteraction);
+
+            rootScope.$broadcast(EVENT.selected, boxInteraction.getGeometry().getExtent());
         }
 
         function startClipping(layer:ol.Observable):void {

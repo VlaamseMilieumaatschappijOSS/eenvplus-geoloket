@@ -3,7 +3,6 @@ declare var ol:ol.Static;
 declare module ol {
 
     interface Static {
-
         has: {
             DEVICE_PIXEL_RATIO:number;
         }
@@ -16,21 +15,22 @@ declare module ol {
         source:source.Static;
         style:style.Static;
 
+        Extent:Extent;
         Feature:Feature;
         FeatureOverlay:FeatureOverlay;
         Map:Map;
         Observable:Observable;
-
     }
 
     interface Collection<T> {
-
         forEach(fn:(value:T, index:number, array:T[]) => void, scope?:any):void;
         getArray():T[];
-
     }
 
     interface Coordinate extends Array<number> {
+    }
+
+    interface Extent extends Array<number> {
     }
 
     interface Feature {
@@ -42,7 +42,6 @@ declare module ol {
 
         setMap(map:any):void;
         setStyle(style:style.Style):void;
-
     }
 
     interface Map extends Object {
@@ -67,7 +66,6 @@ declare module ol {
         on(type:string, listener:Function, scope?:any):void;
         once(type:string, listener:Function, scope?:any):void;
         un(type:string, listener:Function, scope?:any):void;
-
     }
 
     interface Pixel extends Array<number> {
@@ -79,7 +77,6 @@ declare module ol {
     module events {
 
         interface Static {
-
         }
 
     }
@@ -87,17 +84,14 @@ declare module ol {
     module geometry {
 
         interface Static {
-
             Polygon:Polygon;
-
         }
 
-        interface Geometry {
-
+        interface Geometry extends Observable {
+            getExtent():Extent;
         }
 
         interface SimpleGeometry extends Geometry {
-
         }
 
         interface Polygon extends SimpleGeometry {
@@ -111,23 +105,19 @@ declare module ol {
     module interaction {
 
         interface Static {
-
             DragBox:DragBox;
-
         }
 
-        interface DragBox extends Interaction {
+        interface DragBox extends Pointer {
             new (config:any):DragBox;
 
             getGeometry():geometry.Polygon;
         }
 
         interface Interaction extends Observable {
-
         }
 
         interface Pointer extends Interaction {
-
         }
 
     }
@@ -135,20 +125,17 @@ declare module ol {
     module layer {
 
         interface Static {
-
             Base:Base;
             Image:Image;
             Layer:Layer;
             Tile:Tile;
             Vector:Vector;
-
         }
 
         interface Base extends Object {
             prototype:Base;
 
             setVisible(value:boolean):void;
-
         }
 
         interface Image extends Layer {
@@ -175,32 +162,30 @@ declare module ol {
     module render {
 
         interface Static {
-
             Event:Event;
-
         }
 
         interface Event {
-
             context:CanvasRenderingContext2D;
             frameState:FrameState;
-
         }
 
         interface FrameState {
-
             pixelRatio:number;
-
         }
 
     }
 
     module source {
 
-        interface Static{
-
+        interface Static {
             Vector:Vector;
+        }
 
+        interface FormatVector extends Vector {
+        }
+
+        interface ServerVector extends FormatVector {
         }
 
         interface Vector {
@@ -211,12 +196,10 @@ declare module ol {
     module style {
 
         interface Static {
-
             Circle:Circle;
             Fill:Fill;
             Stroke:Stroke;
             Style:Style;
-
         }
 
         interface Circle {
