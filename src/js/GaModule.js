@@ -56,6 +56,8 @@
   goog.require('ga_featuretree_controller');
   goog.require('ga_measure_controller');
   goog.require('ga_draw_controller');
+  
+  goog.require('ga_feature');
 
 
   var module = angular.module('ga', [
@@ -113,7 +115,9 @@
     'ngAnimate',
     'ga_featuretree_controller',
     'ga_measure_controller',
-    'ga_draw_controller'
+    'ga_draw_controller',
+    
+    'ga_feature'
   ]);
 
 })();

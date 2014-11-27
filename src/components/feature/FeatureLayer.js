@@ -1,0 +1,54 @@
+(function() {
+	goog.provide('ga_feature_layer');
+
+	var module = angular.module('ga_feature_layer', [ 'ga_feature_service' ]);
+
+	module.factory('gaFeatureLayerFactory', function(gaFeatureManager) {
+
+		return {
+			"createSource" : function(layerBodId) {
+
+				var source = new ol.source.ServerVector({
+					format : new ol.format.GeoJSON(),
+					loader : function(extent, resolution, projection) {
+						gaFeatureManager.query(layerBodId, extent).then(function() {
+							source.addFeatures(source.readFeatures(response));
+						});
+					},
+					strategy : ol.loadingstrategy
+							.createTile(new ol.tilegrid.XYZ({
+								maxZoom : 19
+							})),
+					projection : 'EPSG:31370'
+				});
+				
+				source.on("addfeature", function() {
+					gaFeatureManager.create(feature);
+				});
+				source.on("removefeature", function() {
+					gaFeatureManager.remove(feature);
+				});
+				
+				return source;
+			},
+			
+			"createLayer" : function(layerBodId) {
+
+				var layer = new ol.layer.Vector({
+					source: this.createSource(layerBodId),
+					style: new ol.style.Style({
+						stroke: new ol.style.Stroke({
+							color: '#FF0000',
+							width: 2
+						}),
+						image: new ol.style.Circle({
+							radius: 4,
+							fill: new ol.style.Fill({color: '#880000'}),
+							stroke: new ol.style.Stroke({color: '#ff0000', width: 2})
+						})
+					})
+				});
+			}
+		}
+	});
+})();
