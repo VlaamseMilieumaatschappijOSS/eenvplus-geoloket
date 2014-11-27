@@ -18,6 +18,7 @@ declare module ol {
         Feature:Feature;
         FeatureOverlay:FeatureOverlay;
         Map:Map;
+        Observable:Observable;
 
     }
 
@@ -58,6 +59,7 @@ declare module ol {
     }
 
     interface Observable {
+        prototype:Observable;
 
         on(type:string, listener:Function, scope?:any):void;
         once(type:string, listener:Function, scope?:any):void;
@@ -135,7 +137,7 @@ declare module ol {
 
         }
 
-        interface Base {
+        interface Base extends Object {
             prototype:Base;
 
             setVisible(value:boolean):void;
@@ -154,6 +156,13 @@ declare module ol {
         interface Event {
 
             context:CanvasRenderingContext2D;
+            frameState:FrameState;
+
+        }
+
+        interface FrameState {
+
+            pixelRatio:number;
 
         }
 
