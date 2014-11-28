@@ -81,6 +81,7 @@ declare module ol {
 
     interface View extends Object {
         getResolution():number;
+        setResolution(value:number):void;
     }
 
     module events {
