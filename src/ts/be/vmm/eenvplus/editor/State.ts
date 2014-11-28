@@ -75,7 +75,7 @@ module be.vmm.eenvplus.editor.state {
                 .filter('displayInLayerManager')
                 .invoke(ol.layer.Base.prototype.get, 'maxResolution')
                 .value();
-            threshold = Math.min.apply(null, resolutions);
+            threshold = Math.max.apply(null, resolutions);
         }
 
         function setMode(editActive:boolean):void {

@@ -59,6 +59,7 @@
   
   goog.require('ga_editor');
   goog.require('ga_feature');
+  goog.require('ga_viewer');
 
   var module = angular.module('ga', [
     'ga_attribution',
@@ -117,7 +118,8 @@
     'ga_measure_controller',
     'ga_draw_controller',
     'ga_editor',
-    'ga_feature'
+    'ga_feature',
+    'ga_viewer'
   ]);
 
 })();
