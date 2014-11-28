@@ -1,0 +1,32 @@
+<a id="selectionHeading" class="panel-heading light desktop" href="#snapping">
+    <i class="icon-ga-mapfunction ga-icon-separator"></i>
+    <span translate>Feature snapping</span>
+</a>
+
+<div class="panel-body panel-body-wide">
+    <ul>
+        <li>
+            <i class=""></i>
+            <a>No snapping</a>
+        </li>
+        <li>
+            <i class=""></i>
+            <a>Move endpoint</a>
+        </li>
+        <li>
+            <i class=""></i>
+            <a>Add segment</a>
+        </li>
+        <li>
+            <i class=""></i>
+            <a>Ask me every time</a>
+        </li>
+        <li>
+            <label>Resolution</label>
+            <input ng-hide="useRange" type="text" maxlength="2" ng-model="snapResolution"/>
+            <input ng-show="useRange" type="range" min="1" max="50" step="1" ng-model="snapResolution"/>
+            <span ng-show="useRange">{{snapResolution}}</span>
+            <span>px</span>
+        </li>
+    </ul>
+</div>
