@@ -1,7 +1,7 @@
 ///ts:ref=Mask
 /// <reference path="./Mask.ts"/> ///ts:ref:generated
 ///ts:ref=Module
-/// <reference path="./Module.ts"/> ///ts:ref:generated
+/// <reference path="../Module.ts"/> ///ts:ref:generated
 
 module be.vmm.eenvplus.editor.featureLayers {
     'use strict';

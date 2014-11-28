@@ -1,7 +1,7 @@
 ///ts:ref=Module
 /// <reference path="./Module.ts"/> ///ts:ref:generated
 
-module be.vmm.eenvplus.editor.state {
+module be.vmm.eenvplus.applicationState {
     'use strict';
 
     export var NAME:string = 'gaState';
@@ -33,13 +33,13 @@ module be.vmm.eenvplus.editor.state {
     function configure():ng.IDirective {
         return {
             restrict: 'A',
-            controller: StateController
+            controller: ApplicationStateController
         };
     }
 
-    StateController.$inject = ['$scope'];
+    ApplicationStateController.$inject = ['$scope'];
 
-    export function StateController(scope:ApplicationScope) {
+    export function ApplicationStateController(scope:ApplicationScope) {
 
         /* ------------------ */
         /* --- properties --- */
@@ -103,7 +103,7 @@ module be.vmm.eenvplus.editor.state {
     }
 
     angular
-        .module(Module.EDITOR)
+        .module(Module.EENVPLUS)
         .directive(NAME, configure);
 
 }

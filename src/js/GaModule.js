@@ -57,9 +57,8 @@
   goog.require('ga_measure_controller');
   goog.require('ga_draw_controller');
   
-  goog.require('ga_editor');
+  goog.require('ga_eenvplus');
   goog.require('ga_feature');
-  goog.require('ga_viewer');
 
   var module = angular.module('ga', [
     'ga_attribution',
@@ -117,9 +116,8 @@
     'ga_featuretree_controller',
     'ga_measure_controller',
     'ga_draw_controller',
-    'ga_editor',
-    'ga_feature',
-    'ga_viewer'
+    'ga_eenvplus',
+    'ga_feature'
   ]);
 
 })();

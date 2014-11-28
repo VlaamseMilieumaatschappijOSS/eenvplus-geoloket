@@ -2,8 +2,11 @@
 /// <reference path="../../../../ol/interaction/DragBox.ts"/> ///ts:ref:generated
 ///ts:ref=Map
 /// <reference path="../../../../ol/Map.ts"/> ///ts:ref:generated
+
+///ts:ref=ApplicationState
+/// <reference path="../ApplicationState.ts"/> ///ts:ref:generated
 ///ts:ref=Module
-/// <reference path="./Module.ts"/> ///ts:ref:generated
+/// <reference path="../Module.ts"/> ///ts:ref:generated
 
 module be.vmm.eenvplus.editor.mask {
     'use strict';
@@ -71,7 +74,7 @@ module be.vmm.eenvplus.editor.mask {
             })
         });
 
-        scope.$on(state.EVENT.modeChange, handleStateChange);
+        scope.$on(applicationState.EVENT.modeChange, handleStateChange);
 
 
         /* ---------------------- */
@@ -85,8 +88,8 @@ module be.vmm.eenvplus.editor.mask {
          * @param event
          * @param editState
          */
-        function handleStateChange(event:ng.IAngularEvent, editState:state.State):void {
-            editState === state.State.EDIT ? activate() : deactivate();
+        function handleStateChange(event:ng.IAngularEvent, editState:applicationState.State):void {
+            editState === applicationState.State.EDIT ? activate() : deactivate();
         }
 
         function handleMaskComposition(event:ol.render.Event):void {
