@@ -31,10 +31,6 @@ module be.vmm.eenvplus.editor.mask {
         ON
     }
 
-    interface Scope extends ng.IScope {
-        map:ol.Map;
-    }
-
     function configure():ng.IDirective {
         return {
             restrict: 'A',
@@ -42,17 +38,16 @@ module be.vmm.eenvplus.editor.mask {
         };
     }
 
-    MaskController.$inject = ['$scope', '$rootScope'];
+    MaskController.$inject = ['$scope'];
 
     /**
      * Lets the user draw a selection mask on the map.
      * The non-selected area is greyed out.
      *
      * @param scope
-     * @param rootScope
      * @constructor
      */
-    function MaskController(scope:Scope, rootScope:ng.IScope) {
+    function MaskController(scope:ApplicationScope) {
 
         /* ------------------ */
         /* --- properties --- */
@@ -76,7 +71,7 @@ module be.vmm.eenvplus.editor.mask {
             })
         });
 
-        rootScope.$on(state.EVENT.change, handleStateChange);
+        scope.$on(state.EVENT.modeChange, handleStateChange);
 
 
         /* ---------------------- */
@@ -152,7 +147,7 @@ module be.vmm.eenvplus.editor.mask {
 
             map.removeInteraction(boxInteraction);
 
-            rootScope.$broadcast(EVENT.selected, boxInteraction.getGeometry().getExtent());
+            scope.$broadcast(EVENT.selected, boxInteraction.getGeometry().getExtent());
         }
 
         function startClipping(layer:ol.Observable):void {

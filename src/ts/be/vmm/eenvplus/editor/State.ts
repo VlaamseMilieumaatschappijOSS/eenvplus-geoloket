@@ -7,12 +7,15 @@ module be.vmm.eenvplus.editor.state {
     export var NAME:string = 'gaState';
 
     export var EVENT = {
-        change: 'stateChange'
+        modeChange: 'modeStateChange',
+        levelChange: 'levelStateChange'
     };
 
     export var STATE = {
         VIEW: 'view',
-        EDIT: 'edit'
+        EDIT: 'edit',
+        OVERVIEW: 'overview',
+        DETAIL: 'detail'
     };
 
     interface Scope extends ng.IScope {
@@ -31,13 +34,15 @@ module be.vmm.eenvplus.editor.state {
         };
     }
 
-    export function StateController($scope:Scope, $rootScope:ng.IScope) {
+    StateController.$inject = ['$scope'];
+
+    export function StateController(scope:ApplicationScope) {
         // not particularly type-safe but it's the easiest way to hook into the main app without touching it
-        $scope.$watch('globals.isDrawActive', toggle);
+        scope.$watch('globals.isDrawActive', toggle);
 
         function toggle(editActive) {
-            $scope.state = editActive ? STATE.EDIT : STATE.VIEW;
-            $rootScope.$broadcast(EVENT.change, $scope.state);
+            scope.state = editActive ? STATE.EDIT : STATE.VIEW;
+            scope.$broadcast(EVENT.modeChange, scope.state);
         }
 
     }

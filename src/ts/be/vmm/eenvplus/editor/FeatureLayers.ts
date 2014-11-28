@@ -15,14 +15,13 @@ module be.vmm.eenvplus.editor.featureLayers {
         };
     }
 
-    FeatureLayersController.$inject = ['$scope', '$rootScope', 'gaFeatureManager', 'gaFeatureLayerFactory'];
+    FeatureLayersController.$inject = ['$scope', 'gaFeatureManager', 'gaFeatureLayerFactory'];
 
-    export function FeatureLayersController(scope,
-                                            rootScope:ng.IScope,
+    export function FeatureLayersController(scope:ApplicationScope,
                                             features:feature.FeatureService,
                                             featureLayer:feature.FeatureLayerFactory) {
 
-        rootScope.$on(mask.EVENT.selected, init);
+        scope.$on(mask.EVENT.selected, init);
 
         function init(event:ng.IAngularEvent, extent:ol.Extent):void {
             features.clear().then(_.partial(load, extent));
