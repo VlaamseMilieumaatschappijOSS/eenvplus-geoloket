@@ -11,7 +11,7 @@
 module be.vmm.eenvplus.editor.mask {
     'use strict';
 
-    export var NAME:string = 'gaMask';
+    export var NAME:string = PREFIX + 'Mask';
 
     export var EVENT = {
         selected: 'selected'

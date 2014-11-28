@@ -6,7 +6,7 @@
 module be.vmm.eenvplus.editor.tools {
     'use strict';
 
-    export var NAME:string = 'gaEditorTools';
+    export var NAME:string = PREFIX + 'EditorTools';
 
     interface Scope extends ng.IScope {
         map:ol.Map;

@@ -8,7 +8,7 @@
 module be.vmm.eenvplus.editor.Module {
     'use strict';
 
-    export var EDITOR:string = 'ga_editor';
+    export var EDITOR:string = PREFIX + '_editor';
 
     goog.provide(EDITOR);
 

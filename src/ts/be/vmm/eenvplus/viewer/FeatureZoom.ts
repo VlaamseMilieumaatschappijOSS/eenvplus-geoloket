@@ -4,7 +4,7 @@
 module be.vmm.eenvplus.viewer {
     'use strict';
 
-    export var NAME:string = 'gaFeatureZoom';
+    export var NAME:string = PREFIX + 'FeatureZoom';
 
     interface Scope extends ng.IScope {
         map:ol.Map;

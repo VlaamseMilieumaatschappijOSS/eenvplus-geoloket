@@ -6,7 +6,7 @@
 module be.vmm.eenvplus.viewer.Module {
     'use strict';
 
-    export var VIEWER:string = 'ga_viewer';
+    export var VIEWER:string = PREFIX + '_viewer';
 
     goog.provide(VIEWER);
 

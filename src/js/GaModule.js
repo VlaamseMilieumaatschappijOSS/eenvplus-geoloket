@@ -57,7 +57,7 @@
   goog.require('ga_measure_controller');
   goog.require('ga_draw_controller');
   
-  goog.require('ga_eenvplus');
+  goog.require('ep_eenvplus');
   goog.require('ga_feature');
 
   var module = angular.module('ga', [
@@ -116,7 +116,7 @@
     'ga_featuretree_controller',
     'ga_measure_controller',
     'ga_draw_controller',
-    'ga_eenvplus',
+    'ep_eenvplus',
     'ga_feature'
   ]);
 

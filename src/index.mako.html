@@ -102,7 +102,7 @@ itemscope itemtype="http://schema.org/WebApplication"
     <link rel="shortcut icon" type="image/x-icon" href="${versionslashed}img/favicon.ico"/>
   </head>
 
-  <body class="{{topicId}} {{state}}" ga-state
+  <body class="{{topicId}} {{state}}" ep-application-state
         ng-class="{
           'search-focused': globals.searchFocused,
           'touch': globals.touch,
@@ -178,7 +178,7 @@ itemscope itemtype="http://schema.org/WebApplication"
       <div class="alert alert-danger" translate>offline_sorry</div>
     </div> <!-- #header -->
 
-    <div tabindex="1" ga-map ga-mask ga-feature-layers ga-map-map="map">
+    <div tabindex="1" ga-map ep-mask ep-feature-layers ga-map-map="map">
       <div id="copyrightsdata">
         <div>
           <span >&copy;&nbsp;</span>
@@ -244,7 +244,7 @@ itemscope itemtype="http://schema.org/WebApplication"
 
     <div id="pulldown" ng-show="!globals.offline" class="include-in-view" ng-class="{'selection-and-catalog-shown': (globals.catalogShown && globals.selectionShown)}">
       <div id="pulldown-content" class="panel-group content ${"in" if device == "desktop" else "collapse"}">
-        <div ga-feature-zoom map="map" class="panel zoom include-in-overview"></div>
+        <div ep-feature-zoom map="map" class="panel zoom include-in-overview"></div>
 
         <div class="panel share">
           <a id="shareHeading" class="panel-heading accordion-toggle collapsed" data-toggle="collapse" data-parent="#pulldown-content" href="#share">
@@ -449,7 +449,7 @@ itemscope itemtype="http://schema.org/WebApplication"
       </button>
     </div> <!-- #pulldown -->
 
-    <aside ga-editor-tools map="map" class="include-in-edit"></aside>
+    <aside ep-editor-tools map="map" class="include-in-edit"></aside>
 
 {% if device == 'mobile' %}
     <!-- offline dialog -->

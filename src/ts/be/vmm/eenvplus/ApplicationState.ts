@@ -4,7 +4,7 @@
 module be.vmm.eenvplus.applicationState {
     'use strict';
 
-    export var NAME:string = 'gaState';
+    export var NAME:string = PREFIX + 'ApplicationState';
 
     export var EVENT = {
         modeChange: 'modeStateChange',

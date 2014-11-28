@@ -6,7 +6,7 @@
 module be.vmm.eenvplus.editor.featureLayers {
     'use strict';
 
-    export var NAME:string = 'gaFeatureLayers';
+    export var NAME:string = PREFIX + 'FeatureLayers';
 
     function configure():ng.IDirective {
         return {
