@@ -20,9 +20,10 @@ declare module ol {
         FeatureOverlay:FeatureOverlay;
         Map:Map;
         Observable:Observable;
+        View:View;
     }
 
-    interface Collection<T> {
+    interface Collection<T> extends Object {
         forEach(fn:(value:T, index:number, array:T[]) => void, scope?:any):void;
         getArray():T[];
     }
@@ -52,12 +53,16 @@ declare module ol {
         getLayers():ol.Collection<ol.layer.Base>;
         getPixelFromCoordinate(coordinate:Coordinate):Pixel;
         getSize():Size;
+        getView():View;
         render():void;
         removeInteraction(interaction:interaction.Interaction):void;
         removeLayer(layer:layer.Base):void;
     }
 
     interface Object extends Observable {
+    }
+
+    interface ObjectEvent {
     }
 
     interface Observable {
@@ -72,6 +77,10 @@ declare module ol {
     }
 
     interface Size extends Array<number> {
+    }
+
+    interface View extends Object {
+        getResolution():number;
     }
 
     module events {
@@ -135,6 +144,7 @@ declare module ol {
         interface Base extends Object {
             prototype:Base;
 
+            get(key:string):any;
             setVisible(value:boolean):void;
         }
 

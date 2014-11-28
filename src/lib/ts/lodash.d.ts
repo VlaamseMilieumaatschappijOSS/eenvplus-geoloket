@@ -6,6 +6,12 @@ declare module _ {
     interface Static {
         (value:any):Chain;
         chain(value:any):Chain;
+        tap(value:any, interceptor:Function):any;
+    }
+
+    interface Chain {
+        chain(value:any):Chain;
+        tap(interceptor:Function):any;
         toString():string;
         value():any;
         valueOf():any;

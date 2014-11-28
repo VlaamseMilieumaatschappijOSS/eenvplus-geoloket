@@ -85,8 +85,8 @@ module be.vmm.eenvplus.editor.mask {
          * @param event
          * @param editState
          */
-        function handleStateChange(event:ng.IAngularEvent, editState:string):void {
-            editState === state.STATE.EDIT ? activate() : deactivate();
+        function handleStateChange(event:ng.IAngularEvent, editState:state.State):void {
+            editState === state.State.EDIT ? activate() : deactivate();
         }
 
         function handleMaskComposition(event:ol.render.Event):void {
