@@ -7,6 +7,17 @@
 	var IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
 	var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
 	
+	var types = ["be.vmm.eenvplus.sdi.model.KoppelPunt", "be.vmm.eenvplus.sdi.model.RioolAppurtenance", "be.vmm.eenvplus.sdi.model.RioolLink"] ;
+	
+	var getType = function(layerBodId) {
+		
+		var index = layerBodId.indexOf(':');
+		if (index > 0)
+			return layerBodId.substring(index + 1);
+
+		return layerBodId;
+	}
+	
 	module.factory('gaGeoHashEncoder', function() {
 		
 		var BASE_32 = ['0', '1', '2', '3', '4', '5', '6',
@@ -72,11 +83,14 @@
 			var openRequest = indexedDB.open("Feature", 1);
 			openRequest.onupgradeneeded = function(event) {
 				  var db = event.target.result;
-				  if(!db.objectStoreNames.contains("Feature")) {
-					  var objectStore = db.createObjectStore("Feature", { keyPath: "id" });
-					  objectStore.createIndex("featureId", "featureId", { unique: true });
-					  objectStore.createIndex("modified", "modified", { unique: false });
-					  objectStore.createIndex("deleted", "deleted", { unique: false });
+				  for (var i = 0; i < types.length; i++) {
+					  var type = types[i];
+					  if(!db.objectStoreNames.contains(type)) {
+						  var objectStore = db.createObjectStore(type, { keyPath: "key", autoIncrement: true });
+						  objectStore.createIndex("featureId", "featureId", { unique: true });
+						  objectStore.createIndex("modified", "modified", { unique: false });
+						  objectStore.createIndex("deleted", "deleted", { unique: false });
+					  }
 				  }
 			};
 			openRequest.onsuccess = function(event) {
@@ -96,7 +110,8 @@
 				var d = $q.defer();
 				
 				db.then(function(db) {
-					var objectStore = db.transaction("Feature").objectStore("Feature");
+					var type = getType(layerBodId);
+					var objectStore = db.transaction(type).objectStore(type);
 					
 					var results = [];
 					
@@ -121,7 +136,8 @@
 				var d = $q.defer();
 				
 				db.then(function(db) {
-					var objectStore = db.transaction("Feature").objectStore("Feature");
+					var type = getType(layerBodId);
+					var objectStore = db.transaction(type).objectStore(type);
 					var index = objectStore.index("featureId");
 					index.get(featureId).onsuccess = function(event) {
 						d.resolve(event.target.result);
@@ -134,8 +150,9 @@
 				var d = $q.defer();
 				
 				db.then(function(db) {
+					var type = getType(feature.layerBodId);
 					feature.modified = true;
-					var objectStore = db.transaction("Feature", "readwrite").objectStore("Feature");
+					var objectStore = db.transaction(type, "readwrite").objectStore(type);
 					objectStore.add(feature).onsuccess = function() {
 						d.resolve();
 					};
@@ -147,8 +164,9 @@
 				var d = $q.defer();
 				
 				db.then(function(db) {
+					var type = getType(feature.layerBodId);
 					feature.modified = true;
-					var objectStore = db.transaction("Feature", "readwrite").objectStore("Feature");
+					var objectStore = db.transaction(type, "readwrite").objectStore(type);
 					objectStore.put(feature).onsuccess = function() {
 						d.resolve();
 					};
@@ -160,9 +178,10 @@
 				var d = $q.defer();
 				
 				db.then(function(db) {
+					var type = getType(feature.layerBodId);
 					feature.modified = true;
 					feature.deleted = true;
-					var objectStore = db.transaction("Feature", "readwrite").objectStore("Feature");
+					var objectStore = db.transaction(type, "readwrite").objectStore(type);
 					objectStore.put(feature).onsuccess = function() {
 						d.resolve();
 					};
@@ -174,10 +193,18 @@
 				var d = $q.defer();
 				
 				db.then(function(db) {
-					var objectStore = db.transaction("Feature", "readwrite").objectStore("Feature");
-					objectStore.clear().onsuccess = function() {
-						d.resolve();
+					var transaction = db.transaction(types, "readwrite");
+					var i = 0;
+					var next = function() {
+						if (i < types.length) {
+							var type = types[i++];
+							var objectStore = transaction.objectStore(type);
+							objectStore.clear().onsuccess = next;
+						} else {
+							d.resolve();
+						}
 					};
+					next();
 				});
 				
 				return d.promise;
@@ -186,11 +213,25 @@
 				var d = $q.defer();
 				
 				db.then(function(db) {
-					var objectStore = db.transaction("Feature").objectStore("Feature");
-					var index = objectStore.index("modified");
-					index.getKey(true).onsuccess = function(event) {
-						d.resolve(event.target.result != null);
+					var transaction = db.transaction(types, "readwrite");
+					var i = 0;
+					var next = function() {
+						if (i < types.length) {
+							var type = types[i++];
+							var objectStore = transaction.objectStore(type);
+							var index = objectStore.index("modified");
+							index.getKey(true).onsuccess = function(event) {
+								if (event.target.result != null) {
+									d.resolve(true);
+								} else {
+									next();;
+								}
+							};
+						} else {
+							d.resolve(false);
+						}
 					};
+					next();
 				});
 				
 				return d.promise;
@@ -200,26 +241,39 @@
 				
 				db.then(function(db) {
 					var url = featureManager.apiUrl + "/rest/services/api/MapServer/pull";
+					url += "?types=" + types.join(",");
 					if(bbox)
-						url += "?extent=" + bbox[0] + "," + bbox[1] + "," + bbox[2] + "," + bbox[3];
+						url += "&extent=" + bbox.join(",");
+
 				
 					$http.get(url).success(function(features) {
-						var objectStore = db.transaction("Feature", "readwrite").objectStore("Feature");
+						var transaction = db.transaction(types, "readwrite");
 						var i = 0;
-						var addNext = function() {
+						var next = function() {
 							if (i < features.length) {
 								var feature = features[i++];
+								var type = getType(feature.layerBodId);
 								if(!feature.geometry.bbox){
 									var geometry = new ol.format.GeoJSON().readGeometry(feature.geometry);
 									var extent = geometry.getExtent();
 									feature.geometry.bbox = extent;
 								}
-								objectStore.put(feature).onsuccess = addNext;
+								var objectStore = transaction.objectStore(type);
+								var index = objectStore.index("featureId");
+								index.getKey(feature.featureId).onsuccess = function(event) {
+									var key = event.target.result;
+									if (key) {
+										feature.id = key;
+										objectStore.put(feature).onsuccess = next;
+									} else {
+										objectStore.add(feature).onsuccess = next;
+									}
+								}
 							} else {
 								d.resolve();
 							}
 						} 
-						addNext();
+						next();
 					});
 				});
 				
@@ -233,21 +287,36 @@
 					
 					var results = [];
 					
-					var index = objectStore.index("modified"); 
-					index.openCursor(true).onsuccess = function(event) {
-						var cursor = event.target.result;
-						if (cursor) {
-							var feature = cursor.value;
-							if (feature) {
-								results.push(cursor.value);
-								cursor.continue();
-							}
-						} else {
-							$http.post(featureManager.apiUrl + "/rest/services/api/MapServer/push", results).success(function(messages) {
-								d.resolve(messages);
-							});
-						}
+					var post = function() {
+						$http.post(featureManager.apiUrl + "/rest/services/api/MapServer/push", results).success(function(messages) {
+							d.resolve(messages);
+						});
 					}
+					
+					var transaction = db.transaction(types, "readwrite");
+					var i = 0;
+					var next = function() {
+						if (i < types.length) {
+							var type = types[i++];
+							var objectStore = transaction.objectStore(type);
+							var index = objectStore.index("modified");
+							index.openCursor(true).onsuccess = function(event) {
+								var cursor = event.target.result;
+								if (cursor) {
+									var feature = cursor.value;
+									if (feature) {
+										results.push(cursor.value);
+										cursor.continue();
+									}
+								} else {
+									next();
+								}
+							};
+						} else {
+							post();
+						}
+					};
+					next();
 				});
 				
 				return d.promise;

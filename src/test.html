@@ -46,7 +46,7 @@
 
 			app.controller('TestController', function($scope, gaFeatureManager) {
 				$scope.test = "";
-				gaFeatureManager.pull().then(function(){
+				gaFeatureManager.pull([154200, 172800, 154300, 172900]).then(function(){
 					gaFeatureManager.query('be.vmm.eenvplus.sdi.model.KoppelPunt', [154200, 172800, 154300, 172900]).then(function(results) {
 						$scope.test = results.length;
 						$scope.$apply();
