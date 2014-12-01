@@ -3,13 +3,13 @@
 ///ts:ref=closure
 /// <reference path="../../../../../lib/ts/closure.d.ts"/> ///ts:ref:generated
 
-module be.vmm.eenvplus.viewer.Module {
+module be.vmm.eenvplus.viewer {
     'use strict';
 
-    export var VIEWER:string = PREFIX + '_viewer';
+    export var MODULE:string = PREFIX + '_viewer';
 
-    goog.provide(VIEWER);
+    goog.provide(MODULE);
 
-    angular.module(VIEWER, []);
+    angular.module(MODULE, []);
 
 }

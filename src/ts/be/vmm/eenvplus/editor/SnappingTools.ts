@@ -30,7 +30,7 @@ module be.vmm.eenvplus.editor.snappingTools {
     }
 
     angular
-        .module(Module.EDITOR)
+        .module(MODULE)
         .directive(NAME, configure);
 
 }

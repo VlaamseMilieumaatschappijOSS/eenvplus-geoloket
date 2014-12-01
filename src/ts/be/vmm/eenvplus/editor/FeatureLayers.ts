@@ -79,7 +79,7 @@ module be.vmm.eenvplus.editor.featureLayers {
     }
 
     angular
-        .module(Module.EDITOR)
+        .module(MODULE)
         .directive(NAME, configure);
 
 }

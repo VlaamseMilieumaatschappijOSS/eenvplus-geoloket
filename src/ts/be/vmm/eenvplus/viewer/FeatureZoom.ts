@@ -41,7 +41,7 @@ module be.vmm.eenvplus.viewer {
     }
 
     angular
-        .module(Module.VIEWER)
+        .module(MODULE)
         .directive(NAME, configure);
 
 }

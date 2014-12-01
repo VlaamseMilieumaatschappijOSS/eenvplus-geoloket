@@ -4,19 +4,17 @@
 /// <reference path="../../../../../lib/ts/closure.d.ts"/> ///ts:ref:generated
 ///ts:ref=openlayers
 /// <reference path="../../../../../lib/ts/openlayers.d.ts"/> ///ts:ref:generated
+/// <reference path="paint/Module.ts"/>
 
-module be.vmm.eenvplus.editor.Module {
+module be.vmm.eenvplus.editor {
     'use strict';
 
-    export var EDITOR:string = PREFIX + '_editor';
+    export var MODULE:string = PREFIX + '_editor';
 
-    export enum Painter {
-        SEWER,
-        APPURTENANCE
-    }
+    goog.provide(MODULE);
 
-    goog.provide(EDITOR);
-
-    angular.module(EDITOR, []);
+    angular.module(MODULE, [
+        paint.MODULE
+    ]);
 
 }

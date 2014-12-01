@@ -117,7 +117,7 @@ module be.vmm.eenvplus.applicationState {
     }
 
     angular
-        .module(Module.EENVPLUS)
+        .module(MODULE)
         .directive(NAME, configure);
 
 }

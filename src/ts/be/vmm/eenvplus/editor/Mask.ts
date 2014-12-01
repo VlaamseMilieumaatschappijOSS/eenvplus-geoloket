@@ -283,7 +283,7 @@ module be.vmm.eenvplus.editor.mask {
     }
 
     angular
-        .module(Module.EDITOR)
+        .module(MODULE)
         .directive(NAME, configure);
 
 }

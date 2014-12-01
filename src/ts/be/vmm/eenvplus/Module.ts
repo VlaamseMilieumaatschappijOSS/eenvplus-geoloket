@@ -5,16 +5,14 @@ module be.vmm.eenvplus {
     'use strict';
 
     export var PREFIX:string = 'ep';
+    export var MODULE:string = PREFIX + '_eenvplus';
 
-    export module Module {
-        export var EENVPLUS:string = PREFIX + '_eenvplus';
+    goog.provide(MODULE);
 
-        goog.provide(EENVPLUS);
-
-        angular.module(EENVPLUS, [
-            editor.Module.EDITOR,
-            viewer.Module.VIEWER
-        ]);
-    }
+    console.log(MODULE);
+    angular.module(MODULE, [
+        editor.MODULE,
+        viewer.MODULE
+    ]);
 
 }
