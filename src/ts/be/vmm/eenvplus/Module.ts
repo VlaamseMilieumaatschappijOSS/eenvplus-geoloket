@@ -9,7 +9,6 @@ module be.vmm.eenvplus {
 
     goog.provide(MODULE);
 
-    console.log(MODULE);
     angular.module(MODULE, [
         editor.MODULE,
         viewer.MODULE

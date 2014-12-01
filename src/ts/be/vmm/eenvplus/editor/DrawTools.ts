@@ -28,17 +28,17 @@ module be.vmm.eenvplus.editor.drawTools {
 
         _.merge(scope, {
             requestEditMode: requestEditMode,
-            requestSewerPainter: _.partial(requestPainter, paint.FeatureType.SEWER),
-            requestAppurtenancePainter: _.partial(requestPainter, paint.FeatureType.APPURTENANCE)
+            selectSewerPainter: _.partial(selectPainter, paint.FeatureType.SEWER),
+            selectAppurtenancePainter: _.partial(selectPainter, paint.FeatureType.APPURTENANCE)
         });
 
         function requestEditMode():void {
             rootScope.$broadcast(applicationState.EVENT.modeRequest, applicationState.State.EDIT);
         }
 
-        function requestPainter(painter:paint.FeatureType):void {
+        function selectPainter(painter:paint.FeatureType):void {
             scope.selectedItem = scope.selectedItem === painter ? undefined : painter;
-
+            rootScope.$broadcast(paint.EVENT.selected, scope.selectedItem);
         }
 
     }
