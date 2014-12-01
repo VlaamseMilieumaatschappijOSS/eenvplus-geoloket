@@ -10,6 +10,11 @@ module be.vmm.eenvplus.editor.Module {
 
     export var EDITOR:string = PREFIX + '_editor';
 
+    export enum Painter {
+        SEWER,
+        APPURTENANCE
+    }
+
     goog.provide(EDITOR);
 
     angular.module(EDITOR, []);

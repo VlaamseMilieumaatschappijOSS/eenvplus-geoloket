@@ -7,7 +7,10 @@ module be.vmm.eenvplus.editor.drawTools {
     export var NAME:string = PREFIX + 'DrawTools';
 
     interface Scope extends ng.IScope {
+        selectedItem:Module.Painter;
         requestEditMode:() => void;
+        requestSewerPainter:() => void;
+        requestAppurtenancePainter:() => void;
     }
 
     function configure():ng.IDirective {
@@ -23,10 +26,19 @@ module be.vmm.eenvplus.editor.drawTools {
 
     function DrawToolsController(scope:Scope, rootScope:ng.IScope) {
 
-        scope.requestEditMode = requestEditMode;
+        _.merge(scope, {
+            requestEditMode: requestEditMode,
+            requestSewerPainter: _.partial(requestPainter, Module.Painter.SEWER),
+            requestAppurtenancePainter: _.partial(requestPainter, Module.Painter.APPURTENANCE)
+        });
 
         function requestEditMode():void {
             rootScope.$broadcast(applicationState.EVENT.modeRequest, applicationState.State.EDIT);
+        }
+
+        function requestPainter(painter:Module.Painter):void {
+            scope.selectedItem = scope.selectedItem === painter ? undefined : painter;
+
         }
 
     }
