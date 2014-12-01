@@ -8,6 +8,7 @@ module be.vmm.eenvplus.applicationState {
 
     export var EVENT = {
         modeChange: 'modeStateChange',
+        modeRequest: 'modeRequest',
         levelChange: 'levelStateChange'
     };
 
@@ -60,10 +61,20 @@ module be.vmm.eenvplus.applicationState {
 
         // not particularly type-safe but it's the easiest way to hook into the main app without touching it
         scope.$watch('globals.isDrawActive', setMode);
+        scope.$on(EVENT.modeRequest, handleModeRequest);
         view.on('change:resolution', invalidateLevel);
         layers.on('change:length', setLevelThreshold);
 
         invalidateViewState();
+
+
+        /* ---------------------- */
+        /* --- event handlers --- */
+        /* ---------------------- */
+
+        function handleModeRequest(event:ng.IAngularEvent, mode:State):void {
+            scope.globals.isDrawActive = mode === State.EDIT;
+        }
 
 
         /* ----------------- */

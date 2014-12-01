@@ -155,6 +155,8 @@ declare module ol {
 
         interface Layer extends Base {
             new (options:LayerOptions):Layer;
+
+            getSource():source.Source;
         }
 
         interface LayerOptions {
@@ -199,7 +201,11 @@ declare module ol {
         interface ServerVector extends FormatVector {
         }
 
-        interface Vector {
+        interface Source extends Observable {
+            clear():void;
+        }
+
+        interface Vector extends Source {
             new ():Vector;
         }
     }
