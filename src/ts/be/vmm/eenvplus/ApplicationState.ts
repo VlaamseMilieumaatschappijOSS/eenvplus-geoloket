@@ -95,7 +95,7 @@ module be.vmm.eenvplus.applicationState {
         }
 
         function invalidateViewState():void {
-            scope.state = _.map(currentState, (state) => {
+            scope.state = _.map(currentState, (state:State):string => {
                 return stateCls[state];
             }).join(' ');
         }

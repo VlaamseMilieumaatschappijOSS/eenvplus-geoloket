@@ -187,13 +187,6 @@ module be.vmm.eenvplus.editor.mask {
         /* ----------------- */
 
         /**
-         * Render the mask and clip the non-background raster layers when the selection is complete.
-         */
-        //function render():void {
-        //    if (currentState === State.ON) _.each(rasterContexts, clip);
-        //}
-
-        /**
          * Grey out the map except for the current selection box.
          * If there is no selection box, the entire map is greyed out.
          *
@@ -280,8 +273,8 @@ module be.vmm.eenvplus.editor.mask {
                 [Math.min, Math.min],
                 [Math.max, Math.min],
                 [Math.max, Math.max]
-            ].map((fns) => {
-                    return fns.map((fn, xy) => {
+            ].map((fns:Function[]):ol.Coordinate => {
+                    return _.map(fns, (fn:Function, xy:number):number => {
                         return fn.apply(null, _.map(coordinates, xy));
                     });
                 });

@@ -160,6 +160,15 @@ module.exports = function (grunt) {
             }
         },
 
+        tslint: {
+            options: {
+                configuration: grunt.file.readJSON('.tslintrc')
+            },
+            files: {
+                src: [src.ts]
+            }
+        },
+
         watch: {
             options: {
                 spawn: false

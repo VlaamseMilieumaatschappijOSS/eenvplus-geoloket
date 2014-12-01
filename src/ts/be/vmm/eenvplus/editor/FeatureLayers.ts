@@ -30,8 +30,8 @@ module be.vmm.eenvplus.editor.featureLayers {
         function load(extent:ol.Extent):void {
             features.pull(extent)
                 .then(createLayers)
-                .catch((e) => {
-                    console.error('Failed to load features', e);
+                .catch((error:Error) => {
+                    console.error('Failed to load features', error);
                 });
         }
 
