@@ -38,7 +38,7 @@
             },
 
             "createLayer": function (layerBodId) {
-                return new ol.layer.Vector({
+                var layer = new ol.layer.Vector({
                     source: this.createSource(layerBodId),
                     style: new ol.style.Style({
                         stroke: new ol.style.Stroke({
@@ -52,6 +52,8 @@
                         })
                     })
                 });
+                layer.set('id', layerBodId);
+                return layer;
             }
         }
     });

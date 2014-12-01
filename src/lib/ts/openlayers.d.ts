@@ -116,12 +116,17 @@ declare module ol {
 
         interface Static {
             DragBox:DragBox;
+            Draw:Draw;
         }
 
         interface DragBox extends Pointer {
             new (config:any):DragBox;
 
             getGeometry():geometry.Polygon;
+        }
+
+        interface Draw extends Pointer {
+            new (config:any):Draw;
         }
 
         interface Interaction extends Observable {
