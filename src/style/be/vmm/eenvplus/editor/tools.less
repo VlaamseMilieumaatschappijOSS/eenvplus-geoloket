@@ -1,27 +1,13 @@
 @import "../../../../app";
 
-[ep-editor-tools] {
-  display: none;
-  position: absolute;
-  top: unit(@small-header-height, px);
-  bottom: unit(@footer-height, px);
-  left: 0;
-  width: 300px;
-  overflow-y: auto;
-  background: white;
-  .box-shadow(6px 6px 12px rgba(0, 0, 0, 0.175));
-  border-right: 1px solid #bdbdbd;
-
-  .panel-body {
-    font-size: 12px;
-  }
-
-  a:hover {
-    text-decoration: none;
-  }
+#pulldown {
 
   ul {
     padding: 0;
+  }
+
+  .snapping .panel-body {
+    max-height: 190px;
   }
 
   .draw li,
@@ -54,8 +40,13 @@
       line-height: 36px;
     }
   }
-}
 
-[ep-edit-actions] {
-  text-align: center;
+  [ep-edit-actions] {
+    text-align: center;
+    padding: 4px;
+
+    .btn {
+      margin: 3px;
+    }
+  }
 }

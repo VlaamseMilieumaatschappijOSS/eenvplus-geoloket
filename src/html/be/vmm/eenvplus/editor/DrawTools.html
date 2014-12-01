@@ -1,9 +1,16 @@
-<a id="selectionHeading" class="panel-heading light desktop" href="#tools">
-    <i class="icon-ga-mapfunction ga-icon-separator"></i>
+<a href="#drawTools"
+   ng-click="requestEditMode()"
+   class="panel-heading accordion-toggle collapsed"
+   data-toggle="collapse"
+   data-parent="#pulldown-content">
+
+    <i class="visible-collapsed icon-caret-right spacer"></i>
+    <i class="hidden-collapsed icon-caret-down"></i>
+    <i class="icon-ga-mapfunction"></i>
     <span translate>Draw features</span>
 </a>
 
-<div class="panel-body panel-body-wide">
+<div id="drawTools" class="panel-body panel-body-wide panel-collapse collapse">
     <ul>
         <li>
             <i class="icon-ga-line"></i>

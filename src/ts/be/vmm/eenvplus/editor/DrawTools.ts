@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.drawTools {
     export var NAME:string = PREFIX + 'DrawTools';
 
     interface Scope extends ng.IScope {
-
+        requestEditMode:() => void;
     }
 
     function configure():ng.IDirective {
@@ -19,11 +19,15 @@ module be.vmm.eenvplus.editor.drawTools {
         };
     }
 
-    DrawToolsController.$inject = ['$scope'];
+    DrawToolsController.$inject = ['$scope', '$rootScope'];
 
-    function DrawToolsController(scope:Scope) {
+    function DrawToolsController(scope:Scope, rootScope:ng.IScope) {
 
+        scope.requestEditMode = requestEditMode;
 
+        function requestEditMode():void {
+            rootScope.$broadcast(applicationState.EVENT.modeRequest, applicationState.State.EDIT);
+        }
 
     }
 

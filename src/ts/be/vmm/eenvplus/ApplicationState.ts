@@ -93,6 +93,9 @@ module be.vmm.eenvplus.applicationState {
             var mode = editActive ? State.EDIT : State.VIEW;
             if (mode === currentState.mode) return;
 
+            // FIXME hard reference
+            if (!editActive) $('#drawTools').collapse('hide');
+
             scope.$broadcast(EVENT.modeChange, currentState.mode = mode);
             invalidateViewState();
         }
