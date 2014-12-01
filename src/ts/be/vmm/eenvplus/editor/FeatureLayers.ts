@@ -57,7 +57,11 @@ module be.vmm.eenvplus.editor.featureLayers {
         }
 
         function createLayers():void {
-            featureLayers = [featureLayer.createLayer('all:be.vmm.eenvplus.sdi.model.KoppelPunt')];
+            featureLayers = [
+                featureLayer.createLayer('be.vmm.eenvplus.sdi.model.KoppelPunt'),
+                featureLayer.createLayer('be.vmm.eenvplus.sdi.model.RioolLink'),
+                featureLayer.createLayer('be.vmm.eenvplus.sdi.model.RioolAppurtenance')
+            ];
             featureLayers.forEach(addLayer);
         }
 

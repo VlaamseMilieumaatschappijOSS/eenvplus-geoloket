@@ -25,7 +25,7 @@ module be.vmm.eenvplus.editor.paint.appurtenancePainter {
 
         function getVectorLayer():ol.layer.Vector {
             return _.find(scope.map.getLayers().getArray(), (layer:ol.layer.Base):boolean => {
-                return layer.get('id') === 'all:be.vmm.eenvplus.sdi.model.KoppelPunt';
+                return layer.get('id') === 'be.vmm.eenvplus.sdi.model.KoppelPunt';
             });
         }
 

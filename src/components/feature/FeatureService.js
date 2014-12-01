@@ -80,7 +80,7 @@
 		var db = (function() {
 			var d = $q.defer();
 
-			var openRequest = indexedDB.open("Feature", 1);
+			var openRequest = indexedDB.open("Feature", 2);
 			openRequest.onupgradeneeded = function(event) {
 				  var db = event.target.result;
 				  for (var i = 0; i < types.length; i++) {
