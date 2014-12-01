@@ -64,7 +64,7 @@ module be.vmm.eenvplus.editor.mask {
         /* --- construction --- */
         /* -------------------- */
 
-        var layer = new ol.layer.Vector({
+        var maskLayer = new ol.layer.Vector({
             source: new ol.source.Vector()
         });
 
@@ -74,7 +74,7 @@ module be.vmm.eenvplus.editor.mask {
             })
         });
 
-        scope.$on(applicationState.EVENT.modeChange, handleStateChange);
+        scope.$on(applicationState.EVENT.modeChange, handleModeChange);
 
 
         /* ---------------------- */
@@ -86,10 +86,10 @@ module be.vmm.eenvplus.editor.mask {
          * When it is disabled, the selection mask is removed.
          *
          * @param event
-         * @param editState
+         * @param editMode
          */
-        function handleStateChange(event:ng.IAngularEvent, editState:applicationState.State):void {
-            editState === applicationState.State.EDIT ? activate() : deactivate();
+        function handleModeChange(event:ng.IAngularEvent, editMode:applicationState.State):void {
+            editMode === applicationState.State.EDIT ? activate() : deactivate();
         }
 
         function handleMaskComposition(event:ol.render.Event):void {
@@ -120,11 +120,11 @@ module be.vmm.eenvplus.editor.mask {
 
             currentState = State.EMPTY;
 
-            map.addLayer(layer);
+            map.addLayer(maskLayer);
             map.addInteraction(boxInteraction);
 
-            layer.on(ol.Map.EVENT.preCompose, handleMaskComposition);
-            layer.on(ol.Map.EVENT.postCompose, handlePostComposition);
+            maskLayer.on(ol.Map.EVENT.preCompose, handleMaskComposition);
+            maskLayer.on(ol.Map.EVENT.postCompose, handlePostComposition);
 
             boxInteraction.once(ol.interaction.DragBox.EVENT.boxStart, startSelecting);
             boxInteraction.once(ol.interaction.DragBox.EVENT.boxEnd, stopSelecting);
@@ -159,8 +159,8 @@ module be.vmm.eenvplus.editor.mask {
         }
 
         function stopClipping(layer:ol.Observable):void {
-            layer.on(ol.Map.EVENT.preCompose, handleRasterComposition);
-            layer.on(ol.Map.EVENT.postCompose, handlePostComposition);
+            layer.un(ol.Map.EVENT.preCompose, handleRasterComposition);
+            layer.un(ol.Map.EVENT.postCompose, handlePostComposition);
         }
 
         /**
@@ -171,27 +171,20 @@ module be.vmm.eenvplus.editor.mask {
 
             currentState = State.OFF;
 
-            layer.un(ol.Map.EVENT.preCompose, handleMaskComposition);
-            layer.un(ol.Map.EVENT.postCompose, handlePostComposition);
+            maskLayer.un(ol.Map.EVENT.preCompose, handleMaskComposition);
+            maskLayer.un(ol.Map.EVENT.postCompose, handlePostComposition);
 
             _(map.getLayers().getArray())
                 .filter('displayInLayerManager')
                 .each(stopClipping);
 
-            map.removeLayer(layer);
+            map.removeLayer(maskLayer);
         }
 
 
         /* ----------------- */
         /* --- rendering --- */
         /* ----------------- */
-
-        /**
-         * Render the mask and clip the non-background raster layers when the selection is complete.
-         */
-        //function render():void {
-        //    if (currentState === State.ON) _.each(rasterContexts, clip);
-        //}
 
         /**
          * Grey out the map except for the current selection box.
@@ -280,8 +273,8 @@ module be.vmm.eenvplus.editor.mask {
                 [Math.min, Math.min],
                 [Math.max, Math.min],
                 [Math.max, Math.max]
-            ].map((fns) => {
-                    return fns.map((fn, xy) => {
+            ].map((fns:Function[]):ol.Coordinate => {
+                    return _.map(fns, (fn:Function, xy:number):number => {
                         return fn.apply(null, _.map(coordinates, xy));
                     });
                 });

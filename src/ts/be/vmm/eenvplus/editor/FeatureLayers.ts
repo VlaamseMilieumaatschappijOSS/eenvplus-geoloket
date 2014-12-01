@@ -21,23 +21,61 @@ module be.vmm.eenvplus.editor.featureLayers {
                                             features:feature.FeatureService,
                                             featureLayer:feature.FeatureLayerFactory) {
 
+        /* ------------------ */
+        /* --- properties --- */
+        /* ------------------ */
+
+        var map:ol.Map = scope.map,
+            addLayer = map.addLayer.bind(map),
+            removeLayer = map.removeLayer.bind(map),
+            featureLayers:ol.layer.Layer[],
+            unRegisterModeChange:Function;
+
+
+        /* -------------------- */
+        /* --- construction --- */
+        /* -------------------- */
+
         scope.$on(mask.EVENT.selected, init);
 
         function init(event:ng.IAngularEvent, extent:ol.Extent):void {
             features.clear().then(_.partial(load, extent));
+            unRegisterModeChange = scope.$on(applicationState.EVENT.modeChange, handleModeChange);
         }
+
+
+        /* ----------------- */
+        /* --- behaviour --- */
+        /* ----------------- */
 
         function load(extent:ol.Extent):void {
             features.pull(extent)
                 .then(createLayers)
-                .catch((e) => {
-                    console.error('Failed to load features', e);
+                .catch((error:Error) => {
+                    console.error('Failed to load features', error);
                 });
         }
 
         function createLayers():void {
-            scope.map.addLayer(featureLayer.createLayer('all:be.vmm.eenvplus.sdi.model.KoppelPunt'));
+            featureLayers = [featureLayer.createLayer('all:be.vmm.eenvplus.sdi.model.KoppelPunt')];
+            featureLayers.forEach(addLayer);
         }
+
+        function clear():void {
+            unRegisterModeChange();
+            featureLayers.forEach(removeLayer);
+            featureLayers = [];
+        }
+
+
+        /* ---------------------- */
+        /* --- event handlers --- */
+        /* ---------------------- */
+
+        function handleModeChange(event:ng.IAngularEvent, editMode:applicationState.State):void {
+            if (editMode === applicationState.State.VIEW) clear();
+        }
+
     }
 
     angular

@@ -59,6 +59,7 @@ declare module _ {
     /** Objects */
     interface Static {
         mapValues(object:Object, fn:any, scope?:any):any;
+        merge(object:Object, source:Object, callback?:MergingIterator, scope?:any):Object;
     }
 
     interface Chain {
@@ -68,6 +69,10 @@ declare module _ {
     /** Iterators */
     interface MemoIterator {
         (prev:any, curr:any, key?:any, collection?:any):boolean;
+    }
+
+    interface MergingIterator {
+        (objectValue:any, sourceValue:any):any;
     }
 
 }

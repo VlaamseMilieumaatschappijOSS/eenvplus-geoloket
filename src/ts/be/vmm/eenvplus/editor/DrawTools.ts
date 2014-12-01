@@ -21,7 +21,7 @@ module be.vmm.eenvplus.editor.drawTools {
 
     DrawToolsController.$inject = ['$scope'];
 
-    function DrawToolsController(scope) {
+    function DrawToolsController(scope:Scope) {
 
 
 
