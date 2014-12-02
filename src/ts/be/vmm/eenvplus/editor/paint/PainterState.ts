@@ -6,18 +6,18 @@ module be.vmm.eenvplus.editor.paint {
     }
 
     export interface PainterState {
-        (type:FeatureType, activate:() => void, deactivate:() => void):void;
+        (type:feature.FeatureType, activate:() => void, deactivate:() => void):void;
     }
 
     factory.$inject = ['$rootScope'];
 
     function factory(app:ApplicationScope):PainterState {
-        return function PainterState(type:FeatureType, activate:() => void, deactivate:() => void):void {
+        return function PainterState(type:feature.FeatureType, activate:() => void, deactivate:() => void):void {
             var isActive:boolean = false;
 
             app.$on(EVENT.selected, handlePainterSelection);
 
-            function handlePainterSelection(event:ng.IAngularEvent, newType:FeatureType):void {
+            function handlePainterSelection(event:ng.IAngularEvent, newType:feature.FeatureType):void {
                 type === newType ? handleActivation() : handleDeactivation();
             }
 

@@ -1,3 +1,6 @@
+///ts:ref=closure
+/// <reference path="./closure.d.ts"/> ///ts:ref:generated
+
 declare var ol:ol.Static;
 
 declare module ol {
@@ -7,12 +10,13 @@ declare module ol {
             DEVICE_PIXEL_RATIO:number;
         }
 
-        events:events.Static;
+        control:control.Static;
         format:format.Static;
         geom:geometry.Static;
         interaction:interaction.Static;
         layer:layer.Static;
         loadingstrategy:loadingstrategy.Static;
+        proj:proj.Static;
         render:render.Static;
         source:source.Static;
         style:style.Static;
@@ -34,10 +38,14 @@ declare module ol {
     interface Coordinate extends Array<number> {
     }
 
+    interface DrawEvent extends goog.events.Event {
+        feature:Feature;
+    }
+
     interface Extent extends Array<number> {
     }
 
-    interface Feature {
+    interface Feature extends Object {
         new (config:any):Feature;
     }
 
@@ -49,11 +57,11 @@ declare module ol {
     }
 
     interface Map extends Object {
-        new (config:any):Map;
+        new (config:MapConfig):Map;
 
         addInteraction(interaction:interaction.Interaction):void;
         addLayer(layer:layer.Base):void;
-        getLayers():ol.Collection<ol.layer.Base>;
+        getLayers():ol.Collection<layer.Base>;
         getPixelFromCoordinate(coordinate:Coordinate):Pixel;
         getSize():Size;
         getView():View;
@@ -62,21 +70,47 @@ declare module ol {
         removeLayer(layer:layer.Base):void;
     }
 
+    interface MapConfig {
+        //controls:Collection<control.Control>;
+        //controls:control.Control[];
+        //interactions:Collection<interaction.Interaction>;
+        //interactions:interaction.Interaction[];
+        //layers:Collection<layer.Base>;
+        //layers:layer.Base[];
+        //logo:any;
+        //overlays:Collection<Overlay>;
+        //overlays:Overlay[];
+        //renderer:string;
+        //renderer:RendererType;
+        //renderer:string[];
+        //renderer:RendererType[];
+        //target:Element;
+        //target:string;
+        //view:View;
+    }
+
     interface Object extends Observable {
     }
 
-    interface ObjectEvent {
+    interface ObjectEvent extends goog.events.Event {
     }
 
     interface Observable {
         prototype:Observable;
 
-        on(type:string, listener:Function, scope?:any):void;
-        once(type:string, listener:Function, scope?:any):void;
+        on(type:string, listener:Function, scope?:any):goog.events.Key<Observable>;
+        once(type:string, listener:Function, scope?:any):goog.events.Key<Observable>;
         un(type:string, listener:Function, scope?:any):void;
+        unByKey(key:goog.events.Key<Observable>):void;
+    }
+
+    interface Overlay {
     }
 
     interface Pixel extends Array<number> {
+    }
+
+    interface RendererType {
     }
 
     interface Size extends Array<number> {
@@ -87,9 +121,13 @@ declare module ol {
         setResolution(value:number):void;
     }
 
-    module events {
+    module control {
 
         interface Static {
+            Control:Control;
+        }
+
+        interface Control {
         }
 
     }
@@ -105,9 +143,23 @@ declare module ol {
 
         interface GeoJSON extends JSONFeature {
             new (config?:GEOJSONConfig):GeoJSON;
+
+            readFeature(json:GeoJSONFeature, option?:any):Feature;
+            writeFeature(feature:Feature, options?:any):GeoJSONFeature;
         }
 
         interface GEOJSONConfig {
+            //defaultDataProjection:string;
+            //defaultDataProjection:ol.proj.Projection;
+            //geometryName:string;
+        }
+
+        interface GeoJSONFeature {
+            geometry:{
+                coordinates:Coordinate[];
+                type:string;
+            };
+            type:string;
         }
 
         interface JSONFeature extends Feature {
@@ -214,6 +266,16 @@ declare module ol {
 
     }
 
+    module proj {
+
+        interface Static {
+            Projection:Projection;
+        }
+
+        interface Projection {
+        }
+    }
+
     module render {
 
         interface Static {
@@ -256,7 +318,7 @@ declare module ol {
             clear():void;
         }
 
-        interface Vector extends Source {
+        interface Vector extends Source, VectorConfig {
             new (options?:VectorConfig):Vector;
 
             addFeatures(features:Feature[]):void;

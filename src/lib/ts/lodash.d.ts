@@ -19,11 +19,13 @@ declare module _ {
 
     /** Arrays */
     interface Static {
+        compact(array:any[]):any[];
         first(array:any[], fn?:any, scope?:any):any;
         last(array:any[], fn?:any, scope?:any):any;
     }
 
     interface Chain {
+        compact():Chain;
         first(fn?:any, scope?:any):Chain;
         last(fn?:any, scope?:any):Chain;
     }

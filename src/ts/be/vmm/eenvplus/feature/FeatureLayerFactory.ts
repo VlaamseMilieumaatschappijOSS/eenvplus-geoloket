@@ -11,8 +11,8 @@ module be.vmm.eenvplus.feature {
     }
 
     export interface FeatureLayerFactory {
-        createSource(layerBodId:string):ol.source.ServerVector;
-        createLayer(layerBodId:string):ol.layer.Vector;
+        createSource(type:FeatureType):ol.source.ServerVector;
+        createLayer(type:FeatureType):ol.layer.Vector;
     }
 
     factory.$inject = ['gaFeatureManager', 'gaSRSName'];
@@ -23,7 +23,7 @@ module be.vmm.eenvplus.feature {
             createLayer: createLayer
         };
 
-        function createSource(layerBodId:string):ol.source.ServerVector {
+        function createSource(type:FeatureType):ol.source.ServerVector {
             var source = new ol.source.ServerVector({
                 format: new ol.format.GeoJSON({
                     defaultDataProjection: srsName.default.code
@@ -39,7 +39,7 @@ module be.vmm.eenvplus.feature {
 
             function load(extent:ol.Extent):void {
                 service
-                    .query(layerBodId, extent)
+                    .query(type, extent)
                     .then(function (results) {
                         source.addFeatures(source.readFeatures({
                             type: 'FeatureCollection',
@@ -49,9 +49,9 @@ module be.vmm.eenvplus.feature {
             }
         }
 
-        function createLayer(layerBodId:string):ol.layer.Vector {
+        function createLayer(type:FeatureType):ol.layer.Vector {
             var layer = new ol.layer.Vector({
-                source: createSource(layerBodId),
+                source: createSource(type),
                 style: new ol.style.Style({
                     stroke: new ol.style.Stroke({
                         color: '#FF0000',
@@ -69,7 +69,7 @@ module be.vmm.eenvplus.feature {
                     })
                 })
             });
-            layer.set('id', layerBodId);
+            layer.set('featureType', type);
             return layer;
         }
     }

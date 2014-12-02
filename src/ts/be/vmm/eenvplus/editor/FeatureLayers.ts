@@ -8,8 +8,6 @@ module be.vmm.eenvplus.editor.featureLayers {
 
     export var NAME:string = PREFIX + 'FeatureLayers';
 
-    var layerFilter:string = 'be.vmm.eenvplus.sdi.model';
-
     function configure():ng.IDirective {
         return {
             restrict: 'A',
@@ -61,9 +59,8 @@ module be.vmm.eenvplus.editor.featureLayers {
         function createLayers():void {
             featureLayers = _(map.getLayers().getArray())
                 .invoke(ol.layer.Base.prototype.get, 'bodId')
-                .filter(function (id:string):boolean {
-                    return _.contains(id, layerFilter);
-                })
+                .filter(feature.isEditable)
+                .map(feature.toType)
                 .map(featureLayer.createLayer)
                 .value();
             featureLayers.forEach(addLayer);

@@ -7,10 +7,7 @@
 	var IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
 	var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
 	
-	var types = ["be.vmm.eenvplus.sdi.model.KoppelPunt", "be.vmm.eenvplus.sdi.model.RioolAppurtenance", "be.vmm.eenvplus.sdi.model.RioolLink"] ;
-	
-	var getType = function(layerBodId) {
-		
+	function getType(layerBodId) {
 		var index = layerBodId.indexOf(':');
 		if (index > 0)
 			return layerBodId.substring(index + 1);
@@ -75,7 +72,8 @@
 		};
 	});
 	
-	module.factory('gaFeatureManager', function($http, $q) {
+	module.factory('gaFeatureManager', function($http, $q, typeModelMap) {
+		var types = typeModelMap;
 
 		var db = (function() {
 			var d = $q.defer();
@@ -106,11 +104,11 @@
 		var featureManager = {
 			"apiUrl": "http://127.0.0.1:8080/eenvplus-sdi-services",
 		
-			"query" : function(layerBodId, extent) {
+			"query" : function(type, extent) {
 				var d = $q.defer();
+				type = types[type];
 				
 				db.then(function(db) {
-					var type = getType(layerBodId);
 					var objectStore = db.transaction(type).objectStore(type);
 					
 					var results = [];
@@ -132,11 +130,11 @@
 				
 				return d.promise;
 			},
-			"get" : function(layerBodId, featureId) {
+			"get" : function(type, featureId) {
 				var d = $q.defer();
+				type = types[type];
 				
 				db.then(function(db) {
-					var type = getType(layerBodId);
 					var objectStore = db.transaction(type).objectStore(type);
 					var index = objectStore.index("featureId");
 					index.get(featureId).onsuccess = function(event) {
@@ -146,11 +144,11 @@
 				
 				return d.promise;
 			},
-			"create" : function(feature) {
+			"create" : function(feature, type) {
 				var d = $q.defer();
+				type = types[type];
 				
 				db.then(function(db) {
-					var type = getType(feature.layerBodId);
 					feature.modified = true;
 					var objectStore = db.transaction(type, "readwrite").objectStore(type);
 					objectStore.add(feature).onsuccess = function() {
@@ -160,11 +158,11 @@
 				
 				return d.promise;
 			},
-			"update" : function(feature) {
+			"update" : function(feature, type) {
 				var d = $q.defer();
+				type = types[type];
 				
 				db.then(function(db) {
-					var type = getType(feature.layerBodId);
 					feature.modified = true;
 					var objectStore = db.transaction(type, "readwrite").objectStore(type);
 					objectStore.put(feature).onsuccess = function() {
@@ -174,11 +172,11 @@
 				
 				return d.promise;
 			},
-			"remove" : function(feature) {
+			"remove" : function(feature, type) {
 				var d = $q.defer();
+				type = types[type];
 				
 				db.then(function(db) {
-					var type = getType(feature.layerBodId);
 					feature.modified = true;
 					feature.deleted = true;
 					var objectStore = db.transaction(type, "readwrite").objectStore(type);

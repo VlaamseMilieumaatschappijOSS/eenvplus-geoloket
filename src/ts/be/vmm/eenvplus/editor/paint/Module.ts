@@ -7,11 +7,6 @@ module be.vmm.eenvplus.editor.paint {
         selected: 'painterSelected'
     };
 
-    export enum FeatureType {
-        SEWER,
-        APPURTENANCE
-    }
-
     goog.provide(MODULE);
 
     angular.module(MODULE, []);
