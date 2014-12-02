@@ -1,3 +1,8 @@
+///ts:ref=Module
+/// <reference path="../Module.ts"/> ///ts:ref:generated
+///ts:ref=FeatureService
+/// <reference path="../feature/FeatureService.ts"/> ///ts:ref:generated
+
 module be.vmm.eenvplus.editor.actions {
     'use strict';
 
@@ -18,26 +23,28 @@ module be.vmm.eenvplus.editor.actions {
         };
     }
 
-    ActionsController.$inject = ['$scope', '$rootScope'];
+    ActionsController.$inject = ['$scope', '$rootScope', 'gaFeatureManager'];
 
-    function ActionsController(scope:Scope, rootScope:ng.IScope):void {
+    function ActionsController(scope:Scope, rootScope:ng.IScope, service:feature.FeatureService):void {
 
         _.merge(scope, {
-            discard: discard,
-            validate: validate,
-            save: save
+            discard: stopEditing,
+            validate: _.partial(execute, service.test),
+            save: _.compose(stopEditing, _.partial(execute, service.push))
         });
 
-        function discard():void {
+        function stopEditing():void {
             rootScope.$broadcast(applicationState.EVENT.modeRequest, applicationState.State.OVERVIEW);
         }
 
-        function validate():void {
-
+        function execute(call:() => ng.IPromise<any>):void {
+            call()
+                .then(showMessages)
+                .catch(console.error);
         }
 
-        function save():void {
-
+        function showMessages(messages:any):void {
+            console.log(messages);
         }
 
     }

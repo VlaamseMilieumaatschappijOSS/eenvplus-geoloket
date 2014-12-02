@@ -54,6 +54,7 @@ declare module _ {
     /** Functions */
     interface Static {
         bind(fn:Function, scope?:any, ...args:any[]):(...args:any[]) => any;
+        compose(...fns:Function[]):(...args:any[]) => any;
         curry(fn:Function):(...args:any[]) => any;
         partial(fn:Function, ...args:any[]):(...args:any[]) => any;
         partialRight(fn:Function, ...args:any[]):(...args:any[]) => any;
