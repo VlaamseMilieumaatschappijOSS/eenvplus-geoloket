@@ -31,6 +31,9 @@ declare module _ {
     /** Collections */
     interface Static {
         cloneDeep(value:any, fn?:(value:any) => any, scope?:any):any;
+        contains(collection:any[], target:any, fromIndex?:number):boolean;
+        contains(collection:Object, target:any, fromIndex?:number):boolean;
+        contains(collection:string, target:any, fromIndex?:number):boolean;
         each(collection:any, fn:any, scope?:any):any;
         filter(collection:any, fn:any, scope?:any):any[];
         find(collection:any, fn:any, scope?:any):any;

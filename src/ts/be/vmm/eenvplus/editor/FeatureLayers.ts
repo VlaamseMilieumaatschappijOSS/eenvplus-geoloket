@@ -8,6 +8,8 @@ module be.vmm.eenvplus.editor.featureLayers {
 
     export var NAME:string = PREFIX + 'FeatureLayers';
 
+    var layerFilter:string = 'be.vmm.eenvplus.sdi.model';
+
     function configure():ng.IDirective {
         return {
             restrict: 'A',
@@ -15,11 +17,11 @@ module be.vmm.eenvplus.editor.featureLayers {
         };
     }
 
-    FeatureLayersController.$inject = ['$scope', 'gaFeatureManager', 'gaFeatureLayerFactory'];
+    FeatureLayersController.$inject = ['$scope', 'gaFeatureManager', 'epFeatureLayerFactory'];
 
     export function FeatureLayersController(scope:ApplicationScope,
                                             features:feature.FeatureService,
-                                            featureLayer:feature.FeatureLayerFactory) {
+                                            featureLayer:feature.FeatureLayerFactory):void {
 
         /* ------------------ */
         /* --- properties --- */
@@ -57,11 +59,13 @@ module be.vmm.eenvplus.editor.featureLayers {
         }
 
         function createLayers():void {
-            featureLayers = [
-                featureLayer.createLayer('be.vmm.eenvplus.sdi.model.KoppelPunt'),
-                featureLayer.createLayer('be.vmm.eenvplus.sdi.model.RioolLink'),
-                featureLayer.createLayer('be.vmm.eenvplus.sdi.model.RioolAppurtenance')
-            ];
+            featureLayers = _(map.getLayers().getArray())
+                .invoke(ol.layer.Base.prototype.get, 'bodId')
+                .filter(function (id:string):boolean {
+                    return _.contains(id, layerFilter);
+                })
+                .map(featureLayer.createLayer)
+                .value();
             featureLayers.forEach(addLayer);
         }
 

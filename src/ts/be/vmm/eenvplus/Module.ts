@@ -1,4 +1,5 @@
 /// <reference path="editor/Module.ts"/>
+/// <reference path="feature/Module.ts"/>
 /// <reference path="viewer/Module.ts"/>
 
 module be.vmm.eenvplus {
@@ -11,6 +12,7 @@ module be.vmm.eenvplus {
 
     angular.module(MODULE, [
         editor.MODULE,
+        feature.MODULE,
         viewer.MODULE
     ]);
 

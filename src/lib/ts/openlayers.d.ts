@@ -8,12 +8,15 @@ declare module ol {
         }
 
         events:events.Static;
+        format:format.Static;
         geom:geometry.Static;
         interaction:interaction.Static;
         layer:layer.Static;
+        loadingstrategy:loadingstrategy.Static;
         render:render.Static;
         source:source.Static;
         style:style.Static;
+        tilegrid:tilegrid.Static;
 
         Extent:Extent;
         Feature:Feature;
@@ -91,6 +94,27 @@ declare module ol {
 
     }
 
+    module format {
+
+        interface Static {
+            GeoJSON:GeoJSON;
+        }
+
+        interface Feature {
+        }
+
+        interface GeoJSON extends JSONFeature {
+            new (config?:GEOJSONConfig):GeoJSON;
+        }
+
+        interface GEOJSONConfig {
+        }
+
+        interface JSONFeature extends Feature {
+        }
+
+    }
+
     module geometry {
 
         interface Static {
@@ -151,6 +175,7 @@ declare module ol {
             prototype:Base;
 
             get(key:string):any;
+            set(key:string, value:any):any;
             setVisible(value:boolean):void;
         }
 
@@ -177,6 +202,18 @@ declare module ol {
 
     }
 
+    module loadingstrategy {
+
+        interface Static {
+            createTile:createTile;
+        }
+
+        interface createTile {
+            (tileGrid:ol.tilegrid.TileGrid):createTile;
+        }
+
+    }
+
     module render {
 
         interface Static {
@@ -197,13 +234,22 @@ declare module ol {
     module source {
 
         interface Static {
+            FormatVector:FormatVector;
+            ServerVector:ServerVector;
             Vector:Vector;
         }
 
+        interface FeatureQuery {
+        }
+
         interface FormatVector extends Vector {
+            new (options?:VectorConfig):FormatVector;
         }
 
         interface ServerVector extends FormatVector {
+            new (options?:VectorConfig):ServerVector;
+
+            readFeatures(query:FeatureQuery):Feature[];
         }
 
         interface Source extends Observable {
@@ -211,7 +257,12 @@ declare module ol {
         }
 
         interface Vector extends Source {
-            new ():Vector;
+            new (options?:VectorConfig):Vector;
+
+            addFeatures(features:Feature[]):void;
+        }
+
+        interface VectorConfig {
         }
     }
 
@@ -238,6 +289,25 @@ declare module ol {
 
         interface Style {
             new (config:any):Style;
+        }
+
+    }
+
+    module tilegrid {
+
+        interface Static {
+            XYZ:XYZ;
+        }
+
+        interface TileGrid {
+            new (config:TileGridConfig):TileGrid;
+        }
+
+        interface TileGridConfig {
+        }
+
+        interface XYZ extends TileGrid {
+            new (config:TileGridConfig):XYZ;
         }
 
     }
