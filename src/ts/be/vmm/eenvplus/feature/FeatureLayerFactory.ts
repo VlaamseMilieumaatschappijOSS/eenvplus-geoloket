@@ -6,7 +6,9 @@
 module be.vmm.eenvplus.feature {
     'use strict';
 
-    export var NAME:string = PREFIX + 'FeatureLayerFactory';
+    export module FeatureLayerFactory {
+        export var NAME:string = PREFIX + 'FeatureLayerFactory';
+    }
 
     export interface FeatureLayerFactory {
         createSource(layerBodId:string):ol.source.ServerVector;
@@ -74,6 +76,6 @@ module be.vmm.eenvplus.feature {
 
     angular
         .module(MODULE)
-        .factory(NAME, factory);
+        .factory(FeatureLayerFactory.NAME, factory);
 
 }

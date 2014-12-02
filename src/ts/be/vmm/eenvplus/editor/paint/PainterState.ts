@@ -1,7 +1,9 @@
 module be.vmm.eenvplus.editor.paint {
     'use strict';
 
-    export var NAME:string = PREFIX + 'PainterState';
+    export module PainterState {
+        export var NAME:string = PREFIX + 'PainterState';
+    }
 
     export interface PainterState {
         (type:FeatureType, activate:() => void, deactivate:() => void):void;
@@ -37,6 +39,6 @@ module be.vmm.eenvplus.editor.paint {
 
     angular
         .module(MODULE)
-        .factory(NAME, factory);
+        .factory(PainterState.NAME, factory);
 
 }
