@@ -39,7 +39,6 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         scope.$on(mask.EVENT.selected, init);
 
         function init(event:ng.IAngularEvent, extent:ol.Extent):void {
-            zoom(extent);
             features.clear().then(_.partial(load, extent));
             unRegisterModeChange = scope.$on(applicationState.EVENT.modeChange, handleModeChange);
         }
@@ -48,17 +47,6 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         /* ----------------- */
         /* --- behaviour --- */
         /* ----------------- */
-
-        function zoom(extent:ol.Extent):void {
-            map.getView().setCenter(<ol.Coordinate>[
-                avg(extent[0], extent[2]),
-                avg(extent[1], extent[3])
-            ]);
-
-            function avg(a:number, b:number):number {
-                return (a + b) / 2;
-            }
-        }
 
         function load(extent:ol.Extent):void {
             features.pull(extent)
