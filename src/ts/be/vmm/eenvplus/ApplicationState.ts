@@ -63,7 +63,7 @@ module be.vmm.eenvplus.applicationState {
         scope.$watch('globals.isDrawActive', setMode);
         scope.$on(EVENT.modeRequest, handleModeRequest);
         view.on('change:resolution', invalidateLevel);
-        layers.on('change:length', setLevelThreshold);
+        layers.on(ol.CollectionEvent.change, setLevelThreshold);
 
         invalidateViewState();
 

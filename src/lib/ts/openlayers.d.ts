@@ -22,6 +22,7 @@ declare module ol {
         style:style.Static;
         tilegrid:tilegrid.Static;
 
+        CollectionEvent:CollectionEvent;
         DrawEvent:DrawEvent;
         Extent:Extent;
         Feature:Feature;
