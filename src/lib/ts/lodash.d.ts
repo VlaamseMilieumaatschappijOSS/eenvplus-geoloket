@@ -41,6 +41,7 @@ declare module _ {
         find(collection:any, fn:any, scope?:any):any;
         invoke(collection:any, fn:Function, ...args:any[]):any;
         invoke(collection:any, methodName:string, ...args:any[]):any;
+        isEqual(valueA:any, valueB:any, compare?:ComparingIterator, scope?:any):boolean;
         map(collection:any, fn:any, scope?:any):any;
         reduce(collection:any, fn:MemoIterator, accumulator:any, scope?:any):any;
         where(collection:any, query:Object):any;
@@ -75,6 +76,10 @@ declare module _ {
     }
 
     /** Iterators */
+    interface ComparingIterator {
+        (valueA:any, valueB:any):boolean;
+    }
+
     interface MemoIterator {
         (prev:any, curr:any, key?:any, collection?:any):boolean;
     }

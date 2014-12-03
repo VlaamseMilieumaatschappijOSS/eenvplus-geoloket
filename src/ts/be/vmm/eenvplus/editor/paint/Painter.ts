@@ -7,19 +7,20 @@ module be.vmm.eenvplus.editor.paint {
                             service:feature.FeatureService):void {
 
         var map = scope.map,
-            vectorLayer, interaction, unRegisterDrawEnd;
+            vectorLayer, mountPointLayer, interaction, unRegisterDrawEnd;
 
         state(type, activate, deactivate);
 
         function activate():void {
             vectorLayer = feature.getLayer(map, type);
+            mountPointLayer = feature.getLayer(map, feature.FeatureType.MOUNT_POINT);
             interaction = new ol.interaction.Draw({
                 type: feature.typeDrawTypeMap[type],
                 source: vectorLayer.getSource()//,
                 //style: style
             });
 
-            unRegisterDrawEnd = interaction.on(ol.DrawEventType.DRAWEND, commit);
+            unRegisterDrawEnd = interaction.on(ol.DrawEventType.DRAWEND, finalizeOperation);
             map.addInteraction(interaction);
         }
 
@@ -27,9 +28,32 @@ module be.vmm.eenvplus.editor.paint {
             return [];
         }
 
-        function commit(event:ol.DrawEvent):void {
+        function finalizeOperation(event:ol.DrawEvent):void {
+            var geometry = <ol.geometry.SimpleGeometry> event.feature.getGeometry(),
+                first = geometry.getFirstCoordinate(),
+                last = geometry.getLastCoordinate(),
+                mountPoints = [createPoint(last)];
+
+            if (!_.isEqual(first, last)) mountPoints.push(createPoint(first));
+
+            mountPointLayer
+                .getSource()
+                .addFeatures(mountPoints);
+            mountPoints
+                .concat([event.feature])
+                .forEach(commit);
+        }
+
+        function createPoint(coordinates:ol.Coordinate):ol.Feature {
+            return new ol.Feature({
+                geometry: new ol.geom.Point(coordinates)
+            });
+        }
+
+        function commit(feature:ol.Feature):void {
+            var json = vectorLayer.getSource().format.writeFeature(feature);
             service
-                .create(vectorLayer.getSource().format.writeFeature(event.feature), type)
+                .create(json, type)
                 .catch(console.error);
         }
 

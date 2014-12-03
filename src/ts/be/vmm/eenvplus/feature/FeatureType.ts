@@ -30,7 +30,7 @@ module be.vmm.eenvplus.feature {
 
     export function getLayer(map:ol.Map, type:FeatureType):ol.layer.Vector {
         var layers = map.getLayers().getArray();
-        return _.where(layers, {values_: {featureType: type}});
+        return _.where(layers, {values_: {featureType: type}})[0];
     }
 
     function path(name:string):string {

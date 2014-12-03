@@ -87,6 +87,8 @@ declare module ol {
 
     interface Feature extends Object {
         new (config:any):Feature;
+
+        getGeometry():geometry.Geometry;
     }
 
     interface FeatureOverlay {
@@ -219,6 +221,7 @@ declare module ol {
     module geometry {
 
         interface Static {
+            Point:Point;
             Polygon:Polygon;
         }
 
@@ -226,7 +229,18 @@ declare module ol {
             getExtent():Extent;
         }
 
+        interface GeometryLayout extends String {
+        }
+
         interface SimpleGeometry extends Geometry {
+            getFirstCoordinate():Coordinate;
+            getLastCoordinate():Coordinate;
+        }
+
+        interface Point extends SimpleGeometry {
+            new (coordinates:Coordinate, layout?:GeometryLayout):Point;
+
+            getCoordinates():Coordinate;
         }
 
         interface Polygon extends SimpleGeometry {
@@ -270,7 +284,7 @@ declare module ol {
             Layer:Layer;
             LayerProperty:LayerProperty;
             Tile:Tile;
-            Vector:Vector;
+            Vector:layer.Vector;
         }
 
         interface Base extends Object {
@@ -304,7 +318,6 @@ declare module ol {
             MAX_RESOLUTION:string;
             MIN_RESOLUTION:string;
         }
-        ;
 
         interface Tile extends Layer {
             new (options?:LayerOptions):Tile;
@@ -367,7 +380,7 @@ declare module ol {
         interface Static {
             FormatVector:FormatVector;
             ServerVector:ServerVector;
-            Vector:Vector;
+            Vector:source.Vector;
         }
 
         interface FeatureQuery {
@@ -388,8 +401,9 @@ declare module ol {
         }
 
         interface Vector extends Source, VectorConfig {
-            new (options?:VectorConfig):Vector;
+            new (options?:VectorConfig):source.Vector;
 
+            addFeature(feature:Feature):void;
             addFeatures(features:Feature[]):void;
         }
 
