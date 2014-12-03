@@ -28,6 +28,7 @@ declare module ol {
         Feature:Feature;
         FeatureOverlay:FeatureOverlay;
         Map:Map;
+        ObjectEvent:ObjectEvent;
         Observable:Observable;
         View:View;
     }
