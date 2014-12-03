@@ -1,8 +1,3 @@
-///ts:ref=DragBox
-/// <reference path="../../../../../ol/interaction/DragBox.ts"/> ///ts:ref:generated
-///ts:ref=Map
-/// <reference path="../../../../../ol/Map.ts"/> ///ts:ref:generated
-
 ///ts:ref=ApplicationState
 /// <reference path="../../ApplicationState.ts"/> ///ts:ref:generated
 ///ts:ref=Module
@@ -123,11 +118,11 @@ module be.vmm.eenvplus.editor.area.mask {
             map.addLayer(maskLayer);
             map.addInteraction(boxInteraction);
 
-            maskLayer.on(ol.Map.EVENT.preCompose, handleMaskComposition);
-            maskLayer.on(ol.Map.EVENT.postCompose, handlePostComposition);
+            maskLayer.on(ol.render.EventType.PRECOMPOSE, handleMaskComposition);
+            maskLayer.on(ol.render.EventType.POSTCOMPOSE, handlePostComposition);
 
-            boxInteraction.once(ol.interaction.DragBox.EVENT.boxStart, startSelecting);
-            boxInteraction.once(ol.interaction.DragBox.EVENT.boxEnd, stopSelecting);
+            boxInteraction.once(ol.DragBoxEventType.BOXSTART, startSelecting);
+            boxInteraction.once(ol.DragBoxEventType.BOXEND, stopSelecting);
         }
 
         /**
@@ -154,13 +149,13 @@ module be.vmm.eenvplus.editor.area.mask {
         }
 
         function startClipping(layer:ol.Observable):void {
-            layer.on(ol.Map.EVENT.preCompose, handleRasterComposition);
-            layer.on(ol.Map.EVENT.postCompose, handlePostComposition);
+            layer.on(ol.render.EventType.PRECOMPOSE, handleRasterComposition);
+            layer.on(ol.render.EventType.POSTCOMPOSE, handlePostComposition);
         }
 
         function stopClipping(layer:ol.Observable):void {
-            layer.un(ol.Map.EVENT.preCompose, handleRasterComposition);
-            layer.un(ol.Map.EVENT.postCompose, handlePostComposition);
+            layer.un(ol.render.EventType.PRECOMPOSE, handleRasterComposition);
+            layer.un(ol.render.EventType.POSTCOMPOSE, handlePostComposition);
         }
 
         /**
@@ -171,8 +166,8 @@ module be.vmm.eenvplus.editor.area.mask {
 
             currentState = State.OFF;
 
-            maskLayer.un(ol.Map.EVENT.preCompose, handleMaskComposition);
-            maskLayer.un(ol.Map.EVENT.postCompose, handlePostComposition);
+            maskLayer.un(ol.render.EventType.PRECOMPOSE, handleMaskComposition);
+            maskLayer.un(ol.render.EventType.POSTCOMPOSE, handlePostComposition);
 
             _(map.getLayers().getArray())
                 .filter('displayInLayerManager')

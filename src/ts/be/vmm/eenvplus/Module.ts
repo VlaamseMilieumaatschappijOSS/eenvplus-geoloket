@@ -8,6 +8,10 @@ module be.vmm.eenvplus {
     export var PREFIX:string = 'ep';
     export var MODULE:string = PREFIX + '_eenvplus';
 
+    export function changeEvent(propertyName:string):string {
+        return 'change:' + propertyName;
+    }
+
     goog.provide(MODULE);
 
     angular.module(MODULE, [

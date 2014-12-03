@@ -23,7 +23,12 @@ declare module ol {
         tilegrid:tilegrid.Static;
 
         CollectionEvent:CollectionEvent;
+        CollectionEventType:CollectionEventType;
+        CollectionProperty:CollectionProperty;
+        DragBoxEvent:DragBoxEvent;
+        DragBoxEventType:DragBoxEventType;
         DrawEvent:DrawEvent;
+        DrawEventType:DrawEventType;
         Extent:Extent;
         Feature:Feature;
         FeatureOverlay:FeatureOverlay;
@@ -31,6 +36,7 @@ declare module ol {
         ObjectEvent:ObjectEvent;
         Observable:Observable;
         View:View;
+        ViewProperty:ViewProperty;
     }
 
     interface Collection<T> extends Object {
@@ -38,11 +44,42 @@ declare module ol {
         getArray():T[];
     }
 
+    interface CollectionEvent extends goog.events.Event {
+    }
+
+    interface CollectionEventType {
+        ADD:string;
+        REMOVE:string;
+    }
+
+    interface CollectionProperty {
+        LENGTH:string;
+    }
+
     interface Coordinate extends Array<number> {
+    }
+
+    interface DragBoxEvent extends goog.events.Event {
+    }
+
+    interface DragBoxEventType {
+        /**
+         * Triggered upon drag box start.
+         */
+        BOXSTART:string;
+        /**
+         * Triggered upon drag box end.
+         */
+        BOXEND:string;
     }
 
     interface DrawEvent extends goog.events.Event {
         feature:Feature;
+    }
+
+    interface DrawEventType {
+        DRAWSTART:string;
+        DRAWEND:string;
     }
 
     interface Extent extends Array<number> {
@@ -125,6 +162,12 @@ declare module ol {
         getResolution():number;
         setCenter(position:ol.Coordinate):void;
         setResolution(value:number):void;
+    }
+
+    interface ViewProperty {
+        CENTER:string;
+        RESOLUTION:string;
+        ROTATION:string;
     }
 
     module control {
@@ -286,11 +329,18 @@ declare module ol {
 
         interface Static {
             Event:Event;
+            EventType:EventType;
         }
 
         interface Event {
             context:CanvasRenderingContext2D;
             frameState:FrameState;
+        }
+
+        interface EventType {
+            POSTCOMPOSE:string;
+            PRECOMPOSE:string;
+            RENDER:string;
         }
 
         interface FrameState {

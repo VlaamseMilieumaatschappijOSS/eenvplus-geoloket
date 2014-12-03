@@ -60,8 +60,8 @@ module be.vmm.eenvplus.applicationState {
         /* -------------------- */
 
         scope.$on(EVENT.modeRequest, handleModeRequest);
-        view.on(ol.ObjectEvent.resolutionChanged, invalidateLevel);
-        layers.on(ol.CollectionEvent.change, setLevelThreshold);
+        view.on(changeEvent(ol.ViewProperty.RESOLUTION), invalidateLevel);
+        layers.on(changeEvent(ol.CollectionProperty.LENGTH), setLevelThreshold);
 
         invalidateViewState();
 

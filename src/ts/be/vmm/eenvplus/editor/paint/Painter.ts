@@ -25,7 +25,7 @@ module be.vmm.eenvplus.editor.paint {
                 //style: style
             });
 
-            unRegisterDrawEnd = interaction.on(ol.DrawEvent.drawEnd, commit);
+            unRegisterDrawEnd = interaction.on(ol.DrawEventType.DRAWEND, commit);
             map.addInteraction(interaction);
         }
 
