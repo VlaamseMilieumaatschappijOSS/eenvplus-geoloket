@@ -59,8 +59,6 @@ module be.vmm.eenvplus.applicationState {
         /* --- construction --- */
         /* -------------------- */
 
-        // not particularly type-safe but it's the easiest way to hook into the main app without touching it
-        scope.$watch('globals.isDrawActive', setMode);
         scope.$on(EVENT.modeRequest, handleModeRequest);
         view.on(ol.ObjectEvent.resolutionChanged, invalidateLevel);
         layers.on(ol.CollectionEvent.change, setLevelThreshold);
@@ -73,7 +71,7 @@ module be.vmm.eenvplus.applicationState {
         /* ---------------------- */
 
         function handleModeRequest(event:ng.IAngularEvent, mode:State):void {
-            scope.globals.isDrawActive = mode === State.EDIT;
+            setMode(mode === State.EDIT);
         }
 
 
