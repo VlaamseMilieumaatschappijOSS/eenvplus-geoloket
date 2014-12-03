@@ -1,14 +1,14 @@
 ///ts:ref=DragBox
-/// <reference path="../../../../ol/interaction/DragBox.ts"/> ///ts:ref:generated
+/// <reference path="../../../../../ol/interaction/DragBox.ts"/> ///ts:ref:generated
 ///ts:ref=Map
-/// <reference path="../../../../ol/Map.ts"/> ///ts:ref:generated
+/// <reference path="../../../../../ol/Map.ts"/> ///ts:ref:generated
 
 ///ts:ref=ApplicationState
-/// <reference path="../ApplicationState.ts"/> ///ts:ref:generated
+/// <reference path="../../ApplicationState.ts"/> ///ts:ref:generated
 ///ts:ref=Module
-/// <reference path="../Module.ts"/> ///ts:ref:generated
+/// <reference path="../../Module.ts"/> ///ts:ref:generated
 
-module be.vmm.eenvplus.editor.mask {
+module be.vmm.eenvplus.editor.area.mask {
     'use strict';
 
     export var NAME:string = PREFIX + 'Mask';

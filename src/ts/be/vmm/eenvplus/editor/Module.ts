@@ -4,6 +4,7 @@
 /// <reference path="../../../../../lib/ts/closure.d.ts"/> ///ts:ref:generated
 ///ts:ref=openlayers
 /// <reference path="../../../../../lib/ts/openlayers.d.ts"/> ///ts:ref:generated
+/// <reference path="area/Module.ts"/>
 /// <reference path="paint/Module.ts"/>
 
 module be.vmm.eenvplus.editor {
@@ -14,6 +15,7 @@ module be.vmm.eenvplus.editor {
     goog.provide(MODULE);
 
     angular.module(MODULE, [
+        area.MODULE,
         paint.MODULE
     ]);
 
