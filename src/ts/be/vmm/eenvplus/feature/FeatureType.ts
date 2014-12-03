@@ -28,6 +28,11 @@ module be.vmm.eenvplus.feature {
         return typeModelMap.indexOf(model);
     }
 
+    export function getLayer(map:ol.Map, type:FeatureType):ol.layer.Vector {
+        var layers = map.getLayers().getArray();
+        return _.where(layers, {values_: {featureType: type}});
+    }
+
     function path(name:string):string {
         return editableModelPackage + '.' + name;
     }

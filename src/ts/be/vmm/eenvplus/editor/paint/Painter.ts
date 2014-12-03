@@ -11,14 +11,8 @@ module be.vmm.eenvplus.editor.paint {
 
         state(type, activate, deactivate);
 
-        function getVectorLayer():ol.layer.Vector {
-            return _.find(map.getLayers().getArray(), (layer:ol.layer.Base):boolean => {
-                return layer.get('featureType') === type;
-            });
-        }
-
         function activate():void {
-            vectorLayer = getVectorLayer();
+            vectorLayer = feature.getLayer(map, type);
             interaction = new ol.interaction.Draw({
                 type: feature.typeDrawTypeMap[type],
                 source: vectorLayer.getSource()//,

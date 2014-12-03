@@ -43,6 +43,7 @@ declare module _ {
         invoke(collection:any, methodName:string, ...args:any[]):any;
         map(collection:any, fn:any, scope?:any):any;
         reduce(collection:any, fn:MemoIterator, accumulator:any, scope?:any):any;
+        where(collection:any, query:Object):any;
     }
 
     interface Chain {
@@ -51,6 +52,7 @@ declare module _ {
         invoke(fn:Function, ...args:any[]):Chain;
         invoke(methodName:string, ...args:any[]):Chain;
         map(fn:any, scope?:any):Chain;
+        where(query:Object):Chain;
     }
 
     /** Functions */
