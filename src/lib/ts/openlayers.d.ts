@@ -117,6 +117,7 @@ declare module ol {
     }
 
     interface View extends Object {
+        constrainResolution(resolution:number, delta?:number, direction?:number):number;
         getCenter():ol.Coordinate;
         getResolution():number;
         setCenter(position:ol.Coordinate):void;
