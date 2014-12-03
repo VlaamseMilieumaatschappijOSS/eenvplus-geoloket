@@ -5,6 +5,7 @@
 ///ts:ref=openlayers
 /// <reference path="../../../../../lib/ts/openlayers.d.ts"/> ///ts:ref:generated
 /// <reference path="area/Module.ts"/>
+/// <reference path="form/Module.ts"/>
 /// <reference path="paint/Module.ts"/>
 
 module be.vmm.eenvplus.editor {
@@ -16,6 +17,7 @@ module be.vmm.eenvplus.editor {
 
     angular.module(MODULE, [
         area.MODULE,
+        form.MODULE,
         paint.MODULE
     ]);
 

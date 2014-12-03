@@ -1,0 +1,23 @@
+@import "../../../../../app";
+
+.ga-full-screen .form-browser {
+  top: 0;
+  bottom: 0;
+}
+
+.form-browser {
+  position: absolute;
+  top: unit(@small-header-height, px);
+  bottom: unit(@footer-height, px);
+  right: 0;
+  width: 300px;
+  overflow-y: auto;
+
+  .panel-group {
+    margin: 0;
+
+    .panel {
+      margin: 0 0 -1px 0;
+    }
+  }
+}
