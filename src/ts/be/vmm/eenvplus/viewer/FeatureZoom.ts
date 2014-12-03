@@ -34,7 +34,7 @@ module be.vmm.eenvplus.viewer {
         function zoom() {
             var resolutions = _(scope.map.getLayers().getArray())
                 .filter('displayInLayerManager')
-                .invoke(ol.layer.Base.prototype.get, 'maxResolution')
+                .invoke(ol.layer.Base.prototype.get, ol.layer.LayerProperty.MAX_RESOLUTION)
                 .value();
             scope.map.getView().setResolution(Math.min.apply(null, resolutions) / 2);
         }

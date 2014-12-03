@@ -82,7 +82,7 @@ module be.vmm.eenvplus.applicationState {
         function setLevelThreshold():void {
             var resolutions = _(scope.map.getLayers().getArray())
                 .filter('displayInLayerManager')
-                .invoke(ol.layer.Base.prototype.get, 'maxResolution')
+                .invoke(ol.layer.Base.prototype.get, ol.layer.LayerProperty.MAX_RESOLUTION)
                 .value();
             threshold = Math.max.apply(null, resolutions);
         }

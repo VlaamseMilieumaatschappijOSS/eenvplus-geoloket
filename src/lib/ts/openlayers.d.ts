@@ -268,6 +268,7 @@ declare module ol {
             Base:Base;
             Image:Image;
             Layer:Layer;
+            LayerProperty:LayerProperty;
             Tile:Tile;
             Vector:Vector;
         }
@@ -292,6 +293,18 @@ declare module ol {
 
         interface LayerOptions {
         }
+
+        interface LayerProperty {
+            BRIGHTNESS:string;
+            CONTRAST:string;
+            HUE:string;
+            OPACITY:string;
+            SATURATION:string;
+            VISIBLE:string;
+            MAX_RESOLUTION:string;
+            MIN_RESOLUTION:string;
+        }
+        ;
 
         interface Tile extends Layer {
             new (options?:LayerOptions):Tile;
