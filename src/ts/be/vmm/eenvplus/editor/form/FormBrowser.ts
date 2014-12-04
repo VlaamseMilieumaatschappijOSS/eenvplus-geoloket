@@ -44,13 +44,13 @@ module be.vmm.eenvplus.editor.form.formBrowser {
             scope.features = features;
         }
 
-        function getLabel(properties:feature.model.FeatureProperties):string {
+        function getLabel(json:feature.model.FeatureJSON):string {
             // TODO get these from .properties
             var typeLabels = ['RioolLink', 'RioolAppurtenance', 'KoppelPunt'],
-                type = feature.toType(properties.layerBodId);
+                type = feature.toType(json.layerBodId);
 
-            if (properties.id)
-                return typeLabels[type] + ' ' + properties.alternatieveId;
+            if (json.id)
+                return typeLabels[type] + ' ' + json.properties.alternatieveId;
             return 'Nieuwe ' + typeLabels[type];
         }
 

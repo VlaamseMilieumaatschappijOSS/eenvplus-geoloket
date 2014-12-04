@@ -3,16 +3,23 @@ module be.vmm.eenvplus.feature.model {
 
     export interface FeatureProperties {
 
-        id:number;
-        key:number;
-        layerBodId:string;
-
         alternatieveId:string;
         beginLifeSpanVersion:number;
         creationDate:number;
         endLifeSpanVersion:number;
         namespaceId:number;
         userId:number;
+
+    }
+
+    export var FeatureProperty = {
+
+        ALTERNATIEVE_ID: 'alternatieveId',
+        BEGIN_LIFESPAN_VERSION: 'beginLifeSpanVersion',
+        CREATION_DATE: 'creationDate',
+        END_LIFESPAN_VERSION: 'endLifeSpanVersion',
+        NAMESPACE_ID: 'namespaceId',
+        USER_ID: 'userId'
 
     }
 

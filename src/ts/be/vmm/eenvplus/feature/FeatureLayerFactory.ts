@@ -40,12 +40,14 @@ module be.vmm.eenvplus.feature {
             function load(extent:ol.Extent):void {
                 service
                     .query(feature.toLayerBodId(type), extent)
-                    .then(function (results) {
-                        source.addFeatures(source.readFeatures({
-                            type: 'FeatureCollection',
-                            features: results
-                        }));
-                    });
+                    .then(addFeatures);
+            }
+
+            function addFeatures(results:ol.format.GeoJSONFeature[]):void {
+                source.addFeatures(source.readFeatures({
+                    type: 'FeatureCollection',
+                    features: results
+                }));
             }
         }
 
@@ -69,8 +71,8 @@ module be.vmm.eenvplus.feature {
                     })
                 })
             });
-            layer.set('layerBodId', feature.toLayerBodId(type));
-            layer.set('featureType', type);
+            layer.set(model.LayerProperty.TYPE_ID, feature.toLayerBodId(type));
+            layer.set(model.LayerProperty.FEATURE_TYPE, type);
             return layer;
         }
     }
