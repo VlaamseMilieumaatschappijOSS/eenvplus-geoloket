@@ -45,8 +45,8 @@ module be.vmm.eenvplus.editor.paint {
             mountPoints.forEach(commitMountPoint);
 
             commitFeature(event.feature)
-                .then((feature:feature.model.FeatureJSON):void => {
-                    scope.$broadcast('featuresSelected', [feature]);
+                .then((json:feature.model.FeatureJSON):void => {
+                    scope.$broadcast(feature.EVENT.selected, [json]);
                 });
         }
 

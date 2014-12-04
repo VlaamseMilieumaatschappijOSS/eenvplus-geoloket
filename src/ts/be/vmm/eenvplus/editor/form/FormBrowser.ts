@@ -38,7 +38,7 @@ module be.vmm.eenvplus.editor.form.formBrowser {
             }
         });
 
-        scope.$on('featuresSelected', (event:ng.IAngularEvent, features:feature.model.FeatureJSON[]) => {
+        scope.$on(feature.EVENT.selected, (event:ng.IAngularEvent, features:feature.model.FeatureJSON[]) => {
             scope.features = features;
         });
 

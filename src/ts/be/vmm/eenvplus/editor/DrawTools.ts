@@ -32,7 +32,7 @@ module be.vmm.eenvplus.editor.drawTools {
             selectAppurtenancePainter: _.partial(selectPainter, feature.FeatureType.APPURTENANCE)
         });
 
-        scope.$on('featuresSelected', _.partial(selectPainter, undefined));
+        scope.$on(feature.EVENT.selected, _.partial(selectPainter, undefined));
 
         function requestEditMode():void {
             rootScope.$broadcast(applicationState.EVENT.modeRequest, applicationState.State.EDIT);
