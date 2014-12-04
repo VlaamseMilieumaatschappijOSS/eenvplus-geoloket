@@ -1,10 +1,10 @@
 ///ts:ref=Feature
-/// <reference path="./Feature.ts"/> ///ts:ref:generated
+/// No file or directory matched name "Feature" ///ts:ref:generated
 
 module be.vmm.eenvplus.feature.model {
     'use strict';
 
-    export interface RioolLink extends Feature {
+    export interface RioolLink extends FeatureProperties {
 
         diameter:number;
         endKoppelPuntId:number;

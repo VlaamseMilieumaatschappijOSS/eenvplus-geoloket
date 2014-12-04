@@ -45,7 +45,7 @@ module be.vmm.eenvplus.editor.paint {
             mountPoints.forEach(commitMountPoint);
 
             commitFeature(event.feature)
-                .then((feature:ol.format.GeoJSONFeature):void => {
+                .then((feature:feature.model.FeatureJSON):void => {
                     scope.$broadcast('featuresSelected', [feature]);
                 });
         }
@@ -56,8 +56,8 @@ module be.vmm.eenvplus.editor.paint {
             });
         }
 
-        function commit(feature:ol.format.GeoJSONFeature):ng.IPromise<ol.format.GeoJSONFeature> {
-            var deferred = q.defer<ol.format.GeoJSONFeature>();
+        function commit(feature:feature.model.FeatureJSON):ng.IPromise<feature.model.FeatureJSON> {
+            var deferred = q.defer<feature.model.FeatureJSON>();
 
             service
                 .create(feature)
@@ -68,19 +68,19 @@ module be.vmm.eenvplus.editor.paint {
 
             function getSavedData(key:number):void {
                 service
-                    .get(feature['layerBodId'], key)
+                    .get(feature.layerBodId, key)
                     .then(deferred.resolve)
                     .catch(console.error);
             }
         }
 
-        function commitFn(type:feature.FeatureType):(feature:ol.Feature) => ng.IPromise<ol.format.GeoJSONFeature> {
+        function commitFn(type:feature.FeatureType):(feature:ol.Feature) => ng.IPromise<feature.model.FeatureJSON> {
             return _.compose(commit, _.partial(toJson, type));
         }
 
-        function toJson(type:feature.FeatureType, newFeature:ol.Feature):ol.format.GeoJSONFeature {
-            var json = vectorLayer.getSource().format.writeFeature(newFeature);
-            json['layerBodId'] = feature.toLayerBodId(type);
+        function toJson(type:feature.FeatureType, newFeature:ol.Feature):feature.model.FeatureJSON {
+            var json = <feature.model.FeatureJSON>vectorLayer.getSource().format.writeFeature(newFeature);
+            json.layerBodId = feature.toLayerBodId(type);
             return json;
         }
 

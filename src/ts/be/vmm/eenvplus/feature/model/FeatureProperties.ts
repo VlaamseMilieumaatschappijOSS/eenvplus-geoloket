@@ -1,7 +1,7 @@
 module be.vmm.eenvplus.feature.model {
     'use strict';
 
-    export interface Feature {
+    export interface FeatureProperties {
 
         id:number;
         key:number;

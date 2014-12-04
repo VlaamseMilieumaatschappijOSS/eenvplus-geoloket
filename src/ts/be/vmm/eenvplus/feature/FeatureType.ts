@@ -7,7 +7,8 @@ module be.vmm.eenvplus.feature {
         MOUNT_POINT
     }
 
-    var editableModelPackage = 'be.vmm.eenvplus.sdi.model';
+    var editableModelPackage = 'be.vmm.eenvplus.sdi.model',
+        bodIdPrefix = 'all:';
 
     export var typeModelMap = [
         path('RioolLink'),
@@ -24,12 +25,16 @@ module be.vmm.eenvplus.feature {
         return _.contains(model, editableModelPackage);
     }
 
+    export function isType(type:FeatureType, model:string):boolean {
+        return toType(model) === type;
+    }
+
     export function toType(model:string):FeatureType {
-        return typeModelMap.indexOf(model);
+        return typeModelMap.indexOf(model.replace(bodIdPrefix, ''));
     }
 
     export function toLayerBodId(type:FeatureType):string {
-        return 'all:' + typeModelMap[type];
+        return bodIdPrefix + typeModelMap[type];
     }
 
     export function getLayer(map:ol.Map, type:FeatureType):ol.layer.Vector {

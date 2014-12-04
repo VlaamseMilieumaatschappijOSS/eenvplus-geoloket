@@ -5,7 +5,7 @@
             <h4 class="panel-title">
                 <a data-toggle="collapse"
                    data-parent="#formBrowser"
-                   href="#featureForm_{{feature.id}}"
+                   href="#featureForm_{{feature.key}}"
                    aria-expanded="true"
                    aria-controls="collapseOne">
                     {{getLabel(feature)}}
@@ -13,12 +13,20 @@
             </h4>
         </header>
 
-        <form id="featureForm_{{feature.id}}"
+        <form id="featureForm_{{feature.key}}"
               class="panel-collapse collapse" ng-class="{in: $first}"
               role="tabpanel">
 
-            <div ep-sewer-form ng-if="isSewer(feature)" data="feature" class="panel-body"></div>
-            <div ep-appurtenance-form ng-if="isAppurtenance(feature)" data="feature" class="panel-body"></div>
+            <div ep-sewer-form
+                 ng-if="isSewer(feature.layerBodId)"
+                 data="feature.properties"
+                 class="panel-body">
+            </div>
+            <div ep-appurtenance-form
+                 ng-if="isAppurtenance(feature.layerBodId)"
+                 data="feature.properties"
+                 class="panel-body">
+            </div>
         </form>
 
         <footer>

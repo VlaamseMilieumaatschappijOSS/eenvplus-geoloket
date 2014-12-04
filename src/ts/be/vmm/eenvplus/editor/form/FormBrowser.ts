@@ -7,10 +7,10 @@ module be.vmm.eenvplus.editor.form.formBrowser {
     export var NAME:string = PREFIX + 'FormBrowser';
 
     interface Scope extends ng.IScope {
-        features:feature.model.Feature[];
-        getLabel(properties:feature.model.Feature):string;
-        isSewer(properties:feature.model.Feature):boolean;
-        isAppurtenance(properties:feature.model.Feature):boolean;
+        features:feature.model.FeatureJSON[];
+        getLabel(properties:feature.model.FeatureJSON):string;
+        isSewer(bodId:string):boolean;
+        isAppurtenance(bodId:string):boolean;
     }
 
     function configure():ng.IDirective {
@@ -28,29 +28,21 @@ module be.vmm.eenvplus.editor.form.formBrowser {
 
         _.merge(scope, {
             getLabel: getLabel,
-            isSewer: (properties:feature.model.Feature): boolean => {
-                return true;
+            isSewer: _.partial(feature.isType, feature.FeatureType.SEWER),
+            isAppurtenance: _.partial(feature.isType, feature.FeatureType.APPURTENANCE),
+            getUser: ():string => {
+                return 'Max';
             },
-            isAppurtenance: (properties:feature.model.Feature): boolean => {
-                return false;
-            },
-            getUser: ():string => { return 'Max';},
-            toDate: (timestamp:number):string => { return timestamp + '' || new Date() +'';}
+            toDate: (timestamp:number):string => {
+                return timestamp + '' || new Date() + '';
+            }
         });
 
-        scope.$on('featuresSelected', (event:ng.IAngularEvent, features:ol.Feature[]) => {
-            setFeatures(features);
+        scope.$on('featuresSelected', (event:ng.IAngularEvent, features:feature.model.FeatureJSON[]) => {
+            scope.features = features;
         });
 
-        function setFeatures(features:ol.Feature[]):void {
-            scope.features = features.map(toProperties);
-        }
-
-        function toProperties(feature:ol.Feature):feature.model.Feature {
-            return feature.get('properties') || {};
-        }
-
-        function getLabel(properties:feature.model.Feature):string {
+        function getLabel(properties:feature.model.FeatureProperties):string {
             // TODO get these from .properties
             var typeLabels = ['RioolLink', 'RioolAppurtenance', 'KoppelPunt'],
                 type = feature.toType(properties.layerBodId);
