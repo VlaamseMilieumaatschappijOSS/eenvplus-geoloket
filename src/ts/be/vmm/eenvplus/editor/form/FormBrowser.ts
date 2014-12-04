@@ -9,6 +9,8 @@ module be.vmm.eenvplus.editor.form.formBrowser {
     interface Scope extends ng.IScope {
         features:feature.model.Feature[];
         getLabel(properties:feature.model.Feature):string;
+        isSewer(properties:feature.model.Feature):boolean;
+        isAppurtenance(properties:feature.model.Feature):boolean;
     }
 
     function configure():ng.IDirective {
@@ -24,7 +26,15 @@ module be.vmm.eenvplus.editor.form.formBrowser {
 
     function FormBrowserController(scope:Scope):void {
 
-        scope.getLabel = getLabel;
+        _.merge(scope, {
+            getLabel: getLabel,
+            isSewer: (properties:feature.model.Feature): boolean => {
+                return true;
+            },
+            isAppurtenance: (properties:feature.model.Feature): boolean => {
+                return false;
+            }
+        });
 
         scope.$on('featuresSelected', (event:ng.IAngularEvent, features:ol.Feature[]) => {
             setFeatures(features);
