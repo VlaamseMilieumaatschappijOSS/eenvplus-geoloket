@@ -36,11 +36,11 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         /* --- construction --- */
         /* -------------------- */
 
-        scope.$on(mask.EVENT.selected, init);
+        scope.$on(mask.EVENT.selected, handle(init));
 
-        function init(event:ng.IAngularEvent, extent:ol.Extent):void {
+        function init(extent:ol.Extent):void {
             features.clear().then(_.partial(load, extent));
-            unRegisterModeChange = scope.$on(applicationState.EVENT.modeChange, handleModeChange);
+            unRegisterModeChange = scope.$on(applicationState.EVENT.modeChange, handle(handleModeChange));
         }
 
 
@@ -77,7 +77,7 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         /* --- event handlers --- */
         /* ---------------------- */
 
-        function handleModeChange(event:ng.IAngularEvent, editMode:applicationState.State):void {
+        function handleModeChange(editMode:applicationState.State):void {
             if (editMode === applicationState.State.VIEW) clear();
         }
 

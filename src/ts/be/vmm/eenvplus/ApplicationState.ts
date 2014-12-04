@@ -59,7 +59,7 @@ module be.vmm.eenvplus.applicationState {
         /* --- construction --- */
         /* -------------------- */
 
-        scope.$on(EVENT.modeRequest, handleModeRequest);
+        scope.$on(EVENT.modeRequest, handle(handleModeRequest));
         view.on(changeEvent(ol.ViewProperty.RESOLUTION), invalidateLevel);
         layers.on(changeEvent(ol.CollectionProperty.LENGTH), setLevelThreshold);
 
@@ -70,7 +70,7 @@ module be.vmm.eenvplus.applicationState {
         /* --- event handlers --- */
         /* ---------------------- */
 
-        function handleModeRequest(event:ng.IAngularEvent, mode:State):void {
+        function handleModeRequest(mode:State):void {
             setMode(mode === State.EDIT);
         }
 

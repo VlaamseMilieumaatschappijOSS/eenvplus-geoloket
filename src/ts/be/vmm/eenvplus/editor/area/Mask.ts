@@ -69,7 +69,7 @@ module be.vmm.eenvplus.editor.area.mask {
             })
         });
 
-        scope.$on(applicationState.EVENT.modeChange, handleModeChange);
+        scope.$on(applicationState.EVENT.modeChange, handle(handleModeChange));
 
 
         /* ---------------------- */
@@ -80,10 +80,9 @@ module be.vmm.eenvplus.editor.area.mask {
          * When edit mode is enabled on the map, the user can start drawing a selection mask.
          * When it is disabled, the selection mask is removed.
          *
-         * @param event
          * @param editMode
          */
-        function handleModeChange(event:ng.IAngularEvent, editMode:applicationState.State):void {
+        function handleModeChange(editMode:applicationState.State):void {
             editMode === applicationState.State.EDIT ? activate() : deactivate();
         }
 

@@ -24,9 +24,9 @@ module be.vmm.eenvplus.editor.area.areaZoom {
             center = _.compose(view.setCenter.bind(view), getCenter),
             zoom = _.compose(view.setResolution.bind(view), getResolution);
 
-        scope.$on(mask.EVENT.selected, centerAndZoom);
+        scope.$on(mask.EVENT.selected, handle(centerAndZoom));
 
-        function centerAndZoom(event:ng.IAngularEvent, extent:ol.Extent):void {
+        function centerAndZoom(extent:ol.Extent):void {
             center(extent);
             zoom(extent);
         }

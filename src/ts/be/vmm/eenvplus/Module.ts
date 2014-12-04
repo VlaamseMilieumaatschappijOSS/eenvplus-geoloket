@@ -12,6 +12,16 @@ module be.vmm.eenvplus {
         return 'change:' + propertyName;
     }
 
+    export function handle(handler:Function, stop:boolean = false):(event:ng.IAngularEvent, ...args:any[]) => any {
+        return function handleEvent(event:ng.IAngularEvent, ...args:any[]):any {
+            if (stop) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            handler.apply(null, Array.prototype.slice.call(arguments, 1));
+        }
+    }
+
     goog.provide(MODULE);
 
     angular.module(MODULE, [

@@ -15,9 +15,9 @@ module be.vmm.eenvplus.editor.paint {
         return function PainterState(type:feature.FeatureType, activate:() => void, deactivate:() => void):void {
             var isActive:boolean = false;
 
-            app.$on(EVENT.selected, handlePainterSelection);
+            app.$on(EVENT.selected, handle(handlePainterSelection));
 
-            function handlePainterSelection(event:ng.IAngularEvent, newType:feature.FeatureType):void {
+            function handlePainterSelection(newType:feature.FeatureType):void {
                 type === newType ? handleActivation() : handleDeactivation();
             }
 
