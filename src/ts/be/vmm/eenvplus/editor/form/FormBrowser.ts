@@ -7,7 +7,8 @@ module be.vmm.eenvplus.editor.form.formBrowser {
     export var NAME:string = PREFIX + 'FormBrowser';
 
     interface Scope extends ng.IScope {
-        features:ol.Feature[];
+        features:feature.model.Feature[];
+        getLabel(properties:feature.model.Feature):string;
     }
 
     function configure():ng.IDirective {
@@ -23,12 +24,30 @@ module be.vmm.eenvplus.editor.form.formBrowser {
 
     function FormBrowserController(scope:Scope):void {
 
-        _.merge(scope, {
-            features: [
-                { bodId: 'A' },
-                { bodId: 'B' }
-            ]
+        scope.getLabel = getLabel;
+
+        scope.$on('featuresSelected', (event:ng.IAngularEvent, features:ol.Feature[]) => {
+            setFeatures(features);
         });
+
+        function setFeatures(features:ol.Feature[]):void {
+            console.log(features);
+            scope.features = features.map(toProperties);
+        }
+
+        function toProperties(feature:ol.Feature):feature.model.Feature {
+            return feature.get('properties') || {};
+        }
+
+        function getLabel(properties:feature.model.Feature):string {
+            // TODO get these from .properties
+            var typeLabels = ['RioolLink', 'RioolAppurtenance', 'KoppelPunt'],
+                type = feature.toType(properties.layerBodId);
+
+            if (properties.id)
+                return typeLabels[type] + ' ' + properties.alternatieveId;
+            return 'Nieuwe ' + typeLabels[type];
+        }
 
     }
 

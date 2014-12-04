@@ -3,6 +3,10 @@ module be.vmm.eenvplus.feature.model {
 
     export interface Feature {
 
+        id:number;
+        key:number;
+        layerBodId:string;
+
         alternatieveId:string;
         beginLifeSpanVersion:number;
         creationDate:number;

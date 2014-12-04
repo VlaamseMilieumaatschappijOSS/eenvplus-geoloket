@@ -42,6 +42,7 @@ module be.vmm.eenvplus.editor.paint {
             mountPoints
                 .concat([event.feature])
                 .forEach(commit);
+            scope.$broadcast('featuresSelected', [event.feature]);
         }
 
         function createPoint(coordinates:ol.Coordinate):ol.Feature {
@@ -51,7 +52,9 @@ module be.vmm.eenvplus.editor.paint {
         }
 
         function commit(feature:ol.Feature):void {
-            var json = vectorLayer.getSource().format.writeFeature(feature);
+            var json = vectorLayer.getSource().format.writeFeature(feature),
+                type = vectorLayer.get('featureType');
+
             service
                 .create(json, type)
                 .catch(console.error);

@@ -5,15 +5,15 @@
             <h4 class="panel-title">
                 <a data-toggle="collapse"
                    data-parent="#formBrowser"
-                   href="#featureForm_{{feature.bodId}}"
+                   href="#featureForm_{{feature.id}}"
                    aria-expanded="true"
                    aria-controls="collapseOne">
-                    {{feature.bodId}}
+                    {{getLabel(feature)}}
                 </a>
             </h4>
         </header>
 
-        <form id="featureForm_{{feature.bodId}}"
+        <form id="featureForm_{{feature.id}}"
               class="panel-collapse collapse" ng-class="{in: $first}"
               role="tabpanel">
 

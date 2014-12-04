@@ -132,6 +132,8 @@ declare module ol {
     }
 
     interface Object extends Observable {
+        get(key:string):any;
+        set(key:string, value:any):any;
     }
 
     interface ObjectEvent extends goog.events.Event {
@@ -290,8 +292,6 @@ declare module ol {
         interface Base extends Object {
             prototype:Base;
 
-            get(key:string):any;
-            set(key:string, value:any):any;
             setVisible(value:boolean):void;
         }
 
