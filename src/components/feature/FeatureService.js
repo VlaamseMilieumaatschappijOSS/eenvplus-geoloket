@@ -139,15 +139,14 @@
 				
 				return d.promise;
 			},
-			"get" : function(layerBodId, featureId) {
+			"get" : function(layerBodId, key) {
 				var d = $q.defer();
 				var type = getType(layerBodId);
 				
 				db.then(function(db) {
 					var objectStore = db.transaction(type).objectStore(type);
-					var index = objectStore.index("featureId");
 					
-					var request = index.get(featureId);
+					var request = objectStore.get(key);
 					request.onsuccess = function(event) {
 						var feature = event.target.result;
 						if (feature && !feature.deleted) {
