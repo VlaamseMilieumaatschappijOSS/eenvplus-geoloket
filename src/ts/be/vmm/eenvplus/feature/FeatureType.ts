@@ -16,9 +16,10 @@ module be.vmm.eenvplus.feature {
         path('KoppelPunt')
     ];
 
-    export var typeDrawTypeMap = [
-        'LineString',
-        'Point'
+    export var typeDrawModeMap = [
+        ol.interaction.DrawMode.LINE_STRING,
+        ol.interaction.DrawMode.POINT,
+        ol.interaction.DrawMode.POINT
     ];
 
     export function isEditable(model:string):boolean {
@@ -50,6 +51,6 @@ module be.vmm.eenvplus.feature {
         .module(MODULE)
         .constant('FeatureType', FeatureType)
         .constant('typeModelMap', typeModelMap)
-        .constant('typeDrawTypeMap', typeDrawTypeMap);
+        .constant('typeDrawTypeMap', typeDrawModeMap);
 
 }

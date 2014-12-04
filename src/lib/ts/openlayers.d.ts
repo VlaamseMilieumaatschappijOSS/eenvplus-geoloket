@@ -258,6 +258,7 @@ declare module ol {
         interface Static {
             DragBox:DragBox;
             Draw:Draw;
+            DrawMode:DrawMode;
         }
 
         interface DragBox extends Pointer {
@@ -268,6 +269,12 @@ declare module ol {
 
         interface Draw extends Pointer {
             new (config:any):Draw;
+        }
+
+        interface DrawMode {
+            POINT:string;
+            LINE_STRING:string;
+            POLYGON:string;
         }
 
         interface Interaction extends Observable {

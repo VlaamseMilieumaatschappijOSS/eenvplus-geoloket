@@ -18,7 +18,7 @@ module be.vmm.eenvplus.editor.paint {
             vectorLayer = feature.getLayer(map, type);
             mountPointLayer = feature.getLayer(map, feature.FeatureType.MOUNT_POINT);
             interaction = new ol.interaction.Draw({
-                type: feature.typeDrawTypeMap[type],
+                type: feature.typeDrawModeMap[type],
                 source: vectorLayer.getSource()//,
                 //style: style
             });
