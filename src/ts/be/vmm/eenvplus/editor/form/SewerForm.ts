@@ -52,7 +52,7 @@ module be.vmm.eenvplus.editor.form.sewerForm {
             ]
         });
 
-        scope.data = scope.data || {};
+        scope.data = scope.data || <feature.model.RioolLink> {};
         scope.selectedSource = _.find(scope.sources, {id: scope.data.namespaceId});
 
     }
