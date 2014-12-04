@@ -17,9 +17,13 @@
               class="panel-collapse collapse" ng-class="{in: $first}"
               role="tabpanel">
 
-            <div ep-sewer-form ng-if="isSewer(feature)" class="panel-body"></div>
-            <div ep-appurtenance-form ng-if="isAppurtenance(feature)" class="panel-body"></div>
+            <div ep-sewer-form ng-if="isSewer(feature)" data="feature" class="panel-body"></div>
+            <div ep-appurtenance-form ng-if="isAppurtenance(feature)" data="feature" class="panel-body"></div>
         </form>
+
+        <footer>
+            Last update by {{getUser(feature)}} on {{toDate(feature.beginLifeSpanVersion)}}
+        </footer>
 
     </section>
 </div>

@@ -7,15 +7,17 @@ module be.vmm.eenvplus.editor.form.appurtenanceForm {
     export var NAME:string = PREFIX + 'AppurtenanceForm';
 
     interface Scope extends ng.IScope {
-
+        data:feature.model.RioolAppurtenance;
     }
 
     function configure():ng.IDirective {
         return {
             restrict: 'A',
-            scope: {},
+            scope: {
+                data: '='
+            },
             controller: AppurtenanceFormController,
-            templateUrl: 'AppurtenanceForm.html'
+            templateUrl: 'html/be/vmm/eenvplus/editor/form/AppurtenanceForm.html'
         };
     }
 

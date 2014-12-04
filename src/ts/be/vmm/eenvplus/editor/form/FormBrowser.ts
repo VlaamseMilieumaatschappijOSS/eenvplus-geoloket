@@ -33,7 +33,9 @@ module be.vmm.eenvplus.editor.form.formBrowser {
             },
             isAppurtenance: (properties:feature.model.Feature): boolean => {
                 return false;
-            }
+            },
+            getUser: ():string => { return 'Max';},
+            toDate: (timestamp:number):string => { return timestamp + '' || new Date();}
         });
 
         scope.$on('featuresSelected', (event:ng.IAngularEvent, features:ol.Feature[]) => {
@@ -41,7 +43,6 @@ module be.vmm.eenvplus.editor.form.formBrowser {
         });
 
         function setFeatures(features:ol.Feature[]):void {
-            console.log(features);
             scope.features = features.map(toProperties);
         }
 

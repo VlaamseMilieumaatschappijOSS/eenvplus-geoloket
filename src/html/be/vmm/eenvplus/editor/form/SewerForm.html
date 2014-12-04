@@ -1,1 +1,48 @@
-SEWER
+<label>
+    Source
+    <select ng-model="selectedSource"
+            ng-options="source as source.label for source in sources">
+    </select>
+</label>
+
+<label>
+    Source ID
+    <input type="text" ng-model="data.alternatieveId"/>
+</label>
+
+<label>
+    Label
+    <input type="text" ng-model="data.label"/>
+</label>
+
+<label>
+    Diameter
+    <input type="number" min="0" max="10" maxLength="2" ng-model="data.diameter"/>
+</label>
+
+<label>
+    Pressure
+    <input type="number" min="0" max="9" maxLength="1" ng-model="data.pressure"/>
+</label>
+
+<label>
+    Sewer type
+    <select ng-model="selectedType"
+            ng-options="type as type.label for type in types">
+    </select>
+</label>
+
+<label>
+    Water type
+    <select ng-model="selectedWaterType"
+            ng-options="type as type.label for type in waterTypes">
+    </select>
+</label>
+
+<label>
+    Status
+</label>
+
+<label>
+    Street
+</label>
