@@ -7,8 +7,6 @@
 	var IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
 	var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
 	
-	var TRUE = "t";
-	
 	function getType(layerBodId) {
 		var index = layerBodId.indexOf(':');
 		if (index > 0)
@@ -83,16 +81,15 @@
 		var db = (function() {
 			var d = $q.defer();
 
-			var openRequest = indexedDB.open("Feature", 2);
+			var openRequest = indexedDB.open("Feature", 3);
 			openRequest.onupgradeneeded = function(event) {
 				  var db = event.target.result;
 				  for (var i = 0; i < types.length; i++) {
 					  var type = types[i];
 					  if(!db.objectStoreNames.contains(type)) {
 						  var objectStore = db.createObjectStore(type, { keyPath: "key", autoIncrement: true });
-						  objectStore.createIndex("featureId", "featureId", { unique: true });
-						  objectStore.createIndex("modified", "modified", { unique: false });
-						  objectStore.createIndex("deleted", "deleted", { unique: false });
+						  objectStore.createIndex("id", "id", { unique: true });
+						  objectStore.createIndex("action", "action", { unique: false });
 					  }
 				  }
 			};
@@ -123,7 +120,7 @@
 						var cursor = event.target.result;
 						if (cursor) {
 							var feature = cursor.value;
-							if (feature && !feature.deleted) {
+							if (feature && feature.action != "delete") {
 								if(ol.extent.intersects(extent, feature.geometry.bbox))
 									results.push(cursor.value);
 								cursor.continue();
@@ -149,7 +146,7 @@
 					var request = objectStore.get(key);
 					request.onsuccess = function(event) {
 						var feature = event.target.result;
-						if (feature && !feature.deleted) {
+						if (feature && feature.action != "delete") {
 							d.resolve(feature);
 						} else {
 							d.resolve(null);
@@ -167,10 +164,11 @@
 				var type = getType(feature.layerBodId);
 				
 				db.then(function(db) {
-					feature.modified = TRUE;
 					addBbox(feature);
 					
 					var objectStore = db.transaction(type, "readwrite").objectStore(type);
+					
+					feature.action = "create";
 					
 					var request = objectStore.add(feature);
 					request.onsuccess = function(event) {
@@ -188,10 +186,11 @@
 				var type = getType(feature.layerBodId);
 				
 				db.then(function(db) {
-					feature.modified = TRUE;
 					addBbox(feature);
 					
 					var objectStore = db.transaction(type, "readwrite").objectStore(type);
+					
+					feature.action = feature.id ? "update" : "create";
 					
 					var request = objectStore.put(feature);
 					request.onsuccess = d.resolve;
@@ -207,12 +206,19 @@
 				var type = getType(feature.layerBodId);
 				
 				db.then(function(db) {
-					feature.modified = TRUE;
-					feature.deleted = TRUE;
+					
 					
 					var objectStore = db.transaction(type, "readwrite").objectStore(type);
 					
-					var request = objectStore.put(feature);
+					var request;
+					if (feature.id) {
+						feature.action = "delete";
+						request = objectStore.put(feature);
+						
+					} else {
+						request = objectStore.delete(feature.key);
+					}
+
 					request.onsuccess = d.resolve;
 					request.onerror = function(event) {
 						d.reject("Could not delete feature in local storage.");
@@ -258,9 +264,9 @@
 							var type = types[i++];
 							
 							var objectStore = transaction.objectStore(type);
-							var index = objectStore.index("modified");
+							var index = objectStore.index("action");
 							
-							var request = index.getKey(TRUE);
+							var request = index.getKey(IDBKeyRange.lowerBound("0"));
 							request.onsuccess = function(event) {
 								if (event.target.result != null) {
 									d.resolve(true);
@@ -281,6 +287,7 @@
 				return d.promise;
 			},
 			"modifications": function() {
+				
 				var d = $q.defer();
 				
 				db.then(function(db) {
@@ -293,9 +300,9 @@
 							var type = types[i++];
 							
 							var objectStore = transaction.objectStore(type);
-							var index = objectStore.index("modified");
+							var index = objectStore.index("action");
 							
-							var request = index.openCursor(IDBKeyRange.only(TRUE));
+							var request = index.openCursor(IDBKeyRange.lowerBound("0"));
 							request.onsuccess = function(event) {
 								var cursor = event.target.result;
 								if (cursor) {
@@ -331,13 +338,13 @@
 							var feature = features[i++];
 							var type = getType(feature.layerBodId);
 							
-							addBbox(feature);
-							
 							var objectStore = transaction.objectStore(type);
-							var index = objectStore.index("featureId");
+							var index = objectStore.index("id");
 							
-							var request = index.getKey(feature.featureId);
+							var request = index.getKey(feature.id);
 							request.onsuccess = function(event) {
+								addBbox(feature);
+								
 								var key = event.target.result;
 								var request;
 								if (key) {
@@ -349,16 +356,16 @@
 								}
 								request.onsuccess = next;
 								request.onerror = function(event) {
-									d.reject("Could not update modified features in local storage.");
+									d.reject("Could not merge features in local storage.");
 								};
 							};
 							request.onerror = function(event) {
-								d.reject("Could not update modified features in local storage.");
+								d.reject("Could not merge features in local storage.");
 							};
 						} else {
 							d.resolve();
 						}
-					} 
+					};
 					next();
 				});
 				
@@ -384,8 +391,48 @@
 				var d = $q.defer();
 				
 				this.modifications().then(function(results) {
-					$http.post(featureManager.apiUrl + "/rest/services/api/MapServer/push", results).success(function(messages) {
-						d.resolve(messages);
+					$http.post(featureManager.apiUrl + "/rest/services/api/MapServer/push", results).success(function(report) {
+						
+						if (report.completed) {
+							db.then(function(db) {
+								var results = report.results;
+								
+								var transaction = db.transaction(types, "readwrite");
+								var i = 0;
+								var next = function() {
+									if (i < results.length) {
+										var result = results[i++];
+										var type = getType(result.layerBodId);
+										
+										var objectStore = transaction.objectStore(type);
+										
+										var key = result.key;
+										var request;
+										if (result.action == "create" || result.action == "update") {
+											var feature = result.feature;
+											feature.key = key;
+											addBbox(feature);
+											request = objectStore.put(feature);
+										} else if (result.action == "delete") {
+											request = objectStore.delete(key);
+										}
+										if (request) {
+											request.onsuccess = next;
+											request.onerror = function(event) {
+												d.reject("Could not merge modified features in local storage.");
+											};
+										} else {
+											next();
+										}
+									} else {
+										d.resolve(report);
+									}
+								};
+								next();
+							});
+						} else {
+							d.resolve(report);
+						}
 					}).error(function() {
 						d.reject("Could not push features.");
 					});
@@ -397,8 +444,8 @@
 				var d = $q.defer();
 				
 				this.modifications().then(function(results) {
-					$http.post(featureManager.apiUrl + "/rest/services/api/MapServer/test", results).success(function(messages) {
-						d.resolve(messages);
+					$http.post(featureManager.apiUrl + "/rest/services/api/MapServer/test", results).success(function(report) {
+						d.resolve(report);
 					}).error(function() {
 						d.reject("Could not test features.");
 					});
