@@ -15,6 +15,7 @@ module be.vmm.eenvplus.applicationState {
     export enum State {
         VIEW,
         EDIT,
+        FEATURE_SELECTED,
         OVERVIEW,
         DETAIL
     }
@@ -22,6 +23,7 @@ module be.vmm.eenvplus.applicationState {
     var stateCls = [
         'view',
         'edit',
+        'feature-selected',
         'overview',
         'detail'
     ];
@@ -50,6 +52,7 @@ module be.vmm.eenvplus.applicationState {
             layers = scope.map.getLayers(),
             currentState = {
                 mode: State.VIEW,
+                featureSelected: -1,
                 level: State.OVERVIEW
             },
             threshold:number;
@@ -60,6 +63,7 @@ module be.vmm.eenvplus.applicationState {
         /* -------------------- */
 
         scope.$on(EVENT.modeRequest, handle(handleModeRequest));
+        scope.$on(feature.EVENT.selected, handle(invalidateFeatureSelection));
         view.on(changeEvent(ol.ViewProperty.RESOLUTION), invalidateLevel);
         layers.on(changeEvent(ol.CollectionProperty.LENGTH), setLevelThreshold);
 
@@ -103,6 +107,11 @@ module be.vmm.eenvplus.applicationState {
             if (level === currentState.level) return;
 
             scope.$broadcast(EVENT.levelChange, currentState.level = level);
+            invalidateViewState();
+        }
+
+        function invalidateFeatureSelection(features:feature.model.FeatureJSON[]):void {
+            currentState.featureSelected = features && features.length ? State.FEATURE_SELECTED : -1;
             invalidateViewState();
         }
 
