@@ -4,9 +4,12 @@ module be.vmm.eenvplus.editor.paint {
     export function Painter(type:feature.FeatureType,
                             scope:ApplicationScope,
                             state:PainterState,
-                            service:feature.FeatureService):void {
+                            service:feature.FeatureService,
+                            q:ng.IQService):void {
 
         var map = scope.map,
+            commitFeature = commitFn(type),
+            commitMountPoint = commitFn(feature.FeatureType.MOUNT_POINT),
             vectorLayer, mountPointLayer, interaction, unRegisterDrawEnd;
 
         state(type, activate, deactivate);
@@ -39,10 +42,12 @@ module be.vmm.eenvplus.editor.paint {
             mountPointLayer
                 .getSource()
                 .addFeatures(mountPoints);
-            mountPoints
-                .concat([event.feature])
-                .forEach(commit);
-            scope.$broadcast('featuresSelected', [event.feature]);
+            mountPoints.forEach(commitMountPoint);
+
+            commitFeature(event.feature)
+                .then((feature:ol.format.GeoJSONFeature):void => {
+                    scope.$broadcast('featuresSelected', [feature]);
+                });
         }
 
         function createPoint(coordinates:ol.Coordinate):ol.Feature {
@@ -51,15 +56,31 @@ module be.vmm.eenvplus.editor.paint {
             });
         }
 
-        function commit(feature:ol.Feature):void {
+        function commit(feature:ol.format.GeoJSONFeature):ng.IPromise<ol.format.GeoJSONFeature> {
+            var deferred = q.defer<ol.format.GeoJSONFeature>();
+
             service
-                .create(toJson(feature))
+                .create(feature)
+                .then(getSavedData)
                 .catch(console.error);
+
+            return deferred.promise;
+
+            function getSavedData(key:number):void {
+                service
+                    .get(feature['layerBodId'], key)
+                    .then(deferred.resolve)
+                    .catch(console.error);
+            }
         }
 
-        function toJson(newFeature:ol.Feature):ol.format.GeoJSONFeature {
+        function commitFn(type:feature.FeatureType):(feature:ol.Feature) => ng.IPromise<ol.format.GeoJSONFeature> {
+            return _.compose(commit, _.partial(toJson, type));
+        }
+
+        function toJson(type:feature.FeatureType, newFeature:ol.Feature):ol.format.GeoJSONFeature {
             var json = vectorLayer.getSource().format.writeFeature(newFeature);
-            json['layerBodId'] = feature.toLayerBodId(vectorLayer.get('featureType'));
+            json['layerBodId'] = feature.toLayerBodId(type);
             return json;
         }
 

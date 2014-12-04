@@ -6,9 +6,9 @@ module be.vmm.eenvplus.feature {
         apiUrl:string;
 
         clear():ng.IPromise<void>;
-        create(feature:ol.format.GeoJSONFeature):ng.IPromise<void>;
+        create(feature:ol.format.GeoJSONFeature):ng.IPromise<number>;
         dirty():ng.IPromise<boolean>;
-        get(layerBodId:string, featureId:number):ng.IPromise<ol.format.GeoJSONFeature>;
+        get(layerBodId:string, key:number):ng.IPromise<ol.format.GeoJSONFeature>;
         pull(bbox?:ol.Extent):ng.IPromise<void>;
         push():ng.IPromise<any>;
         query(layerBodId:string, extent:ol.Extent):ng.IPromise<ol.format.GeoJSONFeature[]>;

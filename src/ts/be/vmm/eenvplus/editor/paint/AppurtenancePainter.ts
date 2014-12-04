@@ -11,7 +11,7 @@ module be.vmm.eenvplus.editor.paint.appurtenancePainter {
     export var NAME:string = PREFIX + 'AppurtenancePainter';
 
     var controller = _.partial(Painter, feature.FeatureType.APPURTENANCE);
-    controller.$inject = ['$scope', 'epPainterState', 'gaFeatureManager'];
+    controller.$inject = ['$scope', 'epPainterState', 'gaFeatureManager', '$q'];
 
     function configure():ng.IDirective {
         return {
