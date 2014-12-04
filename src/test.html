@@ -47,9 +47,29 @@
 			app.controller('TestController', function($scope, gaFeatureManager) {
 				$scope.test = "";
 				gaFeatureManager.pull([154200, 172800, 154300, 172900]).then(function(){
-					gaFeatureManager.query('be.vmm.eenvplus.sdi.model.KoppelPunt', [154200, 172800, 154300, 172900]).then(function(results) {
+					gaFeatureManager.query("be.vmm.eenvplus.sdi.model.KoppelPunt", [154200, 172800, 154300, 172900]).then(function(results) {
+						gaFeatureManager.update({
+								"layerBodId":"all:be.vmm.eenvplus.sdi.model.RioolAppurtenance",
+								"properties":{},
+									"id":123,
+									"type":"Feature",
+									"featureId":123,
+									"geometry":{"type":"Point","coordinates":[162612.99049087756,179311.04204248823],"crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:EPSG:31370"}}}
+							}
+						);
+						
+						gaFeatureManager.test().then(function(r){
+							alert(r);
+						},function(r){
+							alert(r);
+						});
+						
 						$scope.test = results.length;
+						
+						
+						
 						$scope.$apply();
+						
 					});
 				});
 			});
