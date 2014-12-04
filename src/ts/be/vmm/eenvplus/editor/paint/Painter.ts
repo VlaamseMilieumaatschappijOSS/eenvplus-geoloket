@@ -52,12 +52,15 @@ module be.vmm.eenvplus.editor.paint {
         }
 
         function commit(feature:ol.Feature):void {
-            var json = vectorLayer.getSource().format.writeFeature(feature),
-                type = vectorLayer.get('featureType');
-
             service
-                .create(json, type)
+                .create(toJson(feature))
                 .catch(console.error);
+        }
+
+        function toJson(newFeature:ol.Feature):ol.format.GeoJSONFeature {
+            var json = vectorLayer.getSource().format.writeFeature(newFeature);
+            json['layerBodId'] = feature.toLayerBodId(vectorLayer.get('featureType'));
+            return json;
         }
 
         function deactivate():void {

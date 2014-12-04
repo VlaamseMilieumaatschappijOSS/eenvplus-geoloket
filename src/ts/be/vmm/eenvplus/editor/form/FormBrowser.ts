@@ -35,7 +35,7 @@ module be.vmm.eenvplus.editor.form.formBrowser {
                 return false;
             },
             getUser: ():string => { return 'Max';},
-            toDate: (timestamp:number):string => { return timestamp + '' || new Date();}
+            toDate: (timestamp:number):string => { return timestamp + '' || new Date() +'';}
         });
 
         scope.$on('featuresSelected', (event:ng.IAngularEvent, features:ol.Feature[]) => {

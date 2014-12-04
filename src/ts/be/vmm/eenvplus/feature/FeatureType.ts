@@ -28,6 +28,10 @@ module be.vmm.eenvplus.feature {
         return typeModelMap.indexOf(model);
     }
 
+    export function toLayerBodId(type:FeatureType):string {
+        return 'all:' + typeModelMap[type];
+    }
+
     export function getLayer(map:ol.Map, type:FeatureType):ol.layer.Vector {
         var layers = map.getLayers().getArray();
         return _.where(layers, {values_: {featureType: type}})[0];

@@ -39,7 +39,7 @@ module be.vmm.eenvplus.feature {
 
             function load(extent:ol.Extent):void {
                 service
-                    .query(type, extent)
+                    .query(feature.toLayerBodId(type), extent)
                     .then(function (results) {
                         source.addFeatures(source.readFeatures({
                             type: 'FeatureCollection',
@@ -69,6 +69,7 @@ module be.vmm.eenvplus.feature {
                     })
                 })
             });
+            layer.set('layerBodId', feature.toLayerBodId(type));
             layer.set('featureType', type);
             return layer;
         }
