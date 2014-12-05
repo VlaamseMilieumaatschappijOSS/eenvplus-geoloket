@@ -27,11 +27,16 @@
                  data="feature.properties"
                  class="panel-body">
             </div>
-        </form>
 
-        <footer>
-            Last update by {{feature.userId | epUserName}} on {{feature.beginLifeSpanVersion | epDate}}
-        </footer>
+            <div class="metadata">
+                Last update by {{feature.userId | epUserName}} on {{feature.beginLifeSpanVersion | epDate}}
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-danger" ng-click="discard(feature)">Discard</button>
+                <button class="btn btn-success" ng-click="commit(feature)">Accept</button>
+            </div>
+        </form>
 
     </section>
 </div>
