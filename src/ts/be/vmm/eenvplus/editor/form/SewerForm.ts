@@ -8,12 +8,12 @@ module be.vmm.eenvplus.editor.form.sewerForm {
 
     interface Scope extends ng.IScope {
         data:feature.model.RioolLink;
-        selectedSource:Label;
-        sources:Label[];
-        selectedType:Label;
-        types:Label[];
-        selectedWaterType:Label;
-        waterTypes:Label[];
+        selectedSource:label.Label;
+        sources:Array<label.Label>;
+        selectedType:label.Label;
+        types:Array<label.Label>;
+        selectedWaterType:label.Label;
+        waterTypes:Array<label.Label>;
     }
 
     function configure():ng.IDirective {
@@ -27,33 +27,18 @@ module be.vmm.eenvplus.editor.form.sewerForm {
         };
     }
 
-    SewerFormController.$inject = ['$scope'];
+    SewerFormController.$inject = ['$scope', 'epLabelService'];
 
-    function SewerFormController(scope:Scope):void {
+    function SewerFormController(scope:Scope, labelService:label.LabelService):void {
 
-        _.merge(scope, {
-            sources: [
-                {id: 1, label: 'Aquafin'},
-                {id: 2, label: 'Gemeente'},
-                {id: 3, label: 'Andere'},
-                {id: 4, label: 'Privé'}
-            ],
-            types: [
-                {id: 1, label: 'ConnectionStreng'},
-                {id: 2, label: 'gravity duct'},
-                {id: 3, label: 'pressure duct'},
-                {id: 4, label: 'ditch'}
-            ],
-            waterTypes: [
-                {id: 1, label: 'combined'},
-                {id: 2, label: 'reclaimed'},
-                {id: 3, label: 'sanitary'},
-                {id: 4, label: 'storm'}
-            ]
-        });
+        scope.sources = labelService.getLabels(label.LabelType.SOURCE);
+        scope.types = labelService.getLabels(label.LabelType.SEWER_TYPE);
+        scope.waterTypes = labelService.getLabels(label.LabelType.WATER_TYPE);
 
         scope.data = scope.data || <feature.model.RioolLink> {};
         scope.selectedSource = _.find(scope.sources, {id: scope.data.namespaceId});
+        scope.selectedType = _.find(scope.types, {id: scope.data.rioolLinkTypeId});
+        scope.selectedWaterType = _.find(scope.waterTypes, {id: scope.data.sewerWaterTypeId});
 
     }
 

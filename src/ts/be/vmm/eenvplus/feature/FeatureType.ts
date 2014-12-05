@@ -11,10 +11,10 @@ module be.vmm.eenvplus.feature {
         bodIdPrefix = 'all:';
 
     export var typeModelMap = [
-        path('RioolLink'),
-        path('RioolAppurtenance'),
-        path('KoppelPunt')
-    ];
+        'RioolLink',
+        'RioolAppurtenance',
+        'KoppelPunt'
+    ].map(path);
 
     export var typeDrawModeMap = [
         ol.interaction.DrawMode.LINE_STRING,

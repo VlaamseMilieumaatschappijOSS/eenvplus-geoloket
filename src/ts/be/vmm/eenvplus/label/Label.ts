@@ -1,4 +1,4 @@
-module be.vmm.eenvplus.editor.form {
+module be.vmm.eenvplus.label {
     'use strict';
 
     export interface Label {
