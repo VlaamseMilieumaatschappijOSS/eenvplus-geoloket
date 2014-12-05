@@ -51,6 +51,7 @@ module be.vmm.eenvplus.feature {
         .module(MODULE)
         .constant('FeatureType', FeatureType)
         .constant('typeModelMap', typeModelMap)
-        .constant('typeDrawTypeMap', typeDrawModeMap);
+        .constant('typeDrawTypeMap', typeDrawModeMap)
+        .filter(PREFIX + 'IsFeatureType', factory(shiftData(isType)));
 
 }

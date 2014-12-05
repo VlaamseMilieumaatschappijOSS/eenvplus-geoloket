@@ -8,9 +8,7 @@ module be.vmm.eenvplus.editor.form.formBrowser {
 
     interface Scope extends ng.IScope {
         features:feature.model.FeatureJSON[];
-        getLabel(properties:feature.model.FeatureJSON):string;
-        isSewer(bodId:string):boolean;
-        isAppurtenance(bodId:string):boolean;
+        featureType:feature.FeatureType;
     }
 
     function configure():ng.IDirective {
@@ -27,31 +25,13 @@ module be.vmm.eenvplus.editor.form.formBrowser {
     function FormBrowserController(scope:Scope):void {
 
         _.merge(scope, {
-            getLabel: getLabel,
-            isSewer: _.partial(feature.isType, feature.FeatureType.SEWER),
-            isAppurtenance: _.partial(feature.isType, feature.FeatureType.APPURTENANCE),
-            getUser: ():string => {
-                return 'Max';
-            },
-            toDate: (timestamp:number):string => {
-                return timestamp + '' || new Date() + '';
-            }
+            featureType: feature.FeatureType
         });
 
         scope.$on(feature.EVENT.selected, handle(setFeatures));
 
         function setFeatures(features:feature.model.FeatureJSON[]):void{
             scope.features = features;
-        }
-
-        function getLabel(json:feature.model.FeatureJSON):string {
-            // TODO get these from .properties
-            var typeLabels = ['RioolLink', 'RioolAppurtenance', 'KoppelPunt'],
-                type = feature.toType(json.layerBodId);
-
-            if (json.id)
-                return typeLabels[type] + ' ' + json.properties.alternatieveId;
-            return 'Nieuwe ' + typeLabels[type];
         }
 
     }

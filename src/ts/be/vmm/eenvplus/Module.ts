@@ -9,6 +9,19 @@ module be.vmm.eenvplus {
     export var PREFIX:string = 'ep';
     export var MODULE:string = PREFIX + '_eenvplus';
 
+    export function factory(fn:Function):Function {
+        return function createFactory():Function {
+            return fn;
+        }
+    }
+
+    export function shiftData(fn:Function):Function {
+        return function dataAsLastArgument(...args:any[]):any {
+            args.push(args.shift());
+            return fn.apply(null, args);
+        }
+    }
+
     export function changeEvent(propertyName:string):string {
         return 'change:' + propertyName;
     }

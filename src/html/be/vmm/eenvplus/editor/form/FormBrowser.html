@@ -8,7 +8,7 @@
                    href="#featureForm_{{feature.key}}"
                    aria-expanded="true"
                    aria-controls="collapseOne">
-                    {{getLabel(feature)}}
+                    {{feature | epFeatureLabel}}
                 </a>
             </h4>
         </header>
@@ -18,19 +18,19 @@
               role="tabpanel">
 
             <div ep-sewer-form
-                 ng-if="isSewer(feature.layerBodId)"
+                 ng-if="feature.layerBodId | epIsFeatureType: featureType.SEWER"
                  data="feature.properties"
                  class="panel-body">
             </div>
             <div ep-appurtenance-form
-                 ng-if="isAppurtenance(feature.layerBodId)"
+                 ng-if="feature.layerBodId | epIsFeatureType: featureType.APPURTENANCE"
                  data="feature.properties"
                  class="panel-body">
             </div>
         </form>
 
         <footer>
-            Last update by {{getUser(feature)}} on {{toDate(feature.beginLifeSpanVersion)}}
+            Last update by {{feature.userId | epUserName}} on {{feature.beginLifeSpanVersion | epDate}}
         </footer>
 
     </section>
