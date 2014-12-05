@@ -8,6 +8,10 @@ module be.vmm.eenvplus.editor.form.appurtenanceForm {
 
     interface Scope extends ng.IScope {
         data:feature.model.RioolAppurtenance;
+        selectedSource:label.Label;
+        sources:Array<label.Label>;
+        selectedType:label.Label;
+        types:Array<label.Label>;
     }
 
     function configure():ng.IDirective {
@@ -21,11 +25,15 @@ module be.vmm.eenvplus.editor.form.appurtenanceForm {
         };
     }
 
-    AppurtenanceFormController.$inject = ['$scope'];
+    AppurtenanceFormController.$inject = ['$scope', 'epLabelService'];
 
-    function AppurtenanceFormController(scope:Scope):void {
+    function AppurtenanceFormController(scope:Scope, labelService:label.LabelService):void {
 
-        _.merge(scope, {});
+        scope.sources = labelService.getLabels(label.LabelType.SOURCE);
+        scope.types = labelService.getLabels(label.LabelType.APPURTENANCE_TYPE);
+
+        scope.data = scope.data || <feature.model.RioolAppurtenance> {};
+        scope.selectedType = _.find(scope.sources, {id: scope.data.rioolAppurtenanceTypeId});
 
     }
 

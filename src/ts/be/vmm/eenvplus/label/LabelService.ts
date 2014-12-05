@@ -15,6 +15,7 @@ module be.vmm.eenvplus.label {
             labelPackage = 'be.vmm.eenvplus.sdi.model.code',
             locale = 'en',
             typeModelMap = [
+                'RioolAppurtenanceType',
                 'RioolLinkType',
                 'Namespace',
                 'SewerWaterType'

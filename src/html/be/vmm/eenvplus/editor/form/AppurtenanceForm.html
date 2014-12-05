@@ -1,1 +1,23 @@
-APPURTENANCE
+<label>
+    Source
+    <select ng-model="selectedSource"
+            ng-options="source as source.label for source in sources">
+    </select>
+</label>
+
+<label>
+    Source ID
+    <input type="text" ng-model="data.alternatieveId"/>
+</label>
+
+<label>
+    Label
+    <input type="text" ng-model="data.label"/>
+</label>
+
+<label>
+    Appurtenance type
+    <select ng-model="selectedType"
+            ng-options="type as type.label for type in types">
+    </select>
+</label>
