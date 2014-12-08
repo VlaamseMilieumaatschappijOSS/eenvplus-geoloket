@@ -28,11 +28,16 @@ module be.vmm.eenvplus.editor.validation.validator {
             isValid: true
         });
 
+        scope.$on(applicationState.EVENT.modeRequest, handle(handleModeChange));
         manager.signal.validate.add(handleValidation);
 
         function handleValidation(result:ValidationResult):void {
             scope.isValid = result.valid;
             scope.results = result.results;
+        }
+
+        function handleModeChange(state:applicationState.State):void {
+            if (state === applicationState.State.OVERVIEW) scope.isValid = true;
         }
 
     }
