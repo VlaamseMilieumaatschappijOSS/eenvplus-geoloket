@@ -17,11 +17,11 @@ module be.vmm.eenvplus.feature {
     }
 
     export interface FeatureManager {
-        commit: FeatureJSONHandler;
         create: FeatureJSONHandler;
         discard: FeatureJSONHandler;
         load: (extent:ol.Extent) => void;
         signal: Signals;
+        update: FeatureJSONHandler;
     }
 
     export module FeatureManager {
@@ -31,20 +31,21 @@ module be.vmm.eenvplus.feature {
 
         function factory(rootScope:ng.IScope, q:ng.IQService, service:FeatureService):FeatureManager {
             var broadcast = rootScope.$broadcast.bind(rootScope),
+                deselect = _.partial(broadcast, EVENT.selected, null),
                 signals = {
                     create: new signal.TypeSignal<feature.model.FeatureJSON>(),
                     load: new signal.Signal(),
                     remove: new signal.TypeSignal<feature.model.FeatureJSON>()
                 };
 
-            signals.remove.add(_.partial(broadcast, EVENT.selected, null));
+            signals.remove.add(deselect);
 
             return {
-                commit: commit,
                 create: create,
                 discard: discard,
                 load: load,
-                signal: _.mapValues(signals, unary(_.bindAll))
+                signal: _.mapValues(signals, unary(_.bindAll)),
+                update: update
             };
 
             function load(extent:ol.Extent):void {
@@ -54,27 +55,32 @@ module be.vmm.eenvplus.feature {
             function pull(extent:ol.Extent):void {
                 service.pull(extent)
                     .then(signals.load.fire)
-                    .catch((error:Error) => {
-                        console.error('Failed to load features', error);
-                    });
+                    .catch(handleError('load'));
             }
 
-            function create(feature:feature.model.FeatureJSON):ng.IPromise<feature.model.FeatureJSON> {
+            function create(json:feature.model.FeatureJSON):ng.IPromise<feature.model.FeatureJSON> {
                 var deferred = q.defer<feature.model.FeatureJSON>();
 
                 service
-                    .create(feature)
+                    .create(json)
                     .then(getSavedData)
-                    .catch(console.error);
+                    .catch(handleError('create', json));
 
                 return deferred.promise;
 
                 function getSavedData(key:number):void {
                     service
-                        .get(feature.layerBodId, key)
+                        .get(json.layerBodId, key)
                         .then(deferred.resolve)
-                        .catch(console.error);
+                        .catch(handleError('create', json));
                 }
+            }
+
+            function update(json:feature.model.FeatureJSON):void {
+                service
+                    .update(json)
+                    .then(deselect)
+                    .catch(handleError('update', json));
             }
 
             function discard(json:model.FeatureJSON):void {
@@ -86,14 +92,14 @@ module be.vmm.eenvplus.feature {
                     service
                         .remove(json)
                         .then(_.partial(signals.remove.fire, json))
-                        .catch((error:Error) => {
-                            console.error('Failed to discard feature', json, error);
-                        });
+                        .catch(handleError('discard', json));
                 }
             }
 
-            function commit(json:feature.model.FeatureJSON):ng.IPromise<feature.model.FeatureJSON> {
-                return undefined;
+            function handleError(operation:string, data?:model.FeatureJSON):(error:Error) => void {
+                return function createErrorHandler(error:Error):void {
+                    console.error('Failed to ' + operation + ' feature', data, error);
+                }
             }
         }
 

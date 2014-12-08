@@ -29,7 +29,7 @@ module be.vmm.eenvplus.editor.form.formBrowser {
         _.merge(scope, {
             featureType: feature.FeatureType,
             discard: manager.discard,
-            commit: manager.commit
+            commit: manager.update
         });
 
         scope.$on(feature.EVENT.selected, handle(setFeatures));
