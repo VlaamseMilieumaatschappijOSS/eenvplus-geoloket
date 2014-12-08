@@ -27,14 +27,17 @@ module be.vmm.eenvplus.feature {
     export module FeatureManager {
         export var NAME:string = PREFIX + 'FeatureManager';
 
-        factory.$inject = ['$q', 'gaFeatureManager'];
+        factory.$inject = ['$rootScope', '$q', 'gaFeatureManager'];
 
-        function factory(q:ng.IQService, service:FeatureService):FeatureManager {
-            var signals = {
-                create: new signal.TypeSignal<feature.model.FeatureJSON>(),
-                load: new signal.Signal(),
-                remove: new signal.TypeSignal<feature.model.FeatureJSON>()
-            };
+        function factory(rootScope:ng.IScope, q:ng.IQService, service:FeatureService):FeatureManager {
+            var broadcast = rootScope.$broadcast.bind(rootScope),
+                signals = {
+                    create: new signal.TypeSignal<feature.model.FeatureJSON>(),
+                    load: new signal.Signal(),
+                    remove: new signal.TypeSignal<feature.model.FeatureJSON>()
+                };
+
+            signals.remove.add(_.partial(broadcast, EVENT.selected, null));
 
             return {
                 commit: commit,
