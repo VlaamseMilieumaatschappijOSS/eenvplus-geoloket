@@ -59,6 +59,7 @@ declare module _ {
     /** Functions */
     interface Static {
         bind(fn:Function, scope?:any, ...args:any[]):AnyFunction;
+        bindAll(object:Object, ...fns:string[]):Object;
         compose(...fns:Function[]):AnyFunction;
         curry(fn:Function):AnyFunction;
         partial(fn:Function, ...args:any[]):AnyFunction;
@@ -88,8 +89,8 @@ declare module _ {
     interface MergingIterator {
         (objectValue:any, sourceValue:any):any;
     }
-    
-    
+
+
     interface AnyFunction {
         (...args:any[]):any;
     }

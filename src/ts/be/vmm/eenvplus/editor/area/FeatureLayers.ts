@@ -37,8 +37,8 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         /* -------------------- */
 
         scope.$on(mask.EVENT.selected, handle(init));
-        manager.onLoad(createLayers);
-        manager.onRemove(removeFromLayer);
+        manager.signal.load.add(createLayers);
+        manager.signal.remove.add(removeFromLayer);
 
         function init(extent:ol.Extent):void {
             manager.load(extent);

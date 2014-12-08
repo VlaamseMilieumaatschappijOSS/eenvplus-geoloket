@@ -22,6 +22,12 @@ module be.vmm.eenvplus {
         }
     }
 
+    export function unary(fn:Function):Function {
+        return function createUnaryFunction(first:any):Function {
+            return fn.call(this, first);
+        }
+    }
+
     export function changeEvent(propertyName:string):string {
         return 'change:' + propertyName;
     }

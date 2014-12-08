@@ -1,6 +1,8 @@
 ///ts:ref=Module
 /// <reference path="../Module.ts"/> ///ts:ref:generated
 
+import signal = Trasys.Signals;
+
 module be.vmm.eenvplus.feature {
     'use strict';
 
@@ -8,34 +10,38 @@ module be.vmm.eenvplus.feature {
         (json:model.FeatureJSON):void;
     }
 
+    export interface Signals {
+        create:signal.ITypeSignal<feature.model.FeatureJSON>;
+        load:signal.ISignal;
+        remove:signal.ITypeSignal<feature.model.FeatureJSON>;
+    }
+
     export interface FeatureManager {
         commit: FeatureJSONHandler;
-        create: (feature:feature.model.FeatureJSON) => ng.IPromise<feature.model.FeatureJSON>;
+        create: FeatureJSONHandler;
         discard: FeatureJSONHandler;
         load: (extent:ol.Extent) => void;
-        onCommit: (fn:FeatureJSONHandler) => void;
-        onLoad: (fn:() => void) => void;
-        onRemove: (fn:FeatureJSONHandler) => void;
+        signal: Signals;
     }
 
     export module FeatureManager {
         export var NAME:string = PREFIX + 'FeatureManager';
 
-        var commitCallbacks = [],
-            loadCallbacks = [],
-            removeCallbacks = [];
-
         factory.$inject = ['$q', 'gaFeatureManager'];
 
         function factory(q:ng.IQService, service:FeatureService):FeatureManager {
+            var signals = {
+                create: new signal.TypeSignal<feature.model.FeatureJSON>(),
+                load: new signal.Signal(),
+                remove: new signal.TypeSignal<feature.model.FeatureJSON>()
+            };
+
             return {
                 commit: commit,
                 create: create,
                 discard: discard,
                 load: load,
-                onCommit: _.bind(commitCallbacks.push, commitCallbacks),
-                onLoad: _.bind(loadCallbacks.push, loadCallbacks),
-                onRemove: _.bind(removeCallbacks.push, removeCallbacks)
+                signal: _.mapValues(signals, unary(_.bindAll))
             };
 
             function load(extent:ol.Extent):void {
@@ -43,10 +49,8 @@ module be.vmm.eenvplus.feature {
             }
 
             function pull(extent:ol.Extent):void {
-                var notifyLoad = _.partial(notify, null, loadCallbacks);
-
                 service.pull(extent)
-                    .then(notifyLoad)
+                    .then(signals.load.fire)
                     .catch((error:Error) => {
                         console.error('Failed to load features', error);
                     });
@@ -71,8 +75,6 @@ module be.vmm.eenvplus.feature {
             }
 
             function discard(json:model.FeatureJSON):void {
-                var notifyRemoval = _.partial(notify, json, removeCallbacks);
-
                 if (json.id) {
                     // don't remove but reload old geometry
                 }
@@ -80,24 +82,16 @@ module be.vmm.eenvplus.feature {
                     // don't forget to remove connected mountpoints
                     service
                         .remove(json)
-                        .then(notifyRemoval)
+                        .then(_.partial(signals.remove.fire, json))
                         .catch((error:Error) => {
                             console.error('Failed to discard feature', json, error);
                         });
                 }
             }
 
-            function commit(json:feature.model.FeatureJSON):void {
-
+            function commit(json:feature.model.FeatureJSON):ng.IPromise<feature.model.FeatureJSON> {
+                return undefined;
             }
-        }
-
-        function notify(json:model.FeatureJSON, callbacks:FeatureJSONHandler[]):void {
-            _.each(callbacks, _.partial(call, json));
-        }
-
-        function call(json:model.FeatureJSON, callback:FeatureJSONHandler):void {
-            callback(json);
         }
 
         angular
