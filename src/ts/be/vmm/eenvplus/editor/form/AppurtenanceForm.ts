@@ -33,7 +33,15 @@ module be.vmm.eenvplus.editor.form.appurtenanceForm {
         scope.types = labelService.getLabels(label.LabelType.APPURTENANCE_TYPE);
 
         scope.data = scope.data || <feature.model.RioolAppurtenance> {};
+        scope.selectedSource = _.find(scope.sources, {id: scope.data.namespaceId});
         scope.selectedType = _.find(scope.sources, {id: scope.data.rioolAppurtenanceTypeId});
+
+        scope.$watch(updateModel);
+
+        function updateModel():void {
+            scope.data.namespaceId = scope.selectedSource ? scope.selectedSource.id : undefined;
+            scope.data.rioolAppurtenanceTypeId = scope.selectedType ? scope.selectedType.id : undefined;
+        }
 
     }
 

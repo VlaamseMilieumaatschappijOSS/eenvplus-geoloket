@@ -40,6 +40,14 @@ module be.vmm.eenvplus.editor.form.sewerForm {
         scope.selectedType = _.find(scope.types, {id: scope.data.rioolLinkTypeId});
         scope.selectedWaterType = _.find(scope.waterTypes, {id: scope.data.sewerWaterTypeId});
 
+        scope.$watch(updateModel);
+
+        function updateModel():void {
+            scope.data.namespaceId = scope.selectedSource ? scope.selectedSource.id : undefined;
+            scope.data.rioolLinkTypeId = scope.selectedType ? scope.selectedType.id : undefined;
+            scope.data.sewerWaterTypeId = scope.selectedWaterType ? scope.selectedWaterType.id : undefined;
+        }
+
     }
 
     angular
