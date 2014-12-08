@@ -11,9 +11,10 @@ module be.vmm.eenvplus.feature {
     }
 
     export interface Signals {
-        create:signal.ITypeSignal<feature.model.FeatureJSON>;
+        create:signal.ITypeSignal<model.FeatureJSON>;
         load:signal.ISignal;
-        remove:signal.ITypeSignal<feature.model.FeatureJSON>;
+        remove:signal.ITypeSignal<model.FeatureJSON>;
+        validate:signal.ITypeSignal<editor.validation.ValidationResult>;
     }
 
     export interface FeatureManager {
@@ -35,9 +36,10 @@ module be.vmm.eenvplus.feature {
             var broadcast = rootScope.$broadcast.bind(rootScope),
                 deselect = _.partial(broadcast, EVENT.selected, null),
                 signals = {
-                    create: new signal.TypeSignal<feature.model.FeatureJSON>(),
+                    create: new signal.TypeSignal<model.FeatureJSON>(),
                     load: new signal.Signal(),
-                    remove: new signal.TypeSignal<feature.model.FeatureJSON>()
+                    remove: new signal.TypeSignal<model.FeatureJSON>(),
+                    validate: new signal.TypeSignal<editor.validation.ValidationResult>()
                 };
 
             signals.remove.add(deselect);
@@ -62,8 +64,8 @@ module be.vmm.eenvplus.feature {
                     .catch(handleError('load'));
             }
 
-            function create(json:feature.model.FeatureJSON):ng.IPromise<feature.model.FeatureJSON> {
-                var deferred = q.defer<feature.model.FeatureJSON>();
+            function create(json:model.FeatureJSON):ng.IPromise<model.FeatureJSON> {
+                var deferred = q.defer<model.FeatureJSON>();
 
                 service
                     .create(json)
@@ -80,7 +82,7 @@ module be.vmm.eenvplus.feature {
                 }
             }
 
-            function update(json:feature.model.FeatureJSON):void {
+            function update(json:model.FeatureJSON):void {
                 service
                     .update(json)
                     .then(deselect)
@@ -90,14 +92,14 @@ module be.vmm.eenvplus.feature {
             function validate():void {
                 service
                     .test()
-                    .then(showMessages)
+                    .then(signals.validate.fire)
                     .catch(handleError('validate'));
             }
 
             function push():void {
                 service
                     .push()
-                    .then(showMessages)
+                    .then(signals.validate.fire)
                     .catch(handleError('push'));
             }
 
@@ -112,10 +114,6 @@ module be.vmm.eenvplus.feature {
                         .then(_.partial(signals.remove.fire, json))
                         .catch(handleError('discard', json));
                 }
-            }
-
-            function showMessages(messages:any):void {
-                console.log(messages);
             }
 
             function handleError(operation:string, data?:model.FeatureJSON):(error:Error) => void {

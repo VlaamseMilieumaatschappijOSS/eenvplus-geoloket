@@ -1,0 +1,36 @@
+@import "../../../../../app";
+
+.ga-full-screen .validator {
+  top: 0;
+  bottom: 0;
+}
+
+.validator {
+  position: absolute;
+  top: unit(@small-header-height, px);
+  bottom: unit(@footer-height, px);
+  right: 0;
+  width: 320px;
+
+  .content {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    background: white;
+    border-left: 1px solid #bdbdbd;
+    .box-shadow(6px 6px 12px rgba(0, 0, 0, 0.175));
+  }
+
+  li {
+    list-style-type: none;
+  }
+
+  .valid {
+    color: green;
+  }
+
+  .invalid, .error {
+    color: red;
+  }
+
+}

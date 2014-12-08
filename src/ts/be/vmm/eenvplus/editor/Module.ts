@@ -7,6 +7,7 @@
 /// <reference path="area/Module.ts"/>
 /// <reference path="form/Module.ts"/>
 /// <reference path="paint/Module.ts"/>
+/// <reference path="validation/Module.ts"/>
 
 module be.vmm.eenvplus.editor {
     'use strict';
@@ -18,7 +19,8 @@ module be.vmm.eenvplus.editor {
     angular.module(MODULE, [
         area.MODULE,
         form.MODULE,
-        paint.MODULE
+        paint.MODULE,
+        validation.MODULE
     ]);
 
 }
