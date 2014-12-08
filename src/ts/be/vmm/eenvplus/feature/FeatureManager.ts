@@ -10,6 +10,7 @@ module be.vmm.eenvplus.feature {
 
     export interface FeatureManager {
         commit: FeatureJSONHandler;
+        create: (feature:feature.model.FeatureJSON) => ng.IPromise<feature.model.FeatureJSON>;
         discard: FeatureJSONHandler;
         load: (extent:ol.Extent) => void;
         onCommit: (fn:FeatureJSONHandler) => void;
@@ -24,11 +25,12 @@ module be.vmm.eenvplus.feature {
             loadCallbacks = [],
             removeCallbacks = [];
 
-        factory.$inject = ['gaFeatureManager'];
+        factory.$inject = ['$q', 'gaFeatureManager'];
 
-        function factory(service:FeatureService):FeatureManager {
+        function factory(q:ng.IQService, service:FeatureService):FeatureManager {
             return {
                 commit: commit,
+                create: create,
                 discard: discard,
                 load: load,
                 onCommit: _.bind(commitCallbacks.push, commitCallbacks),
@@ -48,6 +50,24 @@ module be.vmm.eenvplus.feature {
                     .catch((error:Error) => {
                         console.error('Failed to load features', error);
                     });
+            }
+
+            function create(feature:feature.model.FeatureJSON):ng.IPromise<feature.model.FeatureJSON> {
+                var deferred = q.defer<feature.model.FeatureJSON>();
+
+                service
+                    .create(feature)
+                    .then(getSavedData)
+                    .catch(console.error);
+
+                return deferred.promise;
+
+                function getSavedData(key:number):void {
+                    service
+                        .get(feature.layerBodId, key)
+                        .then(deferred.resolve)
+                        .catch(console.error);
+                }
             }
 
             function discard(json:model.FeatureJSON):void {

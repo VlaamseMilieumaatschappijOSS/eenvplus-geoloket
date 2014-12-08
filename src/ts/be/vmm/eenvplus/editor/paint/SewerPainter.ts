@@ -11,7 +11,7 @@ module be.vmm.eenvplus.editor.paint.sewerPainter {
     export var NAME:string = PREFIX + 'SewerPainter';
 
     var controller = _.partial(Painter, feature.FeatureType.SEWER);
-    controller.$inject = ['$scope', 'epPainterState', 'gaFeatureManager', '$q'];
+    controller.$inject = ['$scope', 'epPainterState', 'epFeatureManager'];
 
     function configure():ng.IDirective {
         return {
