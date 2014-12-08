@@ -5,7 +5,8 @@
                  class="alert checkbox">
 
                 <label>
-                    <input type="checkbox" checked="{{result.valid}}">{{result.key}}
+                    <input type="checkbox" ng-model="result.valid">
+                    <strong>{{result | epFeatureLabel}}</strong> ({{result.key}})
                 </label>
             </div>
 

@@ -92,15 +92,23 @@ module be.vmm.eenvplus.feature {
             function validate():void {
                 service
                     .test()
-                    .then(signals.validate.fire)
+                    .then(_.compose(signals.validate.fire, enhance))
                     .catch(handleError('validate'));
             }
 
             function push():void {
                 service
                     .push()
-                    .then(signals.validate.fire)
+                    .then(_.compose(signals.validate.fire, enhance))
                     .catch(handleError('push'));
+            }
+
+            function enhance(validation:editor.validation.ValidationResult):editor.validation.ValidationResult {
+                _.each(validation.results, (result:editor.validation.ValidationResult):void => {
+                    // layerBodId should come from server
+                    result['layerBodId'] = feature.typeModelMap[result.valid ? 2 : 0];
+                });
+                return validation;
             }
 
             function discard(json:model.FeatureJSON):void {
