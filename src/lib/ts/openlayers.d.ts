@@ -196,8 +196,10 @@ declare module ol {
 
         interface GeoJSON extends JSONFeature {
             new (config?:GEOJSONConfig):GeoJSON;
+            prototype:GeoJSON;
 
-            readFeature(json:GeoJSONFeature, option?:any):Feature;
+            readFeature(json:GeoJSONFeature, options?:any):Feature;
+            readFeatureFromObject(json:GeoJSONFeature, options?:any):Feature;
             writeFeature(feature:Feature, options?:any):GeoJSONFeature;
         }
 
@@ -332,6 +334,8 @@ declare module ol {
 
         interface Vector extends Layer {
             new (options?:LayerOptions):Vector;
+
+            getSource():source.Vector;
         }
 
     }
@@ -412,6 +416,9 @@ declare module ol {
 
             addFeature(feature:Feature):void;
             addFeatures(features:Feature[]):void;
+            getFeatureById(id:number):Feature;
+            getFeatures():Feature[];
+            removeFeature(feature:Feature):void;
         }
 
         interface VectorConfig {

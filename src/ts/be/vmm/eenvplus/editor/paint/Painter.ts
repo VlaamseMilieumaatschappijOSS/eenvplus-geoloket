@@ -32,7 +32,8 @@ module be.vmm.eenvplus.editor.paint {
         }
 
         function finalizeOperation(event:ol.DrawEvent):void {
-            var geometry = <ol.geometry.SimpleGeometry> event.feature.getGeometry(),
+            var newFeature = <feature.LocalFeature> event.feature,
+                geometry = <ol.geometry.SimpleGeometry> newFeature.getGeometry(),
                 first = geometry.getFirstCoordinate(),
                 last = geometry.getLastCoordinate(),
                 mountPoints = [createPoint(last)];
@@ -44,8 +45,9 @@ module be.vmm.eenvplus.editor.paint {
                 .addFeatures(mountPoints);
             mountPoints.forEach(commitMountPoint);
 
-            commitFeature(event.feature)
+            commitFeature(newFeature)
                 .then((json:feature.model.FeatureJSON):void => {
+                    newFeature.key = json.key;
                     scope.$broadcast(feature.EVENT.selected, [json]);
                 });
         }

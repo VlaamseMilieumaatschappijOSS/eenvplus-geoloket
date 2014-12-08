@@ -77,6 +77,15 @@ module be.vmm.eenvplus.feature {
         }
     }
 
+    ol.format.GeoJSON.prototype.readFeatureFromObject =
+        _.wrap(ol.format.GeoJSON.prototype.readFeatureFromObject, addKey);
+
+    function addKey(fn:Function, json:feature.model.FeatureJSON, options?:any):feature.LocalFeature {
+        var feature = fn(json, options);
+        if (json.key) feature.key = json.key;
+        return feature;
+    }
+
     angular
         .module(MODULE)
         .factory(FeatureLayerFactory.NAME, factory);

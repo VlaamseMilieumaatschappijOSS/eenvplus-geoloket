@@ -18,7 +18,7 @@ module be.vmm.eenvplus.editor.area.featureLayers {
     FeatureLayersController.$inject = ['$scope', 'gaFeatureManager', 'epFeatureLayerFactory'];
 
     export function FeatureLayersController(scope:ApplicationScope,
-                                            features:feature.FeatureService,
+                                            service:feature.FeatureService,
                                             featureLayer:feature.FeatureLayerFactory):void {
 
         /* ------------------ */
@@ -37,9 +37,10 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         /* -------------------- */
 
         scope.$on(mask.EVENT.selected, handle(init));
+        scope.$on(feature.EVENT.discardModification, handle(discard));
 
         function init(extent:ol.Extent):void {
-            features.clear().then(_.partial(load, extent));
+            service.clear().then(_.partial(load, extent));
             unRegisterModeChange = scope.$on(applicationState.EVENT.modeChange, handle(handleModeChange));
         }
 
@@ -49,7 +50,7 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         /* ----------------- */
 
         function load(extent:ol.Extent):void {
-            features.pull(extent)
+            service.pull(extent)
                 .then(createLayers)
                 .catch((error:Error) => {
                     console.error('Failed to load features', error);
@@ -64,6 +65,27 @@ module be.vmm.eenvplus.editor.area.featureLayers {
                 .map(featureLayer.createLayer)
                 .value();
             featureLayers.forEach(addLayer);
+        }
+
+        function discard(json:feature.model.FeatureJSON):void {
+            if (json.id) {
+                // don't remove but reload old geometry
+            }
+            else {
+                // don't forget to remove connected mountpoints
+                service
+                    .remove(json)
+                    .then(_.partial(removeFromLayer, json))
+                    .catch((error:Error) => {
+                        console.error('Failed to discard feature', json, error);
+                    });
+            }
+        }
+
+        function removeFromLayer(json:feature.model.FeatureJSON):void {
+            var layer:ol.layer.Vector = _.where(featureLayers, {values_: {layerBodId: json.layerBodId}})[0],
+                feature = _.find(layer.getSource().getFeatures(), {key: json.key});
+            layer.getSource().removeFeature(feature);
         }
 
         function clear():void {

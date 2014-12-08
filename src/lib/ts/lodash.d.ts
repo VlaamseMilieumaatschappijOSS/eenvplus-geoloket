@@ -58,11 +58,12 @@ declare module _ {
 
     /** Functions */
     interface Static {
-        bind(fn:Function, scope?:any, ...args:any[]):(...args:any[]) => any;
-        compose(...fns:Function[]):(...args:any[]) => any;
-        curry(fn:Function):(...args:any[]) => any;
-        partial(fn:Function, ...args:any[]):(...args:any[]) => any;
-        partialRight(fn:Function, ...args:any[]):(...args:any[]) => any;
+        bind(fn:Function, scope?:any, ...args:any[]):AnyFunction;
+        compose(...fns:Function[]):AnyFunction;
+        curry(fn:Function):AnyFunction;
+        partial(fn:Function, ...args:any[]):AnyFunction;
+        partialRight(fn:Function, ...args:any[]):AnyFunction;
+        wrap(value:any, wrapper:Function):AnyFunction;
     }
 
     /** Objects */
@@ -86,6 +87,11 @@ declare module _ {
 
     interface MergingIterator {
         (objectValue:any, sourceValue:any):any;
+    }
+    
+    
+    interface AnyFunction {
+        (...args:any[]):any;
     }
 
 }

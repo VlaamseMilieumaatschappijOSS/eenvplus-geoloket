@@ -4,6 +4,7 @@ module be.vmm.eenvplus.feature {
     export var MODULE:string = PREFIX + '_feature';
 
     export var EVENT = {
+        discardModification : 'discardModification',
         selected: 'featuresSelected'
     };
 
