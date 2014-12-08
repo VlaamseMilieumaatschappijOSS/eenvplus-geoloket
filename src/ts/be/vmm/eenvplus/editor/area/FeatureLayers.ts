@@ -15,10 +15,11 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         };
     }
 
-    FeatureLayersController.$inject = ['$scope', 'gaFeatureManager', 'epFeatureLayerFactory'];
+    FeatureLayersController.$inject = ['$scope', 'gaFeatureManager', 'epFeatureManager', 'epFeatureLayerFactory'];
 
     export function FeatureLayersController(scope:ApplicationScope,
                                             service:feature.FeatureService,
+                                            manager:feature.FeatureManager,
                                             featureLayer:feature.FeatureLayerFactory):void {
 
         /* ------------------ */
@@ -37,7 +38,7 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         /* -------------------- */
 
         scope.$on(mask.EVENT.selected, handle(init));
-        scope.$on(feature.EVENT.discardModification, handle(discard));
+        manager.onRemove(removeFromLayer);
 
         function init(extent:ol.Extent):void {
             service.clear().then(_.partial(load, extent));
@@ -65,21 +66,6 @@ module be.vmm.eenvplus.editor.area.featureLayers {
                 .map(featureLayer.createLayer)
                 .value();
             featureLayers.forEach(addLayer);
-        }
-
-        function discard(json:feature.model.FeatureJSON):void {
-            if (json.id) {
-                // don't remove but reload old geometry
-            }
-            else {
-                // don't forget to remove connected mountpoints
-                service
-                    .remove(json)
-                    .then(_.partial(removeFromLayer, json))
-                    .catch((error:Error) => {
-                        console.error('Failed to discard feature', json, error);
-                    });
-            }
         }
 
         function removeFromLayer(json:feature.model.FeatureJSON):void {

@@ -22,28 +22,20 @@ module be.vmm.eenvplus.editor.form.formBrowser {
         };
     }
 
-    FormBrowserController.$inject = ['$scope', '$rootScope'];
+    FormBrowserController.$inject = ['$scope', 'epFeatureManager'];
 
-    function FormBrowserController(scope:Scope, rootScope:ng.IScope):void {
+    function FormBrowserController(scope:Scope, manager:feature.FeatureManager):void {
 
         _.merge(scope, {
             featureType: feature.FeatureType,
-            discard: discard,
-            commit: commit
+            discard: manager.discard,
+            commit: manager.commit
         });
 
         scope.$on(feature.EVENT.selected, handle(setFeatures));
 
         function setFeatures(features:feature.model.FeatureJSON[]):void {
             scope.features = features;
-        }
-
-        function discard(json:feature.model.FeatureJSON):void {
-            rootScope.$broadcast(feature.EVENT.discardModification, json);
-        }
-
-        function commit(json:feature.model.FeatureJSON):void {
-
         }
 
     }
