@@ -11,7 +11,9 @@ module be.vmm.eenvplus.feature {
     export interface FeatureManager {
         commit: FeatureJSONHandler;
         discard: FeatureJSONHandler;
+        load: (extent:ol.Extent) => void;
         onCommit: (fn:FeatureJSONHandler) => void;
+        onLoad: (fn:() => void) => void;
         onRemove: (fn:FeatureJSONHandler) => void;
     }
 
@@ -19,6 +21,7 @@ module be.vmm.eenvplus.feature {
         export var NAME:string = PREFIX + 'FeatureManager';
 
         var commitCallbacks = [],
+            loadCallbacks = [],
             removeCallbacks = [];
 
         factory.$inject = ['gaFeatureManager'];
@@ -27,9 +30,25 @@ module be.vmm.eenvplus.feature {
             return {
                 commit: commit,
                 discard: discard,
+                load: load,
                 onCommit: _.bind(commitCallbacks.push, commitCallbacks),
+                onLoad: _.bind(loadCallbacks.push, loadCallbacks),
                 onRemove: _.bind(removeCallbacks.push, removeCallbacks)
             };
+
+            function load(extent:ol.Extent):void {
+                service.clear().then(_.partial(pull, extent));
+            }
+
+            function pull(extent:ol.Extent):void {
+                var notifyLoad = _.partial(notify, null, loadCallbacks);
+
+                service.pull(extent)
+                    .then(notifyLoad)
+                    .catch((error:Error) => {
+                        console.error('Failed to load features', error);
+                    });
+            }
 
             function discard(json:model.FeatureJSON):void {
                 var notifyRemoval = _.partial(notify, json, removeCallbacks);

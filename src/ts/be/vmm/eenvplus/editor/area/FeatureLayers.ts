@@ -15,10 +15,9 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         };
     }
 
-    FeatureLayersController.$inject = ['$scope', 'gaFeatureManager', 'epFeatureManager', 'epFeatureLayerFactory'];
+    FeatureLayersController.$inject = ['$scope', 'epFeatureManager', 'epFeatureLayerFactory'];
 
     export function FeatureLayersController(scope:ApplicationScope,
-                                            service:feature.FeatureService,
                                             manager:feature.FeatureManager,
                                             featureLayer:feature.FeatureLayerFactory):void {
 
@@ -38,10 +37,11 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         /* -------------------- */
 
         scope.$on(mask.EVENT.selected, handle(init));
+        manager.onLoad(createLayers);
         manager.onRemove(removeFromLayer);
 
         function init(extent:ol.Extent):void {
-            service.clear().then(_.partial(load, extent));
+            manager.load(extent);
             unRegisterModeChange = scope.$on(applicationState.EVENT.modeChange, handle(handleModeChange));
         }
 
@@ -49,14 +49,6 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         /* ----------------- */
         /* --- behaviour --- */
         /* ----------------- */
-
-        function load(extent:ol.Extent):void {
-            service.pull(extent)
-                .then(createLayers)
-                .catch((error:Error) => {
-                    console.error('Failed to load features', error);
-                });
-        }
 
         function createLayers():void {
             featureLayers = _(map.getLayers().getArray())
