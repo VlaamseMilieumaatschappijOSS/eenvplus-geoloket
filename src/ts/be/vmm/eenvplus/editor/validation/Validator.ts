@@ -33,7 +33,6 @@ module be.vmm.eenvplus.editor.validation.validator {
         function handleValidation(result:ValidationResult):void {
             scope.isValid = result.valid;
             scope.results = result.results;
-            console.log(scope.results.length);
         }
 
     }

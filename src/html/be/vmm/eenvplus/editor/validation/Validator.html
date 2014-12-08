@@ -1,9 +1,19 @@
 <div ng-hide="isValid" class="content">
     <ul>
-        <li ng-repeat="result in results" ng-class="{valid: result.valid, invalid: !result.valid}">
-            <div>{{result.key}}</div>
-            <ul ng-repeat="message in result.messages">
-                <li class="{{message.level}}">{{message.path}}: {{message.description}}</li>
+        <li ng-repeat="result in results">
+            <div ng-class="{'alert-success': result.valid, 'alert-warning': !result.valid}"
+                 class="alert checkbox">
+
+                <label>
+                    <input type="checkbox" checked="{{result.valid}}">{{result.key}}
+                </label>
+            </div>
+
+            <ul ng-hide="result.valid">
+                <li ng-repeat="message in result.messages"
+                    class="{{message.level}}">
+                    <strong>{{message.path}}:</strong> {{message.description}}
+                </li>
             </ul>
         </li>
     </ul>
