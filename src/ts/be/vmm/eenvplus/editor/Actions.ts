@@ -23,28 +23,18 @@ module be.vmm.eenvplus.editor.actions {
         };
     }
 
-    ActionsController.$inject = ['$scope', '$rootScope', 'gaFeatureManager'];
+    ActionsController.$inject = ['$scope', '$rootScope', 'epFeatureManager'];
 
-    function ActionsController(scope:Scope, rootScope:ng.IScope, service:feature.FeatureService):void {
+    function ActionsController(scope:Scope, rootScope:ng.IScope, manager:feature.FeatureManager):void {
 
         _.merge(scope, {
             discard: stopEditing,
-            validate: _.partial(execute, service.test),
-            save: _.compose(stopEditing, _.partial(execute, service.push))
+            validate: manager.validate,
+            save: _.compose(stopEditing, manager.push)
         });
 
         function stopEditing():void {
             rootScope.$broadcast(applicationState.EVENT.modeRequest, applicationState.State.OVERVIEW);
-        }
-
-        function execute(call:() => ng.IPromise<any>):void {
-            call()
-                .then(showMessages)
-                .catch(console.error);
-        }
-
-        function showMessages(messages:any):void {
-            console.log(messages);
         }
 
     }

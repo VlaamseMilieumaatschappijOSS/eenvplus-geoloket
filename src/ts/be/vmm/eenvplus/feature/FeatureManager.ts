@@ -20,8 +20,10 @@ module be.vmm.eenvplus.feature {
         create: FeatureJSONHandler;
         discard: FeatureJSONHandler;
         load: (extent:ol.Extent) => void;
+        push: FeatureJSONHandler;
         signal: Signals;
         update: FeatureJSONHandler;
+        validate: FeatureJSONHandler;
     }
 
     export module FeatureManager {
@@ -44,8 +46,10 @@ module be.vmm.eenvplus.feature {
                 create: create,
                 discard: discard,
                 load: load,
+                push: push,
                 signal: _.mapValues(signals, unary(_.bindAll)),
-                update: update
+                update: update,
+                validate: validate
             };
 
             function load(extent:ol.Extent):void {
@@ -83,6 +87,20 @@ module be.vmm.eenvplus.feature {
                     .catch(handleError('update', json));
             }
 
+            function validate():void {
+                service
+                    .test()
+                    .then(showMessages)
+                    .catch(handleError('validate'));
+            }
+
+            function push():void {
+                service
+                    .push()
+                    .then(showMessages)
+                    .catch(handleError('push'));
+            }
+
             function discard(json:model.FeatureJSON):void {
                 if (json.id) {
                     // don't remove but reload old geometry
@@ -94,6 +112,10 @@ module be.vmm.eenvplus.feature {
                         .then(_.partial(signals.remove.fire, json))
                         .catch(handleError('discard', json));
                 }
+            }
+
+            function showMessages(messages:any):void {
+                console.log(messages);
             }
 
             function handleError(operation:string, data?:model.FeatureJSON):(error:Error) => void {
