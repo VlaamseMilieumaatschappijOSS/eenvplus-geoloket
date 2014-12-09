@@ -9,14 +9,14 @@ module be.vmm.eenvplus.editor.paint {
 
         var map = scope.map,
             commitFeature = commitFn(type),
-            commitMountPoint = commitFn(feature.FeatureType.MOUNT_POINT),
-            vectorLayer, mountPointLayer, interaction, unRegisterDrawEnd;
+            commitNode = commitFn(feature.FeatureType.NODE),
+            vectorLayer, nodeLayer, interaction, unRegisterDrawEnd;
 
         state(type, activate, deactivate);
 
         function activate():void {
             vectorLayer = feature.getLayer(map, type);
-            mountPointLayer = feature.getLayer(map, feature.FeatureType.MOUNT_POINT);
+            nodeLayer = feature.getLayer(map, feature.FeatureType.NODE);
             interaction = new ol.interaction.Draw({
                 type: feature.typeDrawModeMap[type],
                 source: vectorLayer.getSource()//,
@@ -36,15 +36,15 @@ module be.vmm.eenvplus.editor.paint {
                 geometry = <ol.geometry.SimpleGeometry> newFeature.getGeometry(),
                 first = geometry.getFirstCoordinate(),
                 last = geometry.getLastCoordinate(),
-                mountPoints = [createPoint(last)],
+                nodes = [createPoint(last)],
                 promises;
 
-            if (!_.isEqual(first, last)) mountPoints.push(createPoint(first));
+            if (!_.isEqual(first, last)) nodes.push(createPoint(first));
 
-            mountPointLayer
+            nodeLayer
                 .getSource()
-                .addFeatures(mountPoints);
-            promises = mountPoints.map(commitMountPoint);
+                .addFeatures(nodes);
+            promises = nodes.map(commitNode);
             promises.push(commitFeature(newFeature));
 
             q.all(promises)

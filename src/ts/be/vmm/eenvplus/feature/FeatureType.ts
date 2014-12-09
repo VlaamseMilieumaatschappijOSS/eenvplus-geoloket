@@ -4,7 +4,7 @@ module be.vmm.eenvplus.feature {
     export enum FeatureType {
         SEWER,
         APPURTENANCE,
-        MOUNT_POINT
+        NODE
     }
 
     var editableModelPackage = 'be.vmm.eenvplus.sdi.model',

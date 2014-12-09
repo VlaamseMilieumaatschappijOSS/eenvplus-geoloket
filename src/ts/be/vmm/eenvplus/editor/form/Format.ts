@@ -23,7 +23,7 @@ module be.vmm.eenvplus.editor.form {
 
         export function toFeatureLabel(json:feature.model.FeatureJSON):string {
             // TODO get these from .properties
-            var typeLabels = ['Sewer', 'Appurtenance', 'MountPoint'],
+            var typeLabels = ['Sewer', 'Appurtenance', 'Node'],
                 type = feature.toType(json.layerBodId);
 
             if (json.id)
