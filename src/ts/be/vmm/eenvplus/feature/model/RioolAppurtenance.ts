@@ -6,7 +6,7 @@ module be.vmm.eenvplus.feature.model {
 
     export interface RioolAppurtenance extends FeatureProperties {
 
-        koppelPuntId:number;
+        koppelPuntId:string;
         label:string;
         omschrijving:string;
         rioolAppurtenanceTypeId:number;

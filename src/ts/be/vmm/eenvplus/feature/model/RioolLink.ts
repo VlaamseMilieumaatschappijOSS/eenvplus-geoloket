@@ -7,13 +7,13 @@ module be.vmm.eenvplus.feature.model {
     export interface RioolLink extends FeatureProperties {
 
         diameter:number;
-        endKoppelPuntId:number;
+        endKoppelPuntId:string;
         label:string;
         omschrijving:string;
         pressure:number;
         rioolLinkTypeId:number;
         sewerWaterTypeId:number;
-        startKoppelPuntId:number;
+        startKoppelPuntId:string;
         statussen:Status[];
         straatId:number;
 

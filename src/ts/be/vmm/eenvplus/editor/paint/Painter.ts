@@ -3,6 +3,7 @@ module be.vmm.eenvplus.editor.paint {
 
     export function Painter(type:feature.FeatureType,
                             scope:ApplicationScope,
+                            q:ng.IQService,
                             state:PainterState,
                             manager:feature.FeatureManager):void {
 
@@ -35,20 +36,32 @@ module be.vmm.eenvplus.editor.paint {
                 geometry = <ol.geometry.SimpleGeometry> newFeature.getGeometry(),
                 first = geometry.getFirstCoordinate(),
                 last = geometry.getLastCoordinate(),
-                mountPoints = [createPoint(last)];
+                mountPoints = [createPoint(last)],
+                promises;
 
             if (!_.isEqual(first, last)) mountPoints.push(createPoint(first));
 
             mountPointLayer
                 .getSource()
                 .addFeatures(mountPoints);
-            mountPoints.forEach(commitMountPoint);
+            promises = mountPoints.map(commitMountPoint);
+            promises.push(commitFeature(newFeature));
 
-            commitFeature(newFeature)
-                .then((json:feature.model.FeatureJSON):void => {
-                    newFeature.key = json.key;
-                    scope.$broadcast(feature.EVENT.selected, [json]);
-                });
+            q.all(promises)
+                .then(linkFeatures)
+                .then(notifySelection);
+
+            function linkFeatures(jsons:feature.model.FeatureJSON[]):feature.model.FeatureJSON {
+                var featureJson = _.find(jsons, {layerBodId: feature.toLayerBodId(type)}),
+                    nodeJsons = _.difference(jsons, [featureJson]);
+
+                newFeature.key = featureJson.key;
+                if (!_.isEqual(nodeJsons[0].geometry.coordinates, first))
+                    nodeJsons.reverse();
+                manager.link(featureJson, nodeJsons);
+
+                return featureJson;
+            }
         }
 
         function createPoint(coordinates:ol.Coordinate):ol.Feature {
@@ -57,12 +70,16 @@ module be.vmm.eenvplus.editor.paint {
             });
         }
 
+        function notifySelection(json:feature.model.FeatureJSON):void {
+            scope.$broadcast(feature.EVENT.selected, [json]);
+        }
+
         function commitFn(type:feature.FeatureType):(feature:ol.Feature) => ng.IPromise<feature.model.FeatureJSON> {
             return _.compose(manager.create, _.partial(toJson, type));
         }
 
         function toJson(type:feature.FeatureType, newFeature:ol.Feature):feature.model.FeatureJSON {
-            var json = <feature.model.FeatureJSON>vectorLayer.getSource().format.writeFeature(newFeature);
+            var json = <feature.model.FeatureJSON> vectorLayer.getSource().format.writeFeature(newFeature);
             json.layerBodId = feature.toLayerBodId(type);
             return json;
         }

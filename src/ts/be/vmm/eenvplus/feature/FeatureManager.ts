@@ -20,6 +20,7 @@ module be.vmm.eenvplus.feature {
     export interface FeatureManager {
         create: FeatureJSONHandler;
         discard: FeatureJSONHandler;
+        link: (featureJson:model.FeatureJSON, nodeJsons:model.FeatureJSON[]) => void;
         load: (extent:ol.Extent) => void;
         push: FeatureJSONHandler;
         signal: Signals;
@@ -47,6 +48,7 @@ module be.vmm.eenvplus.feature {
             return {
                 create: create,
                 discard: discard,
+                link: link,
                 load: load,
                 push: push,
                 signal: _.mapValues(signals, unary(_.bindAll)),
@@ -77,9 +79,35 @@ module be.vmm.eenvplus.feature {
                 function getSavedData(key:number):void {
                     service
                         .get(json.layerBodId, key)
+                        .then(ensureProperties)
                         .then(deferred.resolve)
                         .catch(handleError('create', json));
                 }
+            }
+
+            function link(featureJson:model.FeatureJSON, nodeJsons:model.FeatureJSON[]):void {
+                if (nodeJsons.length === 1)
+                    linkAppurtenance(featureJson, nodeJsons[0]);
+                else linkSewer(featureJson, nodeJsons[0], nodeJsons[1]);
+            }
+
+            function linkSewer(sewer:model.FeatureJSON, startNode:model.FeatureJSON, endNode:model.FeatureJSON):void {
+                var props = <model.RioolLink> sewer.properties;
+                props.startKoppelPuntId = getId(startNode);
+                props.endKoppelPuntId = getId(endNode);
+                updateLink(sewer);
+            }
+
+            function linkAppurtenance(appurtenance:model.FeatureJSON, node:model.FeatureJSON):void {
+                var props = <model.RioolAppurtenance> appurtenance.properties;
+                props.koppelPuntId = getId(node);
+                updateLink(appurtenance);
+            }
+
+            function updateLink(json:model.FeatureJSON):void {
+                service
+                    .update(json)
+                    .catch(handleError('link update', json));
             }
 
             function update(json:model.FeatureJSON):void {
@@ -122,6 +150,15 @@ module be.vmm.eenvplus.feature {
                         .then(_.partial(signals.remove.fire, json))
                         .catch(handleError('discard', json));
                 }
+            }
+
+            function getId(json:model.FeatureJSON):string {
+                return json.id ? json.id.toString() : '#' + json.key;
+            }
+
+            function ensureProperties(json:model.FeatureJSON):model.FeatureJSON {
+                json.properties = json.properties || <model.FeatureProperties> {};
+                return json;
             }
 
             function handleError(operation:string, data?:model.FeatureJSON):(error:Error) => void {
