@@ -29,12 +29,12 @@
                ng-model="data.label"/>
     </div>
 
-    <div class="form-group" ng-class="{'has-error': form.type.$invalid}">
+    <div class="form-group" ng-class="{'has-error': form.type.$dirty && form.type.$invalid}">
         <label for="appurtenanceTypeInput">
             Appurtenance type
         </label>
-        <super ng-hide="form.type.$error.required">*</super>
-        <span ng-show="form.type.$error.required" class="help-inline">Required</span>
+        <super ng-hide="form.type.$dirty && form.type.$error.required">*</super>
+        <span ng-show="form.type.$dirty && form.type.$error.required" class="help-inline">Required</span>
 
         <select id="appurtenanceTypeInput" name="type" required
                 placeholder="Select a sewer type" class="form-control"
