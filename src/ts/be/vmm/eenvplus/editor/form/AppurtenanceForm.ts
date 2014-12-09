@@ -8,6 +8,7 @@ module be.vmm.eenvplus.editor.form.appurtenanceForm {
 
     interface Scope extends ng.IScope {
         data:feature.model.RioolAppurtenance;
+        form:ng.IFormController;
         selectedSource:label.Label;
         sources:Array<label.Label>;
         selectedType:label.Label;

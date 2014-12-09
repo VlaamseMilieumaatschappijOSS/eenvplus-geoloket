@@ -1,52 +1,90 @@
-<label>
-    Source
-    <select ng-model="selectedSource"
-            ng-options="source as source.label for source in sources">
-    </select>
-</label>
+<form name="form" novalidate>
 
-<label>
-    Source ID
-    <input type="text" ng-model="data.alternatieveId"/>
-</label>
-
-<label>
-    Label
-    <input type="text" ng-model="data.label"/>
-</label>
-
-<label>
-    Diameter
-    <div class="input-group">
-        <input type="text" min="250" max="3200" maxLength="4" class="form-control"
-               ng-model="data.diameter"/>
-        <span class="input-group-addon">mm</span>
+    <div class="form-group">
+        <label for="sewerSourceInput">
+            Source
+        </label>
+        <select id="sewerSourceInput" name="source"
+                placeholder="Select a source" class="form-control"
+                ng-model="selectedSource"
+                ng-options="source as source.label for source in sources">
+        </select>
     </div>
-</label>
 
-<label>
-    Pressure
-    <div class="input-group">
-        <input type="text" min="0.1" max="15" maxLength="2" step="0.01" class="form-control"
-               ng-model="data.pressure"/>
-        <span class="input-group-addon">bar</span>
+    <div class="form-group">
+        <label for="sewerSourceIdInput">
+            Source ID
+        </label>
+        <input id="sewerSourceInput" name="sourceId"
+               type="text" class="form-control"
+               ng-model="data.alternatieveId"/>
     </div>
-</label>
 
-<label>
-    Sewer type
-    <select ng-model="selectedType"
-            ng-options="type as type.label for type in types">
-    </select>
-</label>
+    <div class="form-group">
+        <label for="sewerLabelInput">
+            Label
+        </label>
+        <input id="sewerLabelInput" name="label"
+               type="text" class="form-control"
+               ng-model="data.label"/>
+    </div>
 
-<label>
-    Water type
-    <select ng-model="selectedWaterType"
-            ng-options="type as type.label for type in waterTypes">
-    </select>
-</label>
+    <label ng-class="{'has-error': form.diameter.$invalid}">
+        <span>Diameter</span>
+        <super ng-hide="form.diameter.$error.required">*</super>
+        <span ng-show="form.diameter.$error.required" class="help-inline">Required</span>
 
-<label>
-    Status
-</label>
+        <div class="input-group">
+            <input name="diameter" type="text" class="form-control"
+                   required min="250" max="3200" maxLength="4"
+                   ng-model="data.diameter"/>
+            <span class="input-group-addon">mm</span>
+        </div>
+    </label>
+
+    <label ng-class="{'has-error': form.pressure.$invalid}">
+        <span>Pressure</span>
+
+        <div class="input-group">
+            <input name="pressure" type="text" class="form-control"
+                   min="0.1" max="15" maxLength="2" step="0.01"
+                   ng-model="data.pressure"/>
+            <span class="input-group-addon">bar</span>
+        </div>
+    </label>
+
+    <div class="form-group" ng-class="{'has-error': form.type.$invalid}">
+        <label for="sewerTypeInput">
+            Sewer type
+        </label>
+        <super ng-hide="form.type.$error.required">*</super>
+        <span ng-show="form.type.$error.required" class="help-inline">Required</span>
+
+        <select id="sewerTypeInput" name="type" required
+                placeholder="Select a sewer type" class="form-control"
+                ng-model="selectedType"
+                ng-options="type as type.label for type in types">
+        </select>
+    </div>
+
+    <div class="form-group" ng-class="{'has-error': form.waterType.$invalid}">
+        <label for="sewerWaterTypeInput">
+            Water type
+        </label>
+        <super ng-hide="form.waterType.$error.required">*</super>
+        <span ng-show="form.waterType.$error.required" class="help-inline">Required</span>
+
+        <select id="sewerWaterTypeInput" name="waterType" required
+                placeholder="Select a water type" class="form-control"
+                ng-model="selectedWaterType"
+                ng-options="type as type.label for type in waterTypes">
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>
+            Status
+        </label>
+    </div>
+
+</form>

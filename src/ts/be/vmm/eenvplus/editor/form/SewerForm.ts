@@ -8,6 +8,7 @@ module be.vmm.eenvplus.editor.form.sewerForm {
 
     interface Scope extends ng.IScope {
         data:feature.model.RioolLink;
+        form:ng.IFormController;
         selectedSource:label.Label;
         sources:Array<label.Label>;
         selectedType:label.Label;
@@ -39,6 +40,8 @@ module be.vmm.eenvplus.editor.form.sewerForm {
         scope.selectedSource = _.find(scope.sources, {id: scope.data.namespaceId});
         scope.selectedType = _.find(scope.types, {id: scope.data.rioolLinkTypeId});
         scope.selectedWaterType = _.find(scope.waterTypes, {id: scope.data.sewerWaterTypeId});
+        console.log(scope.form);
+        //scope.form.$setPristine();
 
         scope.$watch(updateModel);
 

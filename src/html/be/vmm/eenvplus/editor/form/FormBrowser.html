@@ -13,9 +13,9 @@
             </h4>
         </header>
 
-        <form id="featureForm_{{feature.key}}"
-              class="panel-collapse collapse" ng-class="{in: $first}"
-              role="tabpanel">
+        <section id="featureForm_{{feature.key}}"
+                 class="panel-collapse collapse" ng-class="{in: $first}"
+                 role="tabpanel">
 
             <div ep-sewer-form
                  ng-if="feature.layerBodId | epIsFeatureType: featureType.SEWER"
@@ -36,7 +36,7 @@
                 <button class="btn btn-danger" ng-click="discard(feature)">Discard</button>
                 <button class="btn btn-success" ng-click="commit(feature)">Accept</button>
             </div>
-        </form>
+        </section>
 
     </section>
 </div>

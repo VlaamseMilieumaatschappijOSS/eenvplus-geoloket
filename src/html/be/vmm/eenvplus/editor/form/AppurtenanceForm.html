@@ -1,23 +1,46 @@
-<label>
-    Source
-    <select ng-model="selectedSource"
-            ng-options="source as source.label for source in sources">
-    </select>
-</label>
+<form name="form" novalidate>
 
-<label>
-    Source ID
-    <input type="text" ng-model="data.alternatieveId"/>
-</label>
+    <div class="form-group">
+        <label for="appurtenanceSourceInput">
+            Source
+        </label>
+        <select id="appurtenanceSourceInput" name="source"
+                placeholder="Select a source" class="form-control"
+                ng-model="selectedSource"
+                ng-options="source as source.label for source in sources">
+        </select>
+    </div>
 
-<label>
-    Label
-    <input type="text" ng-model="data.label"/>
-</label>
+    <div class="form-group">
+        <label for="appurtenanceSourceIdInput">
+            Source ID
+        </label>
+        <input id="appurtenanceSourceIdInput" name="sourceId"
+               type="text" class="form-control"
+               ng-model="data.alternatieveId"/>
+    </div>
 
-<label>
-    Appurtenance type
-    <select ng-model="selectedType"
-            ng-options="type as type.label for type in types">
-    </select>
-</label>
+    <div class="form-group">
+        <label for="appurtenanceLabelInput">
+            Label
+        </label>
+        <input id="appurtenanceLabelInput" name="label"
+               type="text" class="form-control"
+               ng-model="data.label"/>
+    </div>
+
+    <div class="form-group" ng-class="{'has-error': form.type.$invalid}">
+        <label for="appurtenanceTypeInput">
+            Appurtenance type
+        </label>
+        <super ng-hide="form.type.$error.required">*</super>
+        <span ng-show="form.type.$error.required" class="help-inline">Required</span>
+
+        <select id="appurtenanceTypeInput" name="type" required
+                placeholder="Select a sewer type" class="form-control"
+                ng-model="selectedType"
+                ng-options="type as type.label for type in types">
+        </select>
+    </div>
+
+</form>
