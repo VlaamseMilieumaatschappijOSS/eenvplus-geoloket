@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.form.sewerForm {
     export var NAME:string = PREFIX + 'SewerForm';
 
     interface Scope extends ng.IScope {
-        data:feature.model.RioolLink;
+        data:feature.model.FeatureJSON;
         form:ng.IFormController;
         selectedSource:label.Label;
         sources:Array<label.Label>;
@@ -15,6 +15,9 @@ module be.vmm.eenvplus.editor.form.sewerForm {
         types:Array<label.Label>;
         selectedWaterType:label.Label;
         waterTypes:Array<label.Label>;
+
+        discard:(json:feature.model.FeatureJSON) => void;
+        commit:(json:feature.model.FeatureJSON) => void;
     }
 
     function configure():ng.IDirective {
@@ -28,29 +31,33 @@ module be.vmm.eenvplus.editor.form.sewerForm {
         };
     }
 
-    SewerFormController.$inject = ['$scope', 'epLabelService'];
+    SewerFormController.$inject = ['$scope', 'epLabelService', 'epFeatureManager'];
 
-    function SewerFormController(scope:Scope, labelService:label.LabelService):void {
-
+    function SewerFormController(scope:Scope, labelService:label.LabelService, manager:feature.FeatureManager):void {
         scope.sources = labelService.getLabels(label.LabelType.SOURCE);
         scope.types = labelService.getLabels(label.LabelType.SEWER_TYPE);
         scope.waterTypes = labelService.getLabels(label.LabelType.WATER_TYPE);
 
-        scope.data = scope.data || <feature.model.RioolLink> {};
-        scope.selectedSource = _.find(scope.sources, {id: scope.data.namespaceId});
-        scope.selectedType = _.find(scope.types, {id: scope.data.rioolLinkTypeId});
-        scope.selectedWaterType = _.find(scope.waterTypes, {id: scope.data.sewerWaterTypeId});
-        console.log(scope.form);
-        //scope.form.$setPristine();
+        _.merge(scope, {
+            discard: _.partial(manager.discard, scope.data),
+            commit: commit
+        });
 
-        scope.$watch(updateModel);
+        label.proxy(scope, scope.data.properties)
+            .map(scope.sources, 'selectedSource', 'namespaceId')
+            .map(scope.types, 'selectedType', 'rioolLinkTypeId')
+            .map(scope.waterTypes, 'selectedWaterType', 'sewerWaterTypeId');
 
-        function updateModel():void {
-            scope.data.namespaceId = scope.selectedSource ? scope.selectedSource.id : undefined;
-            scope.data.rioolLinkTypeId = scope.selectedType ? scope.selectedType.id : undefined;
-            scope.data.sewerWaterTypeId = scope.selectedWaterType ? scope.selectedWaterType.id : undefined;
+        function commit() {
+            if (scope.form.$valid) manager.update(scope.data);
+            else _(scope.form)
+                .reject((value:ng.INgModelController, key:string):boolean => {
+                    return key.indexOf('$') === 0;
+                })
+                .each((value:ng.INgModelController):void => {
+                    value.$dirty = true;
+                });
         }
-
     }
 
     angular

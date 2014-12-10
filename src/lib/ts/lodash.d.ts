@@ -46,6 +46,7 @@ declare module _ {
         isEqual(valueA:any, valueB:any, compare?:ComparingIterator, scope?:any):boolean;
         map(collection:any, fn:any, scope?:any):any;
         reduce(collection:any, fn:MemoIterator, accumulator:any, scope?:any):any;
+        reject(collection:any, fn:any, scope?:any):any[];
         where(collection:any, query:Object):any;
     }
 
@@ -55,6 +56,7 @@ declare module _ {
         invoke(fn:Function, ...args:any[]):Chain;
         invoke(methodName:string, ...args:any[]):Chain;
         map(fn:any, scope?:any):Chain;
+        reject(fn:any, scope?:any):Chain;
         where(query:Object):Chain;
     }
 

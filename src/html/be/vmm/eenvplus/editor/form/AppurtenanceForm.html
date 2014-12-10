@@ -17,7 +17,7 @@
         </label>
         <input id="appurtenanceSourceIdInput" name="sourceId"
                type="text" class="form-control"
-               ng-model="data.alternatieveId"/>
+               ng-model="data.properties.alternatieveId"/>
     </div>
 
     <div class="form-group">
@@ -26,7 +26,7 @@
         </label>
         <input id="appurtenanceLabelInput" name="label"
                type="text" class="form-control"
-               ng-model="data.label"/>
+               ng-model="data.properties.label"/>
     </div>
 
     <div class="form-group" ng-class="{'has-error': form.type.$dirty && form.type.$invalid}">
@@ -41,6 +41,15 @@
                 ng-model="selectedType"
                 ng-options="type as type.label for type in types">
         </select>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-danger" ng-click="discard()">Discard</button>
+        <button class="btn btn-success" ng-click="commit()">Accept</button>
+    </div>
+
+    <div class="metadata">
+        Last update by {{data.userId | epUserName}} on {{data.beginLifeSpanVersion | epDate}}
     </div>
 
 </form>

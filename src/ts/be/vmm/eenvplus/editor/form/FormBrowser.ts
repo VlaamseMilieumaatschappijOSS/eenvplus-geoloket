@@ -8,9 +8,7 @@ module be.vmm.eenvplus.editor.form.formBrowser {
 
     interface Scope extends ng.IScope {
         features:feature.model.FeatureJSON[];
-        featureType:feature.FeatureType;
-        discard:(json:feature.model.FeatureJSON) => void;
-        commit:(json:feature.model.FeatureJSON) => void;
+        featureType:any;
     }
 
     function configure():ng.IDirective {
@@ -26,11 +24,7 @@ module be.vmm.eenvplus.editor.form.formBrowser {
 
     function FormBrowserController(scope:Scope, manager:feature.FeatureManager):void {
 
-        _.merge(scope, {
-            featureType: feature.FeatureType,
-            discard: manager.discard,
-            commit: manager.update
-        });
+        scope.featureType = feature.FeatureType;
 
         scope.$on(feature.EVENT.selected, handle(setFeatures));
 

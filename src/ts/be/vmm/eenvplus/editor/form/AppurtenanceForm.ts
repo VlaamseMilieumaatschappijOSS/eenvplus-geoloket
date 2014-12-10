@@ -7,12 +7,15 @@ module be.vmm.eenvplus.editor.form.appurtenanceForm {
     export var NAME:string = PREFIX + 'AppurtenanceForm';
 
     interface Scope extends ng.IScope {
-        data:feature.model.RioolAppurtenance;
+        data:feature.model.FeatureJSON;
         form:ng.IFormController;
         selectedSource:label.Label;
         sources:Array<label.Label>;
         selectedType:label.Label;
         types:Array<label.Label>;
+
+        discard:(json:feature.model.FeatureJSON) => void;
+        commit:(json:feature.model.FeatureJSON) => void;
     }
 
     function configure():ng.IDirective {
@@ -26,24 +29,31 @@ module be.vmm.eenvplus.editor.form.appurtenanceForm {
         };
     }
 
-    AppurtenanceFormController.$inject = ['$scope', 'epLabelService'];
+    AppurtenanceFormController.$inject = ['$scope', 'epLabelService', 'epFeatureManager'];
 
-    function AppurtenanceFormController(scope:Scope, labelService:label.LabelService):void {
-
+    function AppurtenanceFormController(scope:Scope, labelService:label.LabelService, manager:feature.FeatureManager):void {
         scope.sources = labelService.getLabels(label.LabelType.SOURCE);
         scope.types = labelService.getLabels(label.LabelType.APPURTENANCE_TYPE);
 
-        scope.data = scope.data || <feature.model.RioolAppurtenance> {};
-        scope.selectedSource = _.find(scope.sources, {id: scope.data.namespaceId});
-        scope.selectedType = _.find(scope.sources, {id: scope.data.rioolAppurtenanceTypeId});
+        _.merge(scope, {
+            discard: _.partial(manager.discard, scope.data),
+            commit: commit
+        });
 
-        scope.$watch(updateModel);
+        label.proxy(scope, scope.data.properties)
+            .map(scope.sources, 'selectedSource', 'namespaceId')
+            .map(scope.types, 'selectedType', 'rioolAppurtenanceTypeId');
 
-        function updateModel():void {
-            scope.data.namespaceId = scope.selectedSource ? scope.selectedSource.id : undefined;
-            scope.data.rioolAppurtenanceTypeId = scope.selectedType ? scope.selectedType.id : undefined;
+        function commit() {
+            if (scope.form.$valid) manager.update(scope.data);
+            else _(scope.form)
+                .reject((value:ng.INgModelController, key:string):boolean => {
+                    return key.indexOf('$') === 0;
+                })
+                .each((value:ng.INgModelController):void => {
+                    value.$dirty = true;
+                });
         }
-
     }
 
     angular
