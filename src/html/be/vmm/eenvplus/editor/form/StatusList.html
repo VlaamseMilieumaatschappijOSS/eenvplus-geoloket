@@ -1,0 +1,14 @@
+<label>
+    Status
+</label>
+
+<span ng-click="ctrl.addStatus()">
+    <i class="icon icon-plus"></i>
+</span>
+
+<ul>
+    <li ng-repeat="status in ctrl.data"
+        ep-feature-status data="status"
+        class="form-inline">
+    </li>
+</ul>

@@ -20,7 +20,7 @@
         </label>
         <input id="sewerSourceIdInput" name="sourceId"
                type="text" class="form-control"
-               ng-model="ctrl.properties.alternatieveId"/>
+               ng-model="ctrl.data.properties.alternatieveId"/>
     </div>
 
     <div class="form-group">
@@ -29,7 +29,7 @@
         </label>
         <input id="sewerLabelInput" name="label"
                type="text" class="form-control"
-               ng-model="ctrl.properties.label"/>
+               ng-model="ctrl.data.properties.label"/>
     </div>
 
     <label ng-class="{'has-error': ctrl.form.diameter.$dirty && ctrl.form.diameter.$invalid}">
@@ -51,7 +51,7 @@
         <div class="input-group">
             <input name="diameter" type="number" class="form-control"
                    required min="250" max="3200" ng-pattern="ctrl.isInteger"
-                   ng-model="ctrl.properties.diameter"/>
+                   ng-model="ctrl.data.properties.diameter"/>
             <span class="input-group-addon">mm</span>
         </div>
     </label>
@@ -71,7 +71,7 @@
         <div class="input-group">
             <input name="pressure" type="number" class="form-control"
                    min="0.1" max="15" step="0.01" ng-pattern="ctrl.max2Decimals"
-                   ng-model="ctrl.properties.pressure"/>
+                   ng-model="ctrl.data.properties.pressure"/>
             <span class="input-group-addon">bar</span>
         </div>
     </label>
@@ -106,20 +106,9 @@
         </select>
     </div>
 
-    <div class="form-group">
-        <label>
-            Status
-        </label>
-        <span ng-click="ctrl.addStatus()">
-            <i class="icon icon-plus"></i>
-        </span>
-
-        <ul>
-            <li ng-repeat="status in ctrl.properties.statussen"
-                ep-feature-status data="status"
-                class="form-inline">
-            </li>
-        </ul>
+    <div ep-feature-status-list
+         data="ctrl.data.properties.statussen"
+         class="form-group">
     </div>
 
     <div class="actions">
