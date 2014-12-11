@@ -39,6 +39,8 @@ module be.vmm.eenvplus.editor.form.sewerForm {
         public types:Array<label.Label>;
         public selectedWaterType:label.Label;
         public waterTypes:Array<label.Label>;
+        public isInteger:RegExp = /^\d*$/;
+        public max2Decimals:RegExp = /^\d+(,|\.\d{1,2})?$/;
 
         private manager:feature.FeatureManager;
 
