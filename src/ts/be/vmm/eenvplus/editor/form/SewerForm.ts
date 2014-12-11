@@ -32,6 +32,7 @@ module be.vmm.eenvplus.editor.form.sewerForm {
         /* ------------------ */
 
         public data:feature.model.FeatureJSON;
+        public properties:feature.model.RioolLink;
         public form:ng.IFormController;
         public selectedSource:label.Label;
         public sources:Array<label.Label>;
@@ -52,6 +53,7 @@ module be.vmm.eenvplus.editor.form.sewerForm {
         constructor(scope:Scope, labelService:label.LabelService, manager:feature.FeatureManager) {
             this.manager = manager;
             this.data = scope.data;
+            this.properties = <feature.model.RioolLink> this.data.properties;
             this.sources = labelService.getLabels(label.LabelType.SOURCE);
             this.types = labelService.getLabels(label.LabelType.SEWER_TYPE);
             this.waterTypes = labelService.getLabels(label.LabelType.WATER_TYPE);
@@ -62,7 +64,7 @@ module be.vmm.eenvplus.editor.form.sewerForm {
                 }
             });
 
-            label.proxy(this, this.data.properties)
+            label.proxy(this, this.properties)
                 .map(this.sources, 'selectedSource', 'namespaceId')
                 .map(this.types, 'selectedType', 'rioolLinkTypeId')
                 .map(this.waterTypes, 'selectedWaterType', 'sewerWaterTypeId');
@@ -74,6 +76,10 @@ module be.vmm.eenvplus.editor.form.sewerForm {
         /* ----------------- */
         /* --- behaviour --- */
         /* ----------------- */
+
+        public addStatus() {
+            this.properties.statussen.push(<feature.model.Status> {});
+        }
 
         public discard:(json:feature.model.FeatureJSON) => void;
 

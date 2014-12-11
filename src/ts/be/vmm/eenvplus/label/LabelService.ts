@@ -17,6 +17,7 @@ module be.vmm.eenvplus.label {
             typeModelMap = [
                 'RioolAppurtenanceType',
                 'RioolLinkType',
+                'Status',
                 'Namespace',
                 'SewerWaterType'
             ].map(path);

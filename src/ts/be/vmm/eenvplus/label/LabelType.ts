@@ -4,6 +4,7 @@ module be.vmm.eenvplus.label {
     export enum LabelType {
         APPURTENANCE_TYPE,
         SEWER_TYPE,
+        STATUS,
         SOURCE,
         WATER_TYPE
     }

@@ -120,23 +120,15 @@ module be.vmm.eenvplus.feature {
             function validate():void {
                 service
                     .test()
-                    .then(_.compose(signals.validate.fire, enhance))
+                    .then(signals.validate.fire)
                     .catch(handleError('validate'));
             }
 
             function push():void {
                 service
                     .push()
-                    .then(_.compose(signals.validate.fire, enhance))
+                    .then(signals.validate.fire)
                     .catch(handleError('push'));
-            }
-
-            function enhance(validation:editor.validation.ValidationResult):editor.validation.ValidationResult {
-                _.each(validation.results, (result:editor.validation.ValidationResult):void => {
-                    // layerBodId should come from server
-                    result['layerBodId'] = feature.typeModelMap[result.valid ? 2 : 0];
-                });
-                return validation;
             }
 
             function discard(json:model.FeatureJSON):void {
@@ -157,7 +149,9 @@ module be.vmm.eenvplus.feature {
             }
 
             function ensureProperties(json:model.FeatureJSON):model.FeatureJSON {
+                var type = toType(json.layerBodId);
                 json.properties = json.properties || <model.FeatureProperties> {};
+                if (type !== FeatureType.NODE) json.properties['statussen'] = []; // FIXME untyped
                 return json;
             }
 

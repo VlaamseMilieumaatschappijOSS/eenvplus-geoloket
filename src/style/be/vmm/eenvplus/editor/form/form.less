@@ -25,8 +25,42 @@
     }
   }
 
+  ul {
+    padding: 0;
+  }
+
+  li {
+    list-style-type: none;
+    padding-bottom: 8px;
+
+    &:last-of-type {
+      padding-bottom: 0;
+    }
+  }
+
+  .form-inline .form-group {
+    width: 30%;
+    margin-right: 5px;
+
+    &:last-of-type {
+      margin-right: 0;
+    }
+
+    .form-control {
+      width: 100%;
+    }
+
+    select {
+      padding: 5px;
+    }
+  }
+
+  .icon {
+    cursor: pointer;
+  }
+
   .metadata {
-    padding: 0 15px 15px 15px;
+    padding: 15px 15px 0 15px;
   }
 
   .help-inline {
