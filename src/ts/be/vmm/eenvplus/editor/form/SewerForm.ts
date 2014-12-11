@@ -12,7 +12,7 @@ module be.vmm.eenvplus.editor.form.sewerForm {
     }
 
     function configure():ng.IDirective {
-        SewerFormController.$inject = ['$scope', 'epLabelService', 'epFeatureManager'];
+        SewerFormController.$inject = ['$scope', 'epLabelService'];
 
         return {
             restrict: 'A',
@@ -42,15 +42,12 @@ module be.vmm.eenvplus.editor.form.sewerForm {
         public isInteger:RegExp = /^\d*$/;
         public max2Decimals:RegExp = /^\d+(,|\.\d{1,2})?$/;
 
-        private manager:feature.FeatureManager;
-
 
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(scope:Scope, labelService:label.LabelService, manager:feature.FeatureManager) {
-            this.manager = manager;
+        constructor(scope:Scope, labelService:label.LabelService) {
             this.data = scope.data;
             this.sources = labelService.getLabels(label.LabelType.SOURCE);
             this.types = labelService.getLabels(label.LabelType.SEWER_TYPE);
@@ -66,27 +63,8 @@ module be.vmm.eenvplus.editor.form.sewerForm {
                 .map(this.sources, 'selectedSource', 'namespaceId')
                 .map(this.types, 'selectedType', 'rioolLinkTypeId')
                 .map(this.waterTypes, 'selectedWaterType', 'sewerWaterTypeId');
-
-            this.discard = _.partial(manager.discard, this.data);
         }
 
-
-        /* ----------------- */
-        /* --- behaviour --- */
-        /* ----------------- */
-
-        public discard:(json:feature.model.FeatureJSON) => void;
-
-        public commit() {
-            if (this.form.$valid) this.manager.update(this.data);
-            else _(this.form)
-                .reject((value:ng.INgModelController, key:string):boolean => {
-                    return key.indexOf('$') === 0;
-                })
-                .each((value:ng.INgModelController):void => {
-                    value.$dirty = true;
-                });
-        }
     }
 
     angular
