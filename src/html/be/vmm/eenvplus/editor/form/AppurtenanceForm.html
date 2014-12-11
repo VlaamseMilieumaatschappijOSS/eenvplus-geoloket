@@ -1,12 +1,15 @@
 <form name="form" novalidate>
 
-    <div class="form-group">
+    <div class="form-group" ng-class="{'has-error': ctrl.form.source.$dirty && ctrl.form.source.$invalid}">
         <label for="appurtenanceSourceInput">
             Source
         </label>
+        <super ng-hide="ctrl.form.source.$dirty && ctrl.form.source.$error.required">*</super>
+        <span ng-show="ctrl.form.source.$dirty && ctrl.form.source.$error.required" class="help-inline">Required</span>
+
         <select id="appurtenanceSourceInput" name="source"
                 placeholder="Select a source" class="form-control"
-                ng-model="ctrl.selectedSource"
+                ng-model="ctrl.selectedSource" required
                 ng-options="source as source.label for source in ctrl.sources">
         </select>
     </div>
