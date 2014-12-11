@@ -6,8 +6,8 @@
         </label>
         <select id="sewerSourceInput" name="source"
                 placeholder="Select a source" class="form-control"
-                ng-model="selectedSource"
-                ng-options="source as source.label for source in sources">
+                ng-model="ctrl.selectedSource"
+                ng-options="source as source.label for source in ctrl.sources">
         </select>
     </div>
 
@@ -17,7 +17,7 @@
         </label>
         <input id="sewerSourceIdInput" name="sourceId"
                type="text" class="form-control"
-               ng-model="data.properties.alternatieveId"/>
+               ng-model="ctrl.data.properties.alternatieveId"/>
     </div>
 
     <div class="form-group">
@@ -26,58 +26,62 @@
         </label>
         <input id="sewerLabelInput" name="label"
                type="text" class="form-control"
-               ng-model="data.properties.label"/>
+               ng-model="ctrl.data.properties.label"/>
     </div>
 
-    <label ng-class="{'has-error': form.diameter.$dirty && form.diameter.$invalid}">
+    <label ng-class="{'has-error': ctrl.form.diameter.$dirty && ctrl.form.diameter.$invalid}">
         <span>Diameter</span>
-        <super ng-hide="form.diameter.$dirty && form.diameter.$error.required">*</super>
-        <span ng-show="form.diameter.$dirty && form.diameter.$error.required" class="help-inline">Required</span>
+        <super ng-hide="ctrl.form.diameter.$dirty && ctrl.form.diameter.$error.required">*</super>
+        <span ng-show="ctrl.form.diameter.$dirty && ctrl.form.diameter.$error.required" class="help-inline">
+            Required
+        </span>
 
         <div class="input-group">
             <input name="diameter" type="text" class="form-control"
                    required min="250" max="3200" maxLength="4"
-                   ng-model="data.properties.diameter"/>
+                   ng-model="ctrl.data.properties.diameter"/>
             <span class="input-group-addon">mm</span>
         </div>
     </label>
 
-    <label ng-class="{'has-error': form.pressure.$dirty && form.pressure.$invalid}">
+    <label ng-class="{'has-error': ctrl.form.pressure.$dirty && ctrl.form.pressure.$invalid}">
         <span>Pressure</span>
 
         <div class="input-group">
             <input name="pressure" type="text" class="form-control"
                    min="0.1" max="15" maxLength="2" step="0.01"
-                   ng-model="data.properties.pressure"/>
+                   ng-model="ctrl.data.properties.pressure"/>
             <span class="input-group-addon">bar</span>
         </div>
     </label>
 
-    <div class="form-group" ng-class="{'has-error': form.type.$dirty && form.type.$invalid}">
+    <div class="form-group" ng-class="{'has-error': ctrl.form.type.$dirty && ctrl.form.type.$invalid}">
         <label for="sewerTypeInput">
             Sewer type
         </label>
-        <super ng-hide="form.type.$dirty && form.type.$error.required">*</super>
-        <span ng-show="form.type.$dirty && form.type.$error.required" class="help-inline">Required</span>
+        <super ng-hide="ctrl.form.type.$dirty && ctrl.form.type.$error.required">*</super>
+        <span ng-show="ctrl.form.type.$dirty && ctrl.form.type.$error.required" class="help-inline">Required</span>
 
         <select id="sewerTypeInput" name="type" required
                 placeholder="Select a sewer type" class="form-control"
-                ng-model="selectedType"
-                ng-options="type as type.label for type in types">
+                ng-model="ctrl.selectedType"
+                ng-options="type as type.label for type in ctrl.types">
         </select>
     </div>
 
-    <div class="form-group" ng-class="{'has-error': form.waterType.$dirty && form.waterType.$invalid}">
+    <div class="form-group" ng-class="{'has-error': ctrl.form.waterType.$dirty && ctrl.form.waterType.$invalid}">
         <label for="sewerWaterTypeInput">
             Water type
         </label>
-        <super ng-hide="form.waterType.$dirty && form.waterType.$error.required">*</super>
-        <span ng-show="form.waterType.$dirty && form.waterType.$error.required" class="help-inline">Required</span>
+        <super ng-hide="ctrl.form.waterType.$dirty && ctrl.form.waterType.$error.required">*</super>
+        <span ng-show="ctrl.form.waterType.$dirty && ctrl.form.waterType.$error.required" class="help-inline">
+            Required
+        </span>
 
         <select id="sewerWaterTypeInput" name="waterType" required
                 placeholder="Select a water type" class="form-control"
-                ng-model="selectedWaterType"
-                ng-options="type as type.label for type in waterTypes">
+                ng-model="ctrl.selectedWaterType"
+                ng-options="type as type.label for type in ctrl.waterTypes">
         </select>
     </div>
 
@@ -88,12 +92,12 @@
     </div>
 
     <div class="actions">
-        <button class="btn btn-danger" ng-click="discard()">Discard</button>
-        <button class="btn btn-success" ng-click="commit()">Accept</button>
+        <button class="btn btn-danger" ng-click="ctrl.discard()">Discard</button>
+        <button class="btn btn-success" ng-click="ctrl.commit()">Accept</button>
     </div>
 
     <div class="metadata">
-        Last update by {{data.userId | epUserName}} on {{data.beginLifeSpanVersion | epDate}}
+        Last update by {{ctrl.data.userId | epUserName}} on {{ctrl.data.beginLifeSpanVersion | epDate}}
     </div>
 
 </form>

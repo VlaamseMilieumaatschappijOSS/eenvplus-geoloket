@@ -8,36 +8,55 @@ module be.vmm.eenvplus.viewer {
 
     interface Scope extends ng.IScope {
         map:ol.Map;
-        zoom:() => void;
     }
 
     function configure():ng.IDirective {
+        FeatureZoomController.$inject = ['$scope'];
+
         return {
             restrict: 'A',
             scope: {
                 map: '='
             },
+            controllerAs: 'ctrl',
             controller: FeatureZoomController,
             templateUrl: 'html/be/vmm/eenvplus/viewer/FeatureZoom.html'
         };
     }
 
-    FeatureZoomController.$inject = ['$scope'];
+    class FeatureZoomController {
 
-    function FeatureZoomController(scope:Scope) {
+        /* ------------------ */
+        /* --- properties --- */
+        /* ------------------ */
 
-        scope.zoom = zoom;
+        private map:ol.Map;
+
+
+        /* -------------------- */
+        /* --- construction --- */
+        /* -------------------- */
+
+        constructor(scope:Scope) {
+            this.map = scope.map;
+        }
+
+
+        /* ----------------- */
+        /* --- behaviour --- */
+        /* ----------------- */
 
         /**
          * Zoom to the level that has most information, i.e. where all layers are visible.
          */
-        function zoom() {
-            var resolutions = _(scope.map.getLayers().getArray())
+        public zoom() {
+            var resolutions = _(this.map.getLayers().getArray())
                 .filter('displayInLayerManager')
                 .invoke(ol.layer.Base.prototype.get, ol.layer.LayerProperty.MAX_RESOLUTION)
                 .value();
-            scope.map.getView().setResolution(Math.min.apply(null, resolutions) / 2);
+            this.map.getView().setResolution(Math.min.apply(null, resolutions) / 2);
         }
+
     }
 
     angular

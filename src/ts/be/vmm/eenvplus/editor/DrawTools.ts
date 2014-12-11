@@ -6,41 +6,60 @@ module be.vmm.eenvplus.editor.drawTools {
 
     export var NAME:string = PREFIX + 'DrawTools';
 
-    interface Scope extends ng.IScope {
-        selectedItem:feature.FeatureType;
-        requestEditMode:() => void;
-        requestSewerPainter:() => void;
-        requestAppurtenancePainter:() => void;
-    }
-
     function configure():ng.IDirective {
+        DrawToolsController.$inject = ['$scope', '$rootScope'];
+
         return {
             restrict: 'A',
             scope: {},
+            controllerAs: 'ctrl',
             controller: DrawToolsController,
             templateUrl: 'html/be/vmm/eenvplus/editor/DrawTools.html'
         };
     }
 
-    DrawToolsController.$inject = ['$scope', '$rootScope'];
+    class DrawToolsController {
 
-    function DrawToolsController(scope:Scope, rootScope:ng.IScope) {
+        /* ------------------ */
+        /* --- properties --- */
+        /* ------------------ */
 
-        _.merge(scope, {
-            requestEditMode: requestEditMode,
-            selectSewerPainter: _.partial(selectPainter, feature.FeatureType.SEWER),
-            selectAppurtenancePainter: _.partial(selectPainter, feature.FeatureType.APPURTENANCE)
-        });
+        public selectedItem:feature.FeatureType;
 
-        scope.$on(feature.EVENT.selected, _.partial(selectPainter, undefined));
+        private scope:ng.IScope;
+        private rootScope:ng.IScope;
 
-        function requestEditMode():void {
-            rootScope.$broadcast(applicationState.EVENT.modeRequest, applicationState.State.EDIT);
+
+        /* -------------------- */
+        /* --- construction --- */
+        /* -------------------- */
+
+        constructor(scope:ng.IScope, rootScope:ng.IScope) {
+            _.bindAll(this);
+            this.scope = scope;
+            this.rootScope = rootScope;
+
+            this.requestSewerPainter = _.partial(this.selectPainter, feature.FeatureType.SEWER);
+            this.requestAppurtenancePainter = _.partial(this.selectPainter, feature.FeatureType.APPURTENANCE);
+
+            scope.$on(feature.EVENT.selected, _.partial(this.selectPainter, undefined));
         }
 
-        function selectPainter(painter:feature.FeatureType):void {
-            scope.selectedItem = scope.selectedItem === painter ? undefined : painter;
-            rootScope.$broadcast(paint.EVENT.selected, scope.selectedItem);
+
+        /* ----------------- */
+        /* --- behaviour --- */
+        /* ----------------- */
+
+        public requestEditMode():void {
+            this.rootScope.$broadcast(applicationState.EVENT.modeRequest, applicationState.State.EDIT);
+        }
+
+        public requestSewerPainter:() => void;
+        public requestAppurtenancePainter:() => void;
+
+        public selectPainter(painter:feature.FeatureType):void {
+            this.selectedItem = this.selectedItem === painter ? undefined : painter;
+            this.rootScope.$broadcast(paint.EVENT.selected, this.selectedItem);
         }
 
     }

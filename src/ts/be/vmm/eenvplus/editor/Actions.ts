@@ -8,33 +8,51 @@ module be.vmm.eenvplus.editor.actions {
 
     export var NAME:string = PREFIX + 'EditActions';
 
-    interface Scope extends ng.IScope {
-        discard:Function;
-        validate:Function;
-        save:Function;
-    }
-
     function configure():ng.IDirective {
+        ActionsController.$inject = ['$rootScope', 'epFeatureManager'];
+
         return {
             restrict: 'A',
             scope: {},
+            controllerAs: 'ctrl',
             controller: ActionsController,
             templateUrl: 'html/be/vmm/eenvplus/editor/Actions.html'
         };
     }
 
-    ActionsController.$inject = ['$scope', '$rootScope', 'epFeatureManager'];
 
-    function ActionsController(scope:Scope, rootScope:ng.IScope, manager:feature.FeatureManager):void {
+    class ActionsController {
 
-        _.merge(scope, {
-            discard: stopEditing,
-            validate: manager.validate,
-            save: _.compose(stopEditing, manager.push)
-        });
+        /* ------------------ */
+        /* --- properties --- */
+        /* ------------------ */
 
-        function stopEditing():void {
-            rootScope.$broadcast(applicationState.EVENT.modeRequest, applicationState.State.OVERVIEW);
+        private rootScope:ng.IScope;
+        private manager:feature.FeatureManager;
+
+
+        /* -------------------- */
+        /* --- construction --- */
+        /* -------------------- */
+
+        constructor(rootScope:ng.IScope, manager:feature.FeatureManager) {
+            this.rootScope = rootScope;
+            this.manager = manager;
+
+            this.validate = manager.validate;
+            this.save = _.compose(this.discard.bind(this), manager.push);
+        }
+
+
+        /* ----------------- */
+        /* --- behaviour --- */
+        /* ----------------- */
+
+        public validate:Function;
+        public save:Function;
+
+        public discard():void {
+            this.rootScope.$broadcast(applicationState.EVENT.modeRequest, applicationState.State.OVERVIEW);
         }
 
     }

@@ -6,26 +6,35 @@ module be.vmm.eenvplus.editor.snappingTools {
 
     export var NAME:string = PREFIX + 'SnappingTools';
 
-    interface Scope extends ng.IScope {
-        useRange:boolean;
-        snapResolution:number;
-    }
-
     function configure():ng.IDirective {
+        SnappingToolsController.$inject = ['gaBrowserSniffer'];
+
         return {
             restrict: 'A',
             scope: {},
+            controllerAs: 'ctrl',
             controller: SnappingToolsController,
             templateUrl: 'html/be/vmm/eenvplus/editor/SnappingTools.html'
         };
     }
 
-    SnappingToolsController.$inject = ['$scope', 'gaBrowserSniffer'];
+    class SnappingToolsController {
 
-    function SnappingToolsController(scope:Scope, browser:ga.components.BrowserSnifferService) {
+        /* ------------------ */
+        /* --- properties --- */
+        /* ------------------ */
 
-        scope.useRange = !browser.mobile && (!browser.msie || browser.msie > 9);
-        scope.snapResolution = 5;
+        public useRange:boolean;
+        public snapResolution:number = 5;
+
+
+        /* -------------------- */
+        /* --- construction --- */
+        /* -------------------- */
+
+        constructor(browser:ga.components.BrowserSnifferService) {
+            this.useRange = !browser.mobile && (!browser.msie || browser.msie > 9);
+        }
 
     }
 

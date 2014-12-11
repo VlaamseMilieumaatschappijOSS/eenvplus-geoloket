@@ -1,5 +1,5 @@
 <div id="formBrowser" class="panel-group" role="tablist" aria-multiselectable="true">
-    <section class="panel panel-default" ng-repeat="feature in features">
+    <section class="panel panel-default" ng-repeat="feature in ctrl.features">
 
         <header class="panel-heading" role="tab">
             <h4 class="panel-title">
@@ -18,12 +18,12 @@
               role="tabpanel">
 
             <div ep-sewer-form
-                 ng-if="feature.layerBodId | epIsFeatureType: featureType.SEWER"
+                 ng-if="feature.layerBodId | epIsFeatureType: ctrl.featureType.SEWER"
                  data="feature"
                  class="panel-body">
             </div>
             <div ep-appurtenance-form
-                 ng-if="feature.layerBodId | epIsFeatureType: featureType.APPURTENANCE"
+                 ng-if="feature.layerBodId | epIsFeatureType: ctrl.featureType.APPURTENANCE"
                  data="feature"
                  class="panel-body">
             </div>

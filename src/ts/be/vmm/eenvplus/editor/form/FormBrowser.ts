@@ -6,30 +6,30 @@ module be.vmm.eenvplus.editor.form.formBrowser {
 
     export var NAME:string = PREFIX + 'FormBrowser';
 
-    interface Scope extends ng.IScope {
-        features:feature.model.FeatureJSON[];
-        featureType:any;
-    }
-
     function configure():ng.IDirective {
+        FormBrowserController.$inject = ['$scope'];
+
         return {
             restrict: 'A',
             scope: {},
+            controllerAs: 'ctrl',
             controller: FormBrowserController,
             templateUrl: 'html/be/vmm/eenvplus/editor/form/FormBrowser.html'
         };
     }
 
-    FormBrowserController.$inject = ['$scope', 'epFeatureManager'];
+    class FormBrowserController {
 
-    function FormBrowserController(scope:Scope, manager:feature.FeatureManager):void {
+        public features:feature.model.FeatureJSON[];
+        public featureType:any;
 
-        scope.featureType = feature.FeatureType;
+        constructor(scope:ng.IScope) {
+            this.featureType = feature.FeatureType;
+            scope.$on(feature.EVENT.selected, handle(this.setFeatures.bind(this)));
+        }
 
-        scope.$on(feature.EVENT.selected, handle(setFeatures));
-
-        function setFeatures(features:feature.model.FeatureJSON[]):void {
-            scope.features = features;
+        public setFeatures(features:feature.model.FeatureJSON[]):void {
+            this.features = features;
         }
 
     }

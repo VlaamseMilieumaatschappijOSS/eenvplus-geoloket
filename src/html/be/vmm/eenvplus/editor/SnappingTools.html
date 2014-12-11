@@ -29,9 +29,9 @@
         </li>
         <li>
             <label>Resolution</label>
-            <input ng-hide="useRange" type="text" maxlength="2" ng-model="snapResolution"/>
-            <input ng-show="useRange" type="range" min="1" max="50" step="1" ng-model="snapResolution"/>
-            <span ng-show="useRange">{{snapResolution}}</span>
+            <input ng-hide="ctrl.useRange" type="text" maxlength="2" ng-model="ctrl.snapResolution"/>
+            <input ng-show="ctrl.useRange" type="range" min="1" max="50" step="1" ng-model="ctrl.snapResolution"/>
+            <span ng-show="ctrl.useRange">{{ctrl.snapResolution}}</span>
             <span>px</span>
         </li>
     </ul>

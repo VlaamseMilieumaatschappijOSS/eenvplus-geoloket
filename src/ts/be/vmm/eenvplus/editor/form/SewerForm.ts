@@ -9,48 +9,75 @@ module be.vmm.eenvplus.editor.form.sewerForm {
     interface Scope extends ng.IScope {
         data:feature.model.FeatureJSON;
         form:ng.IFormController;
-        selectedSource:label.Label;
-        sources:Array<label.Label>;
-        selectedType:label.Label;
-        types:Array<label.Label>;
-        selectedWaterType:label.Label;
-        waterTypes:Array<label.Label>;
-
-        discard:(json:feature.model.FeatureJSON) => void;
-        commit:(json:feature.model.FeatureJSON) => void;
     }
 
     function configure():ng.IDirective {
+        SewerFormController.$inject = ['$scope', 'epLabelService', 'epFeatureManager'];
+
         return {
             restrict: 'A',
             scope: {
                 data: '='
             },
+            controllerAs: 'ctrl',
             controller: SewerFormController,
             templateUrl: 'html/be/vmm/eenvplus/editor/form/SewerForm.html'
         };
     }
 
-    SewerFormController.$inject = ['$scope', 'epLabelService', 'epFeatureManager'];
+    class SewerFormController {
 
-    function SewerFormController(scope:Scope, labelService:label.LabelService, manager:feature.FeatureManager):void {
-        scope.sources = labelService.getLabels(label.LabelType.SOURCE);
-        scope.types = labelService.getLabels(label.LabelType.SEWER_TYPE);
-        scope.waterTypes = labelService.getLabels(label.LabelType.WATER_TYPE);
+        /* ------------------ */
+        /* --- properties --- */
+        /* ------------------ */
 
-        _.merge(scope, {
-            discard: _.partial(manager.discard, scope.data),
-            commit: commit
-        });
+        public data:feature.model.FeatureJSON;
+        public form:ng.IFormController;
+        public selectedSource:label.Label;
+        public sources:Array<label.Label>;
+        public selectedType:label.Label;
+        public types:Array<label.Label>;
+        public selectedWaterType:label.Label;
+        public waterTypes:Array<label.Label>;
 
-        label.proxy(scope, scope.data.properties)
-            .map(scope.sources, 'selectedSource', 'namespaceId')
-            .map(scope.types, 'selectedType', 'rioolLinkTypeId')
-            .map(scope.waterTypes, 'selectedWaterType', 'sewerWaterTypeId');
+        private manager:feature.FeatureManager;
 
-        function commit() {
-            if (scope.form.$valid) manager.update(scope.data);
-            else _(scope.form)
+
+        /* -------------------- */
+        /* --- construction --- */
+        /* -------------------- */
+
+        constructor(scope:Scope, labelService:label.LabelService, manager:feature.FeatureManager) {
+            this.manager = manager;
+            this.data = scope.data;
+            this.sources = labelService.getLabels(label.LabelType.SOURCE);
+            this.types = labelService.getLabels(label.LabelType.SEWER_TYPE);
+            this.waterTypes = labelService.getLabels(label.LabelType.WATER_TYPE);
+
+            Object.defineProperty(scope, 'form', {
+                set: (value:ng.IFormController):void => {
+                    this.form = value;
+                }
+            });
+
+            label.proxy(this, this.data.properties)
+                .map(this.sources, 'selectedSource', 'namespaceId')
+                .map(this.types, 'selectedType', 'rioolLinkTypeId')
+                .map(this.waterTypes, 'selectedWaterType', 'sewerWaterTypeId');
+
+            this.discard = _.partial(manager.discard, this.data);
+        }
+
+
+        /* ----------------- */
+        /* --- behaviour --- */
+        /* ----------------- */
+
+        public discard:(json:feature.model.FeatureJSON) => void;
+
+        public commit() {
+            if (this.form.$valid) this.manager.update(this.data);
+            else _(this.form)
                 .reject((value:ng.INgModelController, key:string):boolean => {
                     return key.indexOf('$') === 0;
                 })

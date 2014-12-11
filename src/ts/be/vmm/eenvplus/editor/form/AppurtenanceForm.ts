@@ -9,44 +9,71 @@ module be.vmm.eenvplus.editor.form.appurtenanceForm {
     interface Scope extends ng.IScope {
         data:feature.model.FeatureJSON;
         form:ng.IFormController;
-        selectedSource:label.Label;
-        sources:Array<label.Label>;
-        selectedType:label.Label;
-        types:Array<label.Label>;
-
-        discard:(json:feature.model.FeatureJSON) => void;
-        commit:(json:feature.model.FeatureJSON) => void;
     }
 
     function configure():ng.IDirective {
+        AppurtenanceFormController.$inject = ['$scope', 'epLabelService', 'epFeatureManager'];
+
         return {
             restrict: 'A',
             scope: {
                 data: '='
             },
+            controllerAs: 'ctrl',
             controller: AppurtenanceFormController,
             templateUrl: 'html/be/vmm/eenvplus/editor/form/AppurtenanceForm.html'
         };
     }
 
-    AppurtenanceFormController.$inject = ['$scope', 'epLabelService', 'epFeatureManager'];
+    class AppurtenanceFormController {
 
-    function AppurtenanceFormController(scope:Scope, labelService:label.LabelService, manager:feature.FeatureManager):void {
-        scope.sources = labelService.getLabels(label.LabelType.SOURCE);
-        scope.types = labelService.getLabels(label.LabelType.APPURTENANCE_TYPE);
+        /* ------------------ */
+        /* --- properties --- */
+        /* ------------------ */
 
-        _.merge(scope, {
-            discard: _.partial(manager.discard, scope.data),
-            commit: commit
-        });
+        public data:feature.model.FeatureJSON;
+        public form:ng.IFormController;
+        public selectedSource:label.Label;
+        public sources:Array<label.Label>;
+        public selectedType:label.Label;
+        public types:Array<label.Label>;
 
-        label.proxy(scope, scope.data.properties)
-            .map(scope.sources, 'selectedSource', 'namespaceId')
-            .map(scope.types, 'selectedType', 'rioolAppurtenanceTypeId');
+        private manager:feature.FeatureManager;
 
-        function commit() {
-            if (scope.form.$valid) manager.update(scope.data);
-            else _(scope.form)
+
+        /* -------------------- */
+        /* --- construction --- */
+        /* -------------------- */
+
+        constructor(scope:Scope, labelService:label.LabelService, manager:feature.FeatureManager) {
+            this.manager = manager;
+            this.data = scope.data;
+            this.sources = labelService.getLabels(label.LabelType.SOURCE);
+            this.types = labelService.getLabels(label.LabelType.APPURTENANCE_TYPE);
+
+            Object.defineProperty(scope, 'form', {
+                set: (value:ng.IFormController):void => {
+                    this.form = value;
+                }
+            });
+
+            label.proxy(this, this.data.properties)
+                .map(this.sources, 'selectedSource', 'namespaceId')
+                .map(this.types, 'selectedType', 'rioolAppurtenanceTypeId');
+
+            this.discard = _.partial(manager.discard, this.data);
+        }
+
+
+        /* ----------------- */
+        /* --- behaviour --- */
+        /* ----------------- */
+
+        public discard:(json:feature.model.FeatureJSON) => void;
+
+        public commit() {
+            if (this.form.$valid) this.manager.update(this.data);
+            else _(this.form)
                 .reject((value:ng.INgModelController, key:string):boolean => {
                     return key.indexOf('$') === 0;
                 })
@@ -54,6 +81,7 @@ module be.vmm.eenvplus.editor.form.appurtenanceForm {
                     value.$dirty = true;
                 });
         }
+
     }
 
     angular

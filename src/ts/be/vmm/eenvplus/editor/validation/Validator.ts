@@ -6,38 +6,51 @@ module be.vmm.eenvplus.editor.validation.validator {
 
     export var NAME:string = PREFIX + 'Validator';
 
-    interface Scope extends ng.IScope {
-        isValid:boolean;
-        results:FeatureResult[];
-    }
-
     function configure():ng.IDirective {
+        ValidatorController.$inject = ['$scope', 'epFeatureManager'];
+
         return {
             restrict: 'A',
             scope: {},
+            controllerAs: 'ctrl',
             controller: ValidatorController,
             templateUrl: 'html/be/vmm/eenvplus/editor/validation/Validator.html'
         };
     }
 
-    ValidatorController.$inject = ['$scope', 'epFeatureManager'];
+    class ValidatorController {
 
-    function ValidatorController(scope:Scope, manager:feature.FeatureManager):void {
+        /* ------------------ */
+        /* --- properties --- */
+        /* ------------------ */
 
-        _.merge(scope, {
-            isValid: true
-        });
+        public results:FeatureResult[];
+        public isValid:boolean = true;
 
-        scope.$on(applicationState.EVENT.modeRequest, handle(handleModeChange));
-        manager.signal.validate.add(handleValidation);
 
-        function handleValidation(result:ValidationResult):void {
-            scope.isValid = result.valid;
-            scope.results = result.results;
+        /* -------------------- */
+        /* --- construction --- */
+        /* -------------------- */
+
+        constructor(scope:ng.IScope, manager:feature.FeatureManager) {
+            _.bindAll(this);
+
+            scope.$on(applicationState.EVENT.modeRequest, handle(this.handleModeChange));
+            manager.signal.validate.add(this.handleValidation);
         }
 
-        function handleModeChange(state:applicationState.State):void {
-            if (state === applicationState.State.OVERVIEW) scope.isValid = true;
+
+        /* ---------------------- */
+        /* --- event handlers --- */
+        /* ---------------------- */
+
+        private handleValidation(result:ValidationResult):void {
+            this.isValid = result.valid;
+            this.results = result.results;
+        }
+
+        private handleModeChange(state:applicationState.State):void {
+            if (state === applicationState.State.OVERVIEW) this.isValid = true;
         }
 
     }

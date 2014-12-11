@@ -6,8 +6,8 @@
         </label>
         <select id="appurtenanceSourceInput" name="source"
                 placeholder="Select a source" class="form-control"
-                ng-model="selectedSource"
-                ng-options="source as source.label for source in sources">
+                ng-model="ctrl.selectedSource"
+                ng-options="source as source.label for source in ctrl.sources">
         </select>
     </div>
 
@@ -17,7 +17,7 @@
         </label>
         <input id="appurtenanceSourceIdInput" name="sourceId"
                type="text" class="form-control"
-               ng-model="data.properties.alternatieveId"/>
+               ng-model="ctrl.data.properties.alternatieveId"/>
     </div>
 
     <div class="form-group">
@@ -26,30 +26,30 @@
         </label>
         <input id="appurtenanceLabelInput" name="label"
                type="text" class="form-control"
-               ng-model="data.properties.label"/>
+               ng-model="ctrl.data.properties.label"/>
     </div>
 
-    <div class="form-group" ng-class="{'has-error': form.type.$dirty && form.type.$invalid}">
+    <div class="form-group" ng-class="{'has-error': ctrl.form.type.$dirty && ctrl.form.type.$invalid}">
         <label for="appurtenanceTypeInput">
             Appurtenance type
         </label>
-        <super ng-hide="form.type.$dirty && form.type.$error.required">*</super>
-        <span ng-show="form.type.$dirty && form.type.$error.required" class="help-inline">Required</span>
+        <super ng-hide="ctrl.form.type.$dirty && ctrl.form.type.$error.required">*</super>
+        <span ng-show="ctrl.form.type.$dirty && ctrl.form.type.$error.required" class="help-inline">Required</span>
 
         <select id="appurtenanceTypeInput" name="type" required
                 placeholder="Select a sewer type" class="form-control"
-                ng-model="selectedType"
-                ng-options="type as type.label for type in types">
+                ng-model="ctrl.selectedType"
+                ng-options="type as type.label for type in ctrl.types">
         </select>
     </div>
 
     <div class="actions">
-        <button class="btn btn-danger" ng-click="discard()">Discard</button>
-        <button class="btn btn-success" ng-click="commit()">Accept</button>
+        <button class="btn btn-danger" ng-click="ctrl.discard()">Discard</button>
+        <button class="btn btn-success" ng-click="ctrl.commit()">Accept</button>
     </div>
 
     <div class="metadata">
-        Last update by {{data.userId | epUserName}} on {{data.beginLifeSpanVersion | epDate}}
+        Last update by {{ctrl.data.userId | epUserName}} on {{ctrl.data.beginLifeSpanVersion | epDate}}
     </div>
 
 </form>
