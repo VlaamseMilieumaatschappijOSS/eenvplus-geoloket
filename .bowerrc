@@ -1,0 +1,5 @@
+{
+  "directory": "src/lib",
+  "registry": "http://bower.herokuapp.com",
+  "strict-ssl": false
+}
