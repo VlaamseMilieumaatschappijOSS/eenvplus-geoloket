@@ -1,28 +1,32 @@
-<div class="form-group">
-    <label for="statusTypeInput_{{$index}}" class="sr-only" >
+<div ng-show="ctrl.empty('statusType')" class="help-inline">
+    Required
+</div>
+
+<div class="form-group" ng-class="{'has-error': ctrl.empty('statusType')}">
+    <label for="statusTypeInput_{{ctrl.uid}}" class="sr-only">
         Type
     </label>
-    <select id="statusTypeInput_{{$index}}" name="statusType"
+    <select id="statusTypeInput_{{ctrl.uid}}" name="statusType_{{ctrl.uid}}"
             placeholder="Status" class="form-control"
-            ng-model="ctrl.selectedStatus"
+            ng-model="ctrl.selectedStatus" required
             ng-options="type as type.label for type in ctrl.types">
     </select>
 </div>
 
 <div class="form-group">
-    <label for="statusStartInput_{{$index}}" class="sr-only" >
+    <label for="statusStartInput_{{ctrl.uid}}" class="sr-only">
         Start
     </label>
-    <input id="statusStartInput_{{$index}}" name="statusStart" type="date"
+    <input id="statusStartInput_{{ctrl.uid}}" name="statusStart_{{ctrl.uid}}" type="date"
            placeholder="Start" class="form-control"
            ng-model="ctrl.data.geldigVanaf"/>
 </div>
 
 <div class="form-group">
-    <label for="statusEndInput_{{$index}}" class="sr-only" >
+    <label for="statusEndInput_{{ctrl.uid}}" class="sr-only">
         End
     </label>
-    <input id="statusEndInput_{{$index}}" name="statusEnd" type="date"
+    <input id="statusEndInput_{{ctrl.uid}}" name="statusEnd_{{ctrl.uid}}" type="date"
            placeholder="End" class="form-control"
            ng-model="ctrl.data.geldigTot"/>
 </div>

@@ -6,36 +6,59 @@ module be.vmm.eenvplus.editor.form.Status {
 
     export var NAME:string = PREFIX + 'FeatureStatus';
 
-    interface Scope extends ng.IScope {
-        data:feature.model.Status;
-    }
-
     function configure():ng.IDirective {
-        StatusController.$inject = ['$scope', 'epLabelService'];
+        StatusController.$inject = ['epLabelService'];
 
         return {
             restrict: 'A',
+            require: '^form',
             scope: {
                 data: '='
             },
+            bindToController: true,
             controllerAs: 'ctrl',
             controller: StatusController,
-            templateUrl: 'html/be/vmm/eenvplus/editor/form/Status.html'
+            templateUrl: 'html/be/vmm/eenvplus/editor/form/Status.html',
+            link: linkForm
         };
     }
 
     class StatusController {
 
+        private static counter:number = 0;
+
+        /* ------------------ */
+        /* --- properties --- */
+        /* ------------------ */
+
+        public uid:number = StatusController.counter++;
+        /** @inject */
         public data:feature.model.Status;
+        /** @inject */
+        public form:ng.IFormController;
         public types:Array<label.Label>;
         public selectedStatus:label.Label;
 
-        constructor(scope:Scope, labelService:label.LabelService) {
-            this.data = scope.data;
+
+        /* -------------------- */
+        /* --- construction --- */
+        /* -------------------- */
+
+        constructor(labelService:label.LabelService) {
             this.types = labelService.getLabels(label.LabelType.STATUS);
 
             label.proxy(this, this.data)
                 .map(this.types, 'selectedStatus', 'statusId');
+        }
+
+
+        /* ----------------- */
+        /* --- behaviour --- */
+        /* ----------------- */
+
+        public empty(field:string):boolean {
+            var validator:ng.INgModelController = this.form[field + '_' + this.uid];
+            return validator.$dirty && validator.$error.required;
         }
 
     }
