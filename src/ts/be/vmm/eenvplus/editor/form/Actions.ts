@@ -6,23 +6,20 @@ module be.vmm.eenvplus.editor.form.Actions {
 
     export var NAME:string = PREFIX + 'FormActions';
 
-    interface Scope extends ng.IScope {
-        data:feature.model.FeatureJSON;
-        form:ng.IFormController;
-    }
-
     function configure():ng.IDirective {
-        ActionsController.$inject = ['$scope', 'epFeatureManager'];
+        ActionsController.$inject = ['epFeatureManager'];
 
         return {
             restrict: 'A',
+            require: '^form',
             scope: {
-                data: '=',
-                form: '='
+                data: '='
             },
+            bindToController: true,
             controllerAs: 'ctrl',
             controller: ActionsController,
-            templateUrl: 'html/be/vmm/eenvplus/editor/form/Actions.html'
+            templateUrl: 'html/be/vmm/eenvplus/editor/form/Actions.html',
+            link: linkForm
         };
     }
 
@@ -32,7 +29,9 @@ module be.vmm.eenvplus.editor.form.Actions {
         /* --- properties --- */
         /* ------------------ */
 
+        /** @inject */
         private data:feature.model.FeatureJSON;
+        /** @inject */
         private form:ng.IFormController;
         private manager:feature.FeatureManager;
 
@@ -41,11 +40,8 @@ module be.vmm.eenvplus.editor.form.Actions {
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(scope:Scope, manager:feature.FeatureManager) {
-            this.data = scope.data;
-            this.form = scope.form;
+        constructor(manager:feature.FeatureManager) {
             this.manager = manager;
-
             this.discard = _.partial(manager.discard, this.data);
         }
 
