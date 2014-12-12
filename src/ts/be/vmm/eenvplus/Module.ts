@@ -26,6 +26,12 @@ module be.vmm.eenvplus {
         };
     }
 
+    export function get(propertyName:string):AnyFunction {
+        return function get(o:any):any {
+            return o[propertyName];
+        };
+    }
+
     export function unary(fn:Function):AnyFunction {
         return function createUnaryFunction(first:any):Function {
             return fn.call(this, first);

@@ -128,7 +128,7 @@ module be.vmm.eenvplus.feature {
             function push():void {
                 service
                     .push()
-                    .then(signals.validate.fire)
+                    .then(_.compose(signals.validate.fire, get('validation')))
                     .catch(handleError('push'));
             }
 
