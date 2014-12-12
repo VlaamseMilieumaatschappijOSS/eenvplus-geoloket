@@ -9,26 +9,30 @@ module be.vmm.eenvplus {
     export var PREFIX:string = 'ep';
     export var MODULE:string = PREFIX + '_eenvplus';
 
-    export function factory(fn:Function):Function {
+    interface fn {
+        (...args:any[]):any;
+    }
+
+    export function factory(fn:Function):fn {
         return function createFactory():Function {
             return fn;
         }
     }
 
-    export function shiftData(fn:Function):Function {
+    export function shiftData(fn:Function):fn {
         return function dataAsLastArgument(...args:any[]):any {
             args.push(args.shift());
             return fn.apply(null, args);
         }
     }
 
-    export function unary(fn:Function):Function {
+    export function unary(fn:Function):fn {
         return function createUnaryFunction(first:any):Function {
             return fn.call(this, first);
         }
     }
 
-    export function apply(fn:Function):Function {
+    export function apply(fn:Function):fn {
         return function apply() {
             fn.apply(null, arguments[0]);
         }

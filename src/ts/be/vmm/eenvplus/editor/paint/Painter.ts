@@ -76,7 +76,7 @@ module be.vmm.eenvplus.editor.paint {
             return _.compose(manager.create, _.partial(toJson, type));
         }
 
-        function setKey(promise:ng.IPromise, feature:feature.LocalFeature):void {
+        function setKey(promise:ng.IPromise<feature.model.FeatureJSON>, feature:feature.LocalFeature):void {
             promise.then((json:feature.model.FeatureJSON):void => {
                 feature.key = json.key;
             });
