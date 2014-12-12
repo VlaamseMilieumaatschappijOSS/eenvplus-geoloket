@@ -36,6 +36,7 @@ module be.vmm.eenvplus.feature {
         function factory(rootScope:ng.IScope, q:ng.IQService, service:FeatureService):FeatureManager {
             var broadcast = rootScope.$broadcast.bind(rootScope),
                 deselect = _.partial(broadcast, EVENT.selected, null),
+                getNode = _.partial(service.get, toLayerBodId(FeatureType.NODE)),
                 signals = {
                     create: new signal.TypeSignal<model.FeatureJSON>(),
                     load: new signal.Signal(),
@@ -136,7 +137,12 @@ module be.vmm.eenvplus.feature {
                     // don't remove but reload old geometry
                 }
                 else {
-                    // don't forget to remove connected mountpoints
+                    _(json.properties)
+                        .filter(shiftData(isNodeId))
+                        .map(keyToId)
+                        .map(getNode)
+                        .invoke('then', discard);
+
                     service
                         .remove(json)
                         .then(_.partial(signals.remove.fire, json))
@@ -146,6 +152,14 @@ module be.vmm.eenvplus.feature {
 
             function getId(json:model.FeatureJSON):string {
                 return json.id ? json.id.toString() : '#' + json.key;
+            }
+
+            function keyToId(key:string):number {
+                return parseInt(key.replace('#', ''), 10);
+            }
+
+            function isNodeId(propertyName:string):boolean {
+                return propertyName.indexOf('oppelPuntId') !== -1;
             }
 
             function ensureProperties(json:model.FeatureJSON):model.FeatureJSON {
