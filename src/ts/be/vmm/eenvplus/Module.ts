@@ -28,6 +28,12 @@ module be.vmm.eenvplus {
         }
     }
 
+    export function apply(fn:Function):Function {
+        return function apply() {
+            fn.apply(null, arguments[0]);
+        }
+    }
+
     export function changeEvent(propertyName:string):string {
         return 'change:' + propertyName;
     }

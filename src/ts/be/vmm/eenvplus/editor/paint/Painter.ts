@@ -19,16 +19,11 @@ module be.vmm.eenvplus.editor.paint {
             nodeLayer = feature.getLayer(map, feature.FeatureType.NODE);
             interaction = new ol.interaction.Draw({
                 type: feature.typeDrawModeMap[type],
-                source: vectorLayer.getSource()//,
-                //style: style
+                source: vectorLayer.getSource()
             });
 
             unRegisterDrawEnd = interaction.on(ol.DrawEventType.DRAWEND, finalizeOperation);
             map.addInteraction(interaction);
-        }
-
-        function style(feature, resolution):ol.style.Style[] {
-            return [];
         }
 
         function finalizeOperation(event:ol.DrawEvent):void {
@@ -47,6 +42,10 @@ module be.vmm.eenvplus.editor.paint {
             promises = nodes.map(commitNode);
             promises.push(commitFeature(newFeature));
 
+            // set keys returned from DB on their respective Features
+            _.zip(promises, nodes.concat([newFeature]))
+                .forEach(apply(setKey));
+
             q.all(promises)
                 .then(linkFeatures)
                 .then(notifySelection);
@@ -55,7 +54,6 @@ module be.vmm.eenvplus.editor.paint {
                 var featureJson = _.find(jsons, {layerBodId: feature.toLayerBodId(type)}),
                     nodeJsons = _.difference(jsons, [featureJson]);
 
-                newFeature.key = featureJson.key;
                 if (!_.isEqual(nodeJsons[0].geometry.coordinates, first))
                     nodeJsons.reverse();
                 manager.link(featureJson, nodeJsons);
@@ -76,6 +74,12 @@ module be.vmm.eenvplus.editor.paint {
 
         function commitFn(type:feature.FeatureType):(feature:ol.Feature) => ng.IPromise<feature.model.FeatureJSON> {
             return _.compose(manager.create, _.partial(toJson, type));
+        }
+
+        function setKey(promise:ng.IPromise, feature:feature.LocalFeature):void {
+            promise.then((json:feature.model.FeatureJSON):void => {
+                feature.key = json.key;
+            });
         }
 
         function toJson(type:feature.FeatureType, newFeature:ol.Feature):feature.model.FeatureJSON {

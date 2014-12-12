@@ -23,6 +23,8 @@ declare module _ {
         difference(array:any[], values:any[]):any[];
         first(array:any[], fn?:any, scope?:any):any;
         last(array:any[], fn?:any, scope?:any):any;
+        unzip(...arrays:any[][]):any[][];
+        zip(...arrays:any[][]):any[][];
     }
 
     interface Chain {
@@ -30,6 +32,8 @@ declare module _ {
         difference(values:any[]):Chain;
         first(fn?:any, scope?:any):Chain;
         last(fn?:any, scope?:any):Chain;
+        unzip(...arrays:any[][]):any[][];
+        zip(...arrays:any[][]):any[][];
     }
 
     /** Collections */
