@@ -36,7 +36,7 @@ module be.vmm.eenvplus.feature {
         function factory(rootScope:ng.IScope, q:ng.IQService, service:FeatureService):FeatureManager {
             var broadcast = rootScope.$broadcast.bind(rootScope),
                 deselect = _.partial(broadcast, EVENT.selected, null),
-                getNode = _.partial(service.get, toLayerBodId(FeatureType.NODE)),
+                getNode = _.partial(getFeature, toLayerBodId(FeatureType.NODE)),
                 signals = {
                     create: new signal.TypeSignal<model.FeatureJSON>(),
                     load: new signal.Signal(),
@@ -67,23 +67,22 @@ module be.vmm.eenvplus.feature {
                     .catch(handleError('load'));
             }
 
+            function getFeature(layerBodId:string, key:number):ng.IPromise<model.FeatureJSON> {
+                return service
+                    .get(layerBodId, key)
+                    .then(ensureProperties);
+            }
+
             function create(json:model.FeatureJSON):ng.IPromise<model.FeatureJSON> {
                 var deferred = q.defer<model.FeatureJSON>();
 
                 service
                     .create(json)
-                    .then(getSavedData)
+                    .then(_.partial(getFeature, json.layerBodId))
+                    .then(deferred.resolve)
                     .catch(handleError('create', json));
 
                 return deferred.promise;
-
-                function getSavedData(key:number):void {
-                    service
-                        .get(json.layerBodId, key)
-                        .then(ensureProperties)
-                        .then(deferred.resolve)
-                        .catch(handleError('create', json));
-                }
             }
 
             function link(featureJson:model.FeatureJSON, nodeJsons:model.FeatureJSON[]):void {
@@ -112,10 +111,20 @@ module be.vmm.eenvplus.feature {
             }
 
             function update(json:model.FeatureJSON):void {
+                getConnectedNodes(json)
+                    .then(_.partialRight(_.reject, get('properties.namespaceId')))
+                    .then(_.partialRight(_.each, ensureNodeSource))
+                    .then(_.partialRight(_.each, updateLink))
+                    .catch(handleError('discard', json));
+
                 service
                     .update(json)
                     .then(deselect)
                     .catch(handleError('update', json));
+
+                function ensureNodeSource(node:model.FeatureJSON):void {
+                    node.properties.namespaceId = json.properties.namespaceId;
+                }
             }
 
             function validate():void {
@@ -137,17 +146,23 @@ module be.vmm.eenvplus.feature {
                     // don't remove but reload old geometry
                 }
                 else {
-                    _(json.properties)
-                        .filter(shiftData(isNodeId))
-                        .map(keyToId)
-                        .map(getNode)
-                        .invoke('then', discard);
+                    getConnectedNodes(json)
+                        .then(_.partialRight(_.each, discard))
+                        .catch(handleError('discard', json));
 
                     service
                         .remove(json)
                         .then(_.partial(signals.remove.fire, json))
                         .catch(handleError('discard', json));
                 }
+            }
+
+            function getConnectedNodes(json:model.FeatureJSON):ng.IPromise<model.FeatureJSON[]> {
+                return q.all(_(json.properties)
+                    .filter(shiftData(isNodeId))
+                    .map(keyToId)
+                    .map(getNode)
+                    .value());
             }
 
             function getId(json:model.FeatureJSON):string {

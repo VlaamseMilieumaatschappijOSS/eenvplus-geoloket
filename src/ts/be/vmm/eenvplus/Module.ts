@@ -26,9 +26,11 @@ module be.vmm.eenvplus {
         };
     }
 
-    export function get(propertyName:string):AnyFunction {
-        return function get(o:any):any {
-            return o[propertyName];
+    export function get(propertyChain:string):AnyFunction {
+        return function get(object:any):any {
+            return _.reduce(propertyChain.split('.'), (host:Object, property:string):any => {
+                return host ? host[property] : undefined;
+            }, object);
         };
     }
 
