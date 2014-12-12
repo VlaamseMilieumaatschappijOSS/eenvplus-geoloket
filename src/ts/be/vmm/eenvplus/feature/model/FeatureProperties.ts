@@ -12,6 +12,7 @@ module be.vmm.eenvplus.feature.model {
 
     }
 
+    /* tslint:disable */
     export var FeatureProperty = {
 
         ALTERNATIEVE_ID: 'alternatieveId',
@@ -21,6 +22,6 @@ module be.vmm.eenvplus.feature.model {
         NAMESPACE_ID: 'namespaceId',
         USER_ID: 'userId'
 
-    }
+    };
 
 }

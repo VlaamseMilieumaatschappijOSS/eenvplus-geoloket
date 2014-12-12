@@ -9,33 +9,33 @@ module be.vmm.eenvplus {
     export var PREFIX:string = 'ep';
     export var MODULE:string = PREFIX + '_eenvplus';
 
-    interface fn {
+    interface AnyFunction {
         (...args:any[]):any;
     }
 
-    export function factory(fn:Function):fn {
+    export function factory(fn:Function):AnyFunction {
         return function createFactory():Function {
             return fn;
-        }
+        };
     }
 
-    export function shiftData(fn:Function):fn {
+    export function shiftData(fn:Function):AnyFunction {
         return function dataAsLastArgument(...args:any[]):any {
             args.push(args.shift());
             return fn.apply(null, args);
-        }
+        };
     }
 
-    export function unary(fn:Function):fn {
+    export function unary(fn:Function):AnyFunction {
         return function createUnaryFunction(first:any):Function {
             return fn.call(this, first);
-        }
+        };
     }
 
-    export function apply(fn:Function):fn {
+    export function apply(fn:Function):AnyFunction {
         return function apply() {
             fn.apply(null, arguments[0]);
-        }
+        };
     }
 
     export function changeEvent(propertyName:string):string {
@@ -49,7 +49,7 @@ module be.vmm.eenvplus {
                 event.stopPropagation();
             }
             handler.apply(null, Array.prototype.slice.call(arguments, 1));
-        }
+        };
     }
 
     goog.provide(MODULE);

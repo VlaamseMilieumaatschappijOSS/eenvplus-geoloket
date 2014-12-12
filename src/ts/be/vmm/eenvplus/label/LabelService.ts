@@ -38,7 +38,7 @@ module be.vmm.eenvplus.label {
             };
 
             function getLabels(type:LabelType):ng.resource.IResourceArray<Label> {
-                if (!typeModelMap[type]) throw new Error("No model defined for LabelType " + type);
+                if (!typeModelMap[type]) throw new Error('No model defined for LabelType ' + type);
 
                 return service.query({
                     mapId: 0,

@@ -11,7 +11,7 @@ module be.vmm.eenvplus.editor.form {
         setDirty():void;
     }
 
-    interface validate {
+    interface ValidateFn {
         (field:string):boolean;
     }
 
@@ -34,11 +34,11 @@ module be.vmm.eenvplus.editor.form {
             return validator.$dirty && validator.$invalid;
         }
 
-        function validate(type:string):validate {
+        function validate(type:string):ValidateFn {
             return function validate(field:string):boolean {
                 var validator:ng.INgModelController = form[field];
                 return validator.$dirty && validator.$error[type];
-            }
+            };
         }
 
         function setDirty():void {
@@ -57,10 +57,10 @@ module be.vmm.eenvplus.editor.form {
             return name.indexOf('$') === 0;
         }
 
-        function not(fn:validate):validate {
+        function not(fn:ValidateFn):ValidateFn {
             return function not(field:string):boolean {
                 return !fn(field);
-            }
+            };
         }
 
     }

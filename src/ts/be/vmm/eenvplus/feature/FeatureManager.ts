@@ -172,7 +172,7 @@ module be.vmm.eenvplus.feature {
             function handleError(operation:string, data?:model.FeatureJSON):(error:Error) => void {
                 return function createErrorHandler(error:Error):void {
                     console.error('Failed to ' + operation + ' feature', data, error);
-                }
+                };
             }
         }
 
