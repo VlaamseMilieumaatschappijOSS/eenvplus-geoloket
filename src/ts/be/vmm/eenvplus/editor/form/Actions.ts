@@ -19,7 +19,7 @@ module be.vmm.eenvplus.editor.form.Actions {
             controllerAs: 'ctrl',
             controller: ActionsController,
             templateUrl: 'html/be/vmm/eenvplus/editor/form/Actions.html',
-            link: linkForm
+            link: injectValidator
         };
     }
 
@@ -32,7 +32,7 @@ module be.vmm.eenvplus.editor.form.Actions {
         /** @inject */
         private data:feature.model.FeatureJSON;
         /** @inject */
-        private form:ng.IFormController;
+        private validate:Validator;
         private manager:feature.FeatureManager;
 
 
@@ -53,14 +53,8 @@ module be.vmm.eenvplus.editor.form.Actions {
         public discard:(json:feature.model.FeatureJSON) => void;
 
         public commit() {
-            if (this.form.$valid) this.manager.update(this.data);
-            else _(this.form)
-                .reject((value:ng.INgModelController, key:string):boolean => {
-                    return key.indexOf('$') === 0;
-                })
-                .each((value:ng.INgModelController):void => {
-                    value.$dirty = true;
-                });
+            if (this.validate.valid()) this.manager.update(this.data);
+            else this.validate.setDirty();
         }
 
     }

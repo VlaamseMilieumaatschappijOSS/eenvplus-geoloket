@@ -16,16 +16,16 @@
         <section id="featureForm_{{feature.key}}" role="tabpanel"
                  class="panel-collapse collapse" ng-class="{in: $first}">
 
-            <div ep-sewer-form
-                 ng-if="feature.layerBodId | epIsFeatureType: ctrl.featureType.SEWER"
-                 data="feature"
-                 class="panel-body">
-            </div>
-            <div ep-appurtenance-form
-                 ng-if="feature.layerBodId | epIsFeatureType: ctrl.featureType.APPURTENANCE"
-                 data="feature"
-                 class="panel-body">
-            </div>
+            <form ep-sewer-form name="form" novalidate
+                  ng-if="feature.layerBodId | epIsFeatureType: ctrl.featureType.SEWER"
+                  data="feature"
+                  class="panel-body">
+            </form>
+            <form ep-appurtenance-form name="form" novalidate
+                  ng-if="feature.layerBodId | epIsFeatureType: ctrl.featureType.APPURTENANCE"
+                  data="feature"
+                  class="panel-body">
+            </form>
 
         </section>
 

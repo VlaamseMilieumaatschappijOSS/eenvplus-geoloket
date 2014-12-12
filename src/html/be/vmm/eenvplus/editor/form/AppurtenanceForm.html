@@ -1,63 +1,59 @@
-<form name="form" novalidate>
+<div class="form-group" ng-class="{'has-error': ctrl.validate.invalid('source')}">
+    <label for="appurtenanceSourceInput">
+        Source
+    </label>
+    <sup ng-hide="ctrl.validate.required('source')">*</sup>
+    <span ng-show="ctrl.validate.required('source')" class="help-inline">Required</span>
 
-    <div class="form-group" ng-class="{'has-error': ctrl.form.source.$dirty && ctrl.form.source.$invalid}">
-        <label for="appurtenanceSourceInput">
-            Source
-        </label>
-        <super ng-hide="ctrl.form.source.$dirty && ctrl.form.source.$error.required">*</super>
-        <span ng-show="ctrl.form.source.$dirty && ctrl.form.source.$error.required" class="help-inline">Required</span>
+    <select id="appurtenanceSourceInput" name="source"
+            placeholder="Select a source" class="form-control"
+            ng-model="ctrl.selectedSource" required
+            ng-options="source as source.label for source in ctrl.sources">
+    </select>
+</div>
 
-        <select id="appurtenanceSourceInput" name="source"
-                placeholder="Select a source" class="form-control"
-                ng-model="ctrl.selectedSource" required
-                ng-options="source as source.label for source in ctrl.sources">
-        </select>
-    </div>
+<div class="form-group">
+    <label for="appurtenanceSourceIdInput">
+        Source ID
+    </label>
+    <input id="appurtenanceSourceIdInput" name="sourceId"
+           type="text" class="form-control"
+           ng-model="ctrl.data.properties.alternatieveId"/>
+</div>
 
-    <div class="form-group">
-        <label for="appurtenanceSourceIdInput">
-            Source ID
-        </label>
-        <input id="appurtenanceSourceIdInput" name="sourceId"
-               type="text" class="form-control"
-               ng-model="ctrl.data.properties.alternatieveId"/>
-    </div>
+<div class="form-group">
+    <label for="appurtenanceLabelInput">
+        Label
+    </label>
+    <input id="appurtenanceLabelInput" name="label"
+           type="text" class="form-control"
+           ng-model="ctrl.data.properties.label"/>
+</div>
 
-    <div class="form-group">
-        <label for="appurtenanceLabelInput">
-            Label
-        </label>
-        <input id="appurtenanceLabelInput" name="label"
-               type="text" class="form-control"
-               ng-model="ctrl.data.properties.label"/>
-    </div>
+<div class="form-group" ng-class="{'has-error': ctrl.validate.invalid('type')}">
+    <label for="appurtenanceTypeInput">
+        Appurtenance type
+    </label>
+    <sup ng-hide="ctrl.validate.required('type')">*</sup>
+    <span ng-show="ctrl.validate.required('type')" class="help-inline">Required</span>
 
-    <div class="form-group" ng-class="{'has-error': ctrl.form.type.$dirty && ctrl.form.type.$invalid}">
-        <label for="appurtenanceTypeInput">
-            Appurtenance type
-        </label>
-        <super ng-hide="ctrl.form.type.$dirty && ctrl.form.type.$error.required">*</super>
-        <span ng-show="ctrl.form.type.$dirty && ctrl.form.type.$error.required" class="help-inline">Required</span>
+    <select id="appurtenanceTypeInput" name="type" required
+            placeholder="Select a sewer type" class="form-control"
+            ng-model="ctrl.selectedType"
+            ng-options="type as type.label for type in ctrl.types">
+    </select>
+</div>
 
-        <select id="appurtenanceTypeInput" name="type" required
-                placeholder="Select a sewer type" class="form-control"
-                ng-model="ctrl.selectedType"
-                ng-options="type as type.label for type in ctrl.types">
-        </select>
-    </div>
+<div ep-feature-status-list
+     data="ctrl.data.properties.statussen"
+     class="form-group">
+</div>
 
-    <div ep-feature-status-list
-         data="ctrl.data.properties.statussen"
-         class="form-group">
-    </div>
+<div ep-form-actions
+     data="ctrl.data"
+     class="actions">
+</div>
 
-    <div ep-form-actions
-         data="ctrl.data"
-         class="actions">
-    </div>
-
-    <div class="metadata">
-        Last update by {{ctrl.data.userId | epUserName}} on {{ctrl.data.beginLifeSpanVersion | epDate}}
-    </div>
-
-</form>
+<div class="metadata">
+    Last update by {{ctrl.data.userId | epUserName}} on {{ctrl.data.beginLifeSpanVersion | epDate}}
+</div>

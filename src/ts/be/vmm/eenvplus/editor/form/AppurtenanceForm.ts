@@ -6,22 +6,20 @@ module be.vmm.eenvplus.editor.form.appurtenanceForm {
 
     export var NAME:string = PREFIX + 'AppurtenanceForm';
 
-    interface Scope extends ng.IScope {
-        data:feature.model.FeatureJSON;
-        form:ng.IFormController;
-    }
-
     function configure():ng.IDirective {
-        AppurtenanceFormController.$inject = ['$scope', 'epLabelService'];
+        AppurtenanceFormController.$inject = ['epLabelService'];
 
         return {
             restrict: 'A',
+            require: 'form',
             scope: {
                 data: '='
             },
+            bindToController: true,
             controllerAs: 'ctrl',
             controller: AppurtenanceFormController,
-            templateUrl: 'html/be/vmm/eenvplus/editor/form/AppurtenanceForm.html'
+            templateUrl: 'html/be/vmm/eenvplus/editor/form/AppurtenanceForm.html',
+            link: injectValidator
         };
     }
 
@@ -31,8 +29,10 @@ module be.vmm.eenvplus.editor.form.appurtenanceForm {
         /* --- properties --- */
         /* ------------------ */
 
+        /** @inject */
         public data:feature.model.FeatureJSON;
-        public form:ng.IFormController;
+        /** @inject */
+        public validate:Validator;
         public selectedSource:label.Label;
         public sources:Array<label.Label>;
         public selectedType:label.Label;
@@ -43,16 +43,9 @@ module be.vmm.eenvplus.editor.form.appurtenanceForm {
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(scope:Scope, labelService:label.LabelService) {
-            this.data = scope.data;
+        constructor(labelService:label.LabelService) {
             this.sources = labelService.getLabels(label.LabelType.SOURCE);
             this.types = labelService.getLabels(label.LabelType.APPURTENANCE_TYPE);
-
-            Object.defineProperty(scope, 'form', {
-                set: (value:ng.IFormController):void => {
-                    this.form = value;
-                }
-            });
 
             label.proxy(this, this.data.properties)
                 .map(this.sources, 'selectedSource', 'namespaceId')

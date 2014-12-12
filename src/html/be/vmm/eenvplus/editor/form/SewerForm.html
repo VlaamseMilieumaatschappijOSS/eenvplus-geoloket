@@ -1,123 +1,103 @@
-<form name="form" novalidate>
-
-    <div class="form-group" ng-class="{'has-error': ctrl.form.source.$dirty && ctrl.form.source.$invalid}">
-        <label for="appurtenanceSourceInput">
-            Source
-        </label>
-        <super ng-hide="ctrl.form.source.$dirty && ctrl.form.source.$error.required">*</super>
-        <span ng-show="ctrl.form.source.$dirty && ctrl.form.source.$error.required" class="help-inline">Required</span>
-
-        <select id="appurtenanceSourceInput" name="source"
-                placeholder="Select a source" class="form-control"
-                ng-model="ctrl.selectedSource" required
-                ng-options="source as source.label for source in ctrl.sources">
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="sewerSourceIdInput">
-            Source ID
-        </label>
-        <input id="sewerSourceIdInput" name="sourceId"
-               type="text" class="form-control"
-               ng-model="ctrl.data.properties.alternatieveId"/>
-    </div>
-
-    <div class="form-group">
-        <label for="sewerLabelInput">
-            Label
-        </label>
-        <input id="sewerLabelInput" name="label"
-               type="text" class="form-control"
-               ng-model="ctrl.data.properties.label"/>
-    </div>
-
-    <label ng-class="{'has-error': ctrl.form.diameter.$dirty && ctrl.form.diameter.$invalid}">
-        <span>Diameter</span>
-        <super ng-hide="ctrl.form.diameter.$dirty && ctrl.form.diameter.$error.required">*</super>
-        <span ng-show="ctrl.form.diameter.$dirty && ctrl.form.diameter.$error.required" class="help-inline">
-            Required
-        </span>
-        <span ng-show="ctrl.form.diameter.$dirty && ctrl.form.diameter.$error.min" class="help-inline">
-            Value too low
-        </span>
-        <span ng-show="ctrl.form.diameter.$dirty && ctrl.form.diameter.$error.max" class="help-inline">
-            Value too high
-        </span>
-        <span ng-show="ctrl.form.diameter.$dirty && ctrl.form.diameter.$error.pattern" class="help-inline">
-            No fractions allowed
-        </span>
-
-        <div class="input-group">
-            <input name="diameter" type="number" class="form-control"
-                   required min="250" max="3200" ng-pattern="ctrl.isInteger"
-                   ng-model="ctrl.data.properties.diameter"/>
-            <span class="input-group-addon">mm</span>
-        </div>
+<div class="form-group" ng-class="{'has-error': ctrl.validate.invalid('source')}">
+    <label for="appurtenanceSourceInput">
+        Source
     </label>
+    <sup ng-hide="ctrl.validate.required('source')">*</sup>
+    <span ng-show="ctrl.validate.required('source')" class="help-inline">Required</span>
 
-    <label ng-class="{'has-error': ctrl.form.pressure.$dirty && ctrl.form.pressure.$invalid}">
-        <span>Pressure</span>
-        <span ng-show="ctrl.form.pressure.$dirty && ctrl.form.pressure.$error.min" class="help-inline">
-            Value too low
-        </span>
-        <span ng-show="ctrl.form.pressure.$dirty && ctrl.form.pressure.$error.max" class="help-inline">
-            Value too high
-        </span>
-        <span ng-show="ctrl.form.pressure.$dirty && ctrl.form.pressure.$error.pattern" class="help-inline">
-            Max. 2 decimals
-        </span>
+    <select id="appurtenanceSourceInput" name="source"
+            placeholder="Select a source" class="form-control"
+            ng-model="ctrl.selectedSource" required
+            ng-options="source as source.label for source in ctrl.sources">
+    </select>
+</div>
 
-        <div class="input-group">
-            <input name="pressure" type="number" class="form-control"
-                   min="0.1" max="15" step="0.01" ng-pattern="ctrl.max2Decimals"
-                   ng-model="ctrl.data.properties.pressure"/>
-            <span class="input-group-addon">bar</span>
-        </div>
+<div class="form-group">
+    <label for="sewerSourceIdInput">
+        Source ID
     </label>
+    <input id="sewerSourceIdInput" name="sourceId"
+           type="text" class="form-control"
+           ng-model="ctrl.data.properties.alternatieveId"/>
+</div>
 
-    <div class="form-group" ng-class="{'has-error': ctrl.form.type.$dirty && ctrl.form.type.$invalid}">
-        <label for="sewerTypeInput">
-            Sewer type
-        </label>
-        <super ng-hide="ctrl.form.type.$dirty && ctrl.form.type.$error.required">*</super>
-        <span ng-show="ctrl.form.type.$dirty && ctrl.form.type.$error.required" class="help-inline">Required</span>
+<div class="form-group">
+    <label for="sewerLabelInput">
+        Label
+    </label>
+    <input id="sewerLabelInput" name="label"
+           type="text" class="form-control"
+           ng-model="ctrl.data.properties.label"/>
+</div>
 
-        <select id="sewerTypeInput" name="type" required
-                placeholder="Select a sewer type" class="form-control"
-                ng-model="ctrl.selectedType"
-                ng-options="type as type.label for type in ctrl.types">
-        </select>
+<label ng-class="{'has-error': ctrl.validate.invalid('diameter')}">
+    <span>Diameter</span>
+    <sup ng-hide="ctrl.validate.required('diameter')">*</sup>
+    <span ng-show="ctrl.validate.required('diameter')" class="help-inline">Required</span>
+    <span ng-show="ctrl.validate.min('diameter')" class="help-inline">Value too low</span>
+    <span ng-show="ctrl.validate.max('diameter')" class="help-inline">Value too high</span>
+    <span ng-show="ctrl.validate.pattern('diameter')" class="help-inline">No fractions allowed</span>
+
+    <div class="input-group">
+        <input name="diameter" type="number" class="form-control"
+               required min="250" max="3200" ng-pattern="ctrl.isInteger"
+               ng-model="ctrl.data.properties.diameter"/>
+        <span class="input-group-addon">mm</span>
     </div>
+</label>
 
-    <div class="form-group" ng-class="{'has-error': ctrl.form.waterType.$dirty && ctrl.form.waterType.$invalid}">
-        <label for="sewerWaterTypeInput">
-            Water type
-        </label>
-        <super ng-hide="ctrl.form.waterType.$dirty && ctrl.form.waterType.$error.required">*</super>
-        <span ng-show="ctrl.form.waterType.$dirty && ctrl.form.waterType.$error.required" class="help-inline">
-            Required
-        </span>
+<label ng-class="{'has-error': ctrl.validate.invalid('pressure')}">
+    <span>Pressure</span>
+    <span ng-show="ctrl.validate.min('pressure')" class="help-inline">Value too low</span>
+    <span ng-show="ctrl.validate.max('pressure')" class="help-inline">Value too high</span>
+    <span ng-show="ctrl.validate.pattern('pressure')" class="help-inline">Max. 2 decimals</span>
 
-        <select id="sewerWaterTypeInput" name="waterType" required
-                placeholder="Select a water type" class="form-control"
-                ng-model="ctrl.selectedWaterType"
-                ng-options="type as type.label for type in ctrl.waterTypes">
-        </select>
+    <div class="input-group">
+        <input name="pressure" type="number" class="form-control"
+               min="0.1" max="15" step="0.01" ng-pattern="ctrl.max2Decimals"
+               ng-model="ctrl.data.properties.pressure"/>
+        <span class="input-group-addon">bar</span>
     </div>
+</label>
 
-    <div ep-feature-status-list
-         data="ctrl.data.properties.statussen"
-         class="form-group">
-    </div>
+<div class="form-group" ng-class="{'has-error': ctrl.validate.invalid('type')}">
+    <label for="sewerTypeInput">
+        Sewer type
+    </label>
+    <sup ng-hide="ctrl.validate.required('type')">*</sup>
+    <span ng-show="ctrl.validate.required('type')" class="help-inline">Required</span>
 
-    <div ep-form-actions
-         data="ctrl.data"
-         class="actions">
-    </div>
+    <select id="sewerTypeInput" name="type" required
+            placeholder="Select a sewer type" class="form-control"
+            ng-model="ctrl.selectedType"
+            ng-options="type as type.label for type in ctrl.types">
+    </select>
+</div>
 
-    <div class="metadata">
-        Last update by {{ctrl.data.userId | epUserName}} on {{ctrl.data.beginLifeSpanVersion | epDate}}
-    </div>
+<div class="form-group" ng-class="{'has-error': ctrl.validate.invalid('waterType')}">
+    <label for="sewerWaterTypeInput">
+        Water type
+    </label>
+    <sup ng-hide="ctrl.validate.required('waterType')">*</sup>
+    <span ng-show="ctrl.validate.required('waterType')" class="help-inline">Required</span>
 
-</form>
+    <select id="sewerWaterTypeInput" name="waterType" required
+            placeholder="Select a water type" class="form-control"
+            ng-model="ctrl.selectedWaterType"
+            ng-options="type as type.label for type in ctrl.waterTypes">
+    </select>
+</div>
+
+<div ep-feature-status-list
+     data="ctrl.data.properties.statussen"
+     class="form-group">
+</div>
+
+<div ep-form-actions
+     data="ctrl.data"
+     class="actions">
+</div>
+
+<div class="metadata">
+    Last update by {{ctrl.data.userId | epUserName}} on {{ctrl.data.beginLifeSpanVersion | epDate}}
+</div>

@@ -19,7 +19,7 @@ module be.vmm.eenvplus.editor.form.Status {
             controllerAs: 'ctrl',
             controller: StatusController,
             templateUrl: 'html/be/vmm/eenvplus/editor/form/Status.html',
-            link: linkForm
+            link: injectValidator
         };
     }
 
@@ -35,7 +35,7 @@ module be.vmm.eenvplus.editor.form.Status {
         /** @inject */
         public data:feature.model.Status;
         /** @inject */
-        public form:ng.IFormController;
+        public validate:Validator;
         public types:Array<label.Label>;
         public selectedStatus:label.Label;
 
@@ -49,16 +49,6 @@ module be.vmm.eenvplus.editor.form.Status {
 
             label.proxy(this, this.data)
                 .map(this.types, 'selectedStatus', 'statusId');
-        }
-
-
-        /* ----------------- */
-        /* --- behaviour --- */
-        /* ----------------- */
-
-        public empty(field:string):boolean {
-            var validator:ng.INgModelController = this.form[field + '_' + this.uid];
-            return validator.$dirty && validator.$error.required;
         }
 
     }

@@ -1,8 +1,8 @@
-<div ng-show="ctrl.empty('statusType')" class="help-inline">
+<div ng-show="ctrl.validate.required('statusType_' + ctrl.uid)" class="help-inline">
     Required
 </div>
 
-<div class="form-group" ng-class="{'has-error': ctrl.empty('statusType')}">
+<div class="form-group" ng-class="{'has-error': ctrl.validate.invalid('statusType_' + ctrl.uid)}">
     <label for="statusTypeInput_{{ctrl.uid}}" class="sr-only">
         Type
     </label>
