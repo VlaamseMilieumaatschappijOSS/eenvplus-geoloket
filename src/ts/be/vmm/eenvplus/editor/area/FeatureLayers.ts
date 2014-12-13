@@ -31,6 +31,13 @@ module be.vmm.eenvplus.editor.area.featureLayers {
             featureLayers:ol.layer.Layer[],
             unRegisterModeChange:Function;
 
+        var select = new ol.interaction.Select({
+            condition: ol.events.condition.click
+        });
+        var highlight = new ol.interaction.Select({
+            condition: ol.events.condition.mouseMove
+        });
+
 
         /* -------------------- */
         /* --- construction --- */
@@ -43,6 +50,14 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         function init(extent:ol.Extent):void {
             manager.load(extent);
             unRegisterModeChange = scope.$on(applicationState.EVENT.modeChange, handle(handleModeChange));
+        }
+
+        select.handleMapBrowserEvent = _.wrap(select.handleMapBrowserEvent, alwaysBubble);
+        highlight.handleMapBrowserEvent = _.wrap(highlight.handleMapBrowserEvent, alwaysBubble);
+
+        function alwaysBubble(fn:Function, event:ol.MapBrowserEvent):boolean {
+            fn.bind(this)(event);
+            return true;
         }
 
 
@@ -58,6 +73,9 @@ module be.vmm.eenvplus.editor.area.featureLayers {
                 .map(featureLayer.createLayer)
                 .value();
             featureLayers.forEach(addLayer);
+
+            map.addInteraction(select);
+            map.addInteraction(highlight);
         }
 
         function removeFromLayer(json:feature.model.FeatureJSON):void {
@@ -67,6 +85,8 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         }
 
         function clear():void {
+            map.removeInteraction(select);
+            map.removeInteraction(highlight);
             unRegisterModeChange();
             featureLayers.forEach(removeLayer);
             featureLayers = [];

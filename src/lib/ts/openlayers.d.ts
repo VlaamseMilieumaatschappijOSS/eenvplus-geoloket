@@ -11,6 +11,7 @@ declare module ol {
         }
 
         control:control.Static;
+        events:events.Static;
         format:format.Static;
         geom:geometry.Static;
         interaction:interaction.Static;
@@ -112,6 +113,12 @@ declare module ol {
         removeLayer(layer:layer.Base):void;
     }
 
+    interface MapBrowserEvent extends MapEvent {
+    }
+
+    interface MapEvent extends goog.events.Event {
+    }
+
     interface MapConfig {
         //controls:Collection<control.Control>;
         //controls:control.Control[];
@@ -181,6 +188,23 @@ declare module ol {
         }
 
         interface Control {
+        }
+
+    }
+
+    module events {
+
+        interface Static {
+            condition:condition.Static;
+        }
+
+        module condition {
+
+            interface Static {
+                click:interaction.handleMapBrowserEvent;
+                mouseMove:interaction.handleMapBrowserEvent;
+            }
+
         }
 
     }
@@ -261,6 +285,7 @@ declare module ol {
             DragBox:DragBox;
             Draw:Draw;
             DrawMode:DrawMode;
+            Select:Select;
         }
 
         interface DragBox extends Pointer {
@@ -283,6 +308,17 @@ declare module ol {
         }
 
         interface Pointer extends Interaction {
+        }
+
+        interface Select extends Interaction {
+            new (config?:any):Select;
+            prototype:Select;
+
+            handleMapBrowserEvent:handleMapBrowserEvent;
+        }
+
+        interface handleMapBrowserEvent {
+            (event:MapBrowserEvent):void;
         }
 
     }
