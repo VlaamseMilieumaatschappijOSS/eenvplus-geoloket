@@ -12,7 +12,9 @@ module be.vmm.eenvplus.editor.paint {
     export module PainterStore {
         export var NAME:string = PREFIX + 'PainterStore';
 
-        function factory():PainterStore {
+        factory.$inject = ['epFeatureStore'];
+
+        function factory(feature:feature.FeatureStore):PainterStore {
             var _current,
                 store = {
                     get current():feature.FeatureType {
@@ -25,6 +27,10 @@ module be.vmm.eenvplus.editor.paint {
                     },
                     selected: new Trasys.Signals.TypeSignal()
                 };
+
+            feature.selected.add((json:feature.model.FeatureJSON):void => {
+                if (!json) store.current = json;
+            });
 
             return store;
         }

@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.form.formBrowser {
     export var NAME:string = PREFIX + 'FormBrowser';
 
     function configure():ng.IDirective {
-        FormBrowserController.$inject = ['$scope'];
+        FormBrowserController.$inject = ['epFeatureStore'];
 
         return {
             restrict: 'A',
@@ -20,16 +20,26 @@ module be.vmm.eenvplus.editor.form.formBrowser {
 
     class FormBrowserController {
 
-        public features:feature.model.FeatureJSON[];
+        /* ------------------ */
+        /* --- properties --- */
+        /* ------------------ */
+
         public featureType:any;
 
-        constructor(scope:ng.IScope) {
-            this.featureType = feature.FeatureType;
-            scope.$on(feature.EVENT.selected, handle(this.setFeatures.bind(this)));
+        public get features():feature.model.FeatureJSON[] {
+            return this.featureStore.current ? [this.featureStore.current] : [];
         }
 
-        public setFeatures(features:feature.model.FeatureJSON[]):void {
-            this.features = features;
+        private featureStore:feature.FeatureStore;
+
+
+        /* -------------------- */
+        /* --- construction --- */
+        /* -------------------- */
+
+        constructor(featureStore:feature.FeatureStore) {
+            this.featureType = feature.FeatureType;
+            this.featureStore = featureStore;
         }
 
     }

@@ -12,13 +12,17 @@
 
 <div id="drawTools" class="panel-body panel-body-wide panel-collapse collapse">
     <ul>
-        <li ng-click="ctrl.requestSewerPainter()">
+        <li ng-click="ctrl.selectedItem = ctrl.featureType.SEWER">
             <i class="icon-ga-line"></i>
-            <a ng-class="{ selected: ctrl.selectedItem === 0 }">Draw sewer</a>
+            <a ng-class="{ selected: ctrl.selectedItem === ctrl.featureType.SEWER }">
+                Draw sewer
+            </a>
         </li>
-        <li ng-click="ctrl.requestAppurtenancePainter()">
+        <li ng-click="ctrl.selectedItem = ctrl.featureType.APPURTENANCE">
             <i class="icon-ga-point"></i>
-            <a ng-class="{ selected: ctrl.selectedItem === 1 }">Place appurtenance</a>
+            <a ng-class="{ selected: ctrl.selectedItem === ctrl.featureType.APPURTENANCE }">
+                Place appurtenance
+            </a>
         </li>
     </ul>
 </div>

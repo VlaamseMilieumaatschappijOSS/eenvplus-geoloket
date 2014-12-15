@@ -40,9 +40,9 @@ module be.vmm.eenvplus.applicationState {
         };
     }
 
-    ApplicationStateController.$inject = ['$scope'];
+    ApplicationStateController.$inject = ['$scope', 'epFeatureStore'];
 
-    export function ApplicationStateController(scope:ApplicationScope) {
+    export function ApplicationStateController(scope:ApplicationScope, featureStore:feature.FeatureStore):void {
 
         /* ------------------ */
         /* --- properties --- */
@@ -63,7 +63,7 @@ module be.vmm.eenvplus.applicationState {
         /* -------------------- */
 
         scope.$on(EVENT.modeRequest, handle(handleModeRequest));
-        scope.$on(feature.EVENT.selected, handle(invalidateFeatureSelection));
+        featureStore.selected.add(invalidateFeatureSelection);
         view.on(changeEvent(ol.ViewProperty.RESOLUTION), invalidateLevel);
         layers.on(changeEvent(ol.CollectionProperty.LENGTH), setLevelThreshold);
 
@@ -110,8 +110,8 @@ module be.vmm.eenvplus.applicationState {
             invalidateViewState();
         }
 
-        function invalidateFeatureSelection(features:feature.model.FeatureJSON[]):void {
-            currentState.featureSelected = features && features.length ? State.FEATURE_SELECTED : -1;
+        function invalidateFeatureSelection(feature:feature.model.FeatureJSON):void {
+            currentState.featureSelected = feature ? State.FEATURE_SELECTED : -1;
             invalidateViewState();
         }
 

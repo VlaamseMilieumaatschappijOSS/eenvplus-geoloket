@@ -19,10 +19,12 @@ module be.vmm.eenvplus.feature {
 
     export interface FeatureManager {
         create: FeatureJSONHandler;
+        deselect: () => void;
         discard: FeatureJSONHandler;
         link: (featureJson:model.FeatureJSON, nodeJsons:model.FeatureJSON[]) => void;
         load: (extent:ol.Extent) => void;
         push: FeatureJSONHandler;
+        select: FeatureJSONHandler;
         signal: Signals;
         update: FeatureJSONHandler;
         validate: FeatureJSONHandler;
@@ -31,12 +33,11 @@ module be.vmm.eenvplus.feature {
     export module FeatureManager {
         export var NAME:string = PREFIX + 'FeatureManager';
 
-        factory.$inject = ['$rootScope', '$q', 'gaFeatureManager'];
+        factory.$inject = ['$q', 'gaFeatureManager', 'epFeatureStore'];
 
-        function factory(rootScope:ng.IScope, q:ng.IQService, service:FeatureService):FeatureManager {
-            var broadcast = rootScope.$broadcast.bind(rootScope),
-                deselect = _.partial(broadcast, EVENT.selected, null),
-                getNode = _.partial(getFeature, toLayerBodId(FeatureType.NODE)),
+        function factory(q:ng.IQService, service:FeatureService, store:FeatureStore):FeatureManager {
+            var getNode = _.partial(getFeature, toLayerBodId(FeatureType.NODE)),
+                deselect = _.partial(select, undefined),
                 signals = {
                     create: new signal.TypeSignal<model.FeatureJSON>(),
                     load: new signal.Signal(),
@@ -48,10 +49,12 @@ module be.vmm.eenvplus.feature {
 
             return {
                 create: create,
+                deselect: deselect,
                 discard: discard,
                 link: link,
                 load: load,
                 push: push,
+                select: select,
                 signal: _.mapValues(signals, unary(_.bindAll)),
                 update: update,
                 validate: validate
@@ -175,6 +178,10 @@ module be.vmm.eenvplus.feature {
 
             function isNodeId(propertyName:string):boolean {
                 return propertyName.indexOf('oppelPuntId') !== -1;
+            }
+
+            function select(json:model.FeatureJSON):void {
+                store.current = json;
             }
 
             function ensureProperties(json:model.FeatureJSON):model.FeatureJSON {

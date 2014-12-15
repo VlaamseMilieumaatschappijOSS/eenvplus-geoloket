@@ -2,14 +2,12 @@ module be.vmm.eenvplus.editor.paint {
     'use strict';
 
     export function Painter(type:feature.FeatureType,
-                            scope:ApplicationScope,
                             q:ng.IQService,
                             map:ol.Map,
                             state:PainterState,
                             manager:feature.FeatureManager):void {
 
-        var map = scope.map,
-            commitFeature = commitFn(type),
+        var commitFeature = commitFn(type),
             commitNode = commitFn(feature.FeatureType.NODE),
             vectorLayer, nodeLayer, interaction, unRegisterDrawEnd;
 
@@ -51,7 +49,7 @@ module be.vmm.eenvplus.editor.paint {
 
             q.all(promises)
                 .then(linkFeatures)
-                .then(notifySelection);
+                .then(manager.select);
 
             function linkFeatures(jsons:feature.model.FeatureJSON[]):feature.model.FeatureJSON {
                 var featureJson = _.find(jsons, {layerBodId: feature.toLayerBodId(type)}),
@@ -69,10 +67,6 @@ module be.vmm.eenvplus.editor.paint {
             return _.merge(new ol.Feature({
                 geometry: new ol.geom.Point(coordinates)
             }), {type: feature.FeatureType.NODE});
-        }
-
-        function notifySelection(json:feature.model.FeatureJSON):void {
-            scope.$broadcast(feature.EVENT.selected, [json]);
         }
 
         function commitFn(type:feature.FeatureType):(feature:ol.Feature) => ng.IPromise<feature.model.FeatureJSON> {

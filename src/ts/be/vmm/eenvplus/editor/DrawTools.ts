@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.drawTools {
     export var NAME:string = PREFIX + 'DrawTools';
 
     function configure():ng.IDirective {
-        DrawToolsController.$inject = ['$scope', '$rootScope', 'epPainterStore'];
+        DrawToolsController.$inject = ['$rootScope', 'epPainterStore'];
 
         return {
             restrict: 'A',
@@ -24,9 +24,15 @@ module be.vmm.eenvplus.editor.drawTools {
         /* --- properties --- */
         /* ------------------ */
 
-        public selectedItem:feature.FeatureType;
+        public featureType:any;
 
-        private scope:ng.IScope;
+        public get selectedItem():feature.FeatureType {
+            return this.painterStore.current;
+        }
+        public set selectedItem(value:feature.FeatureType) {
+            this.painterStore.current = value;
+        }
+
         private rootScope:ng.IScope;
         private painterStore:paint.PainterStore;
 
@@ -35,16 +41,10 @@ module be.vmm.eenvplus.editor.drawTools {
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(scope:ng.IScope, rootScope:ng.IScope, painterStore:paint.PainterStore) {
-            _.bindAll(this);
-            this.scope = scope;
+        constructor(rootScope:ng.IScope, painterStore:paint.PainterStore) {
+            this.featureType = feature.FeatureType;
             this.rootScope = rootScope;
             this.painterStore = painterStore;
-
-            this.requestSewerPainter = _.partial(this.selectPainter, feature.FeatureType.SEWER);
-            this.requestAppurtenancePainter = _.partial(this.selectPainter, feature.FeatureType.APPURTENANCE);
-
-            scope.$on(feature.EVENT.selected, _.partial(this.selectPainter, undefined));
         }
 
 
@@ -54,14 +54,6 @@ module be.vmm.eenvplus.editor.drawTools {
 
         public requestEditMode():void {
             this.rootScope.$broadcast(applicationState.EVENT.modeRequest, applicationState.State.EDIT);
-        }
-
-        public requestSewerPainter:() => void;
-        public requestAppurtenancePainter:() => void;
-
-        public selectPainter(painter:feature.FeatureType):void {
-            this.selectedItem = this.selectedItem === painter ? undefined : painter;
-            this.painterStore.current = this.selectedItem;
         }
 
     }
