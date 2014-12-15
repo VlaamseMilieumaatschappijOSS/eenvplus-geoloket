@@ -12,6 +12,7 @@ declare module ol {
 
         control:control.Static;
         events:events.Static;
+        extent:extent.Static;
         format:format.Static;
         geom:geometry.Static;
         interaction:interaction.Static;
@@ -41,6 +42,7 @@ declare module ol {
     }
 
     interface Collection<T> extends Object {
+        extend(array:T[]):Collection<T>;
         forEach(fn:(value:T, index:number, array:T[]) => void, scope?:any):void;
         getArray():T[];
     }
@@ -103,12 +105,14 @@ declare module ol {
     interface Map extends Object {
         new (config:MapConfig):Map;
 
+        addControl(control:control.Control):void;
         addInteraction(interaction:interaction.Interaction):void;
         addLayer(layer:layer.Base):void;
         getLayers():ol.Collection<layer.Base>;
         getPixelFromCoordinate(coordinate:Coordinate):Pixel;
         getSize():Size;
         getView():View;
+        getViewport():Element;
         render():void;
         removeInteraction(interaction:interaction.Interaction):void;
         removeLayer(layer:layer.Base):void;
@@ -169,6 +173,8 @@ declare module ol {
     }
 
     interface View extends Object {
+        new (options?:any):View;
+
         constrainResolution(resolution:number, delta?:number, direction?:number):number;
         getCenter():ol.Coordinate;
         getResolution():number;
@@ -185,10 +191,16 @@ declare module ol {
     module control {
 
         interface Static {
+            defaults(options?:any):Collection<Control>;
+
             Control:Control;
         }
 
         interface Control {
+        }
+
+        interface ZoomToExtent extends Control {
+            new (options?:any):ZoomToExtent;
         }
 
     }
@@ -206,6 +218,14 @@ declare module ol {
                 mouseMove:interaction.handleMapBrowserEvent;
             }
 
+        }
+
+    }
+
+    module extent {
+
+        interface Static {
+            getCenter(extent:Extent):Coordinate;
         }
 
     }
@@ -283,7 +303,10 @@ declare module ol {
     module interaction {
 
         interface Static {
+            defaults(options?:any):Collection<Interaction>;
+
             DragBox:DragBox;
+            DragZoom:DragZoom;
             Draw:Draw;
             DrawMode:DrawMode;
             Select:Select;
@@ -293,6 +316,10 @@ declare module ol {
             new (config:any):DragBox;
 
             getGeometry():geometry.Polygon;
+        }
+
+        interface DragZoom extends DragBox {
+            new (config?:any):DragZoom;
         }
 
         interface Draw extends Pointer {
@@ -393,10 +420,14 @@ declare module ol {
     module proj {
 
         interface Static {
+            get(projection:Projection):Projection;
+            get(projection:string):Projection;
+
             Projection:Projection;
         }
 
         interface Projection {
+            setExtent(extent:Extent):void;
         }
     }
 

@@ -1,15 +1,11 @@
 (function() {
   goog.provide('ga_main_controller');
 
-  goog.require('ga_config');
-  goog.require('ga_map');
   goog.require('ga_networkstatus_service');
   goog.require('ga_storage_service');
 
   var module = angular.module('ga_main_controller', [
     'pascalprecht.translate',
-    'ga_config',
-    'ga_map',
     'ga_networkstatus_service',
     'ga_storage_service'
   ]);
@@ -19,60 +15,8 @@
    */
   module.controller('GaMainController',
     function($rootScope, $scope, $timeout, $translate, $window, gaBrowserSniffer,
-        gaFeaturesPermalinkManager, gaLayersPermalinkManager, MAP_CONFIG,
-        gaNetworkStatus, gaPermalink, gaSRSName, gaStorage) {
-
-      var createMap = function() {
-        var toolbar = $('#zoomButtons')[0];
-        var projection = ol.proj.get(gaSRSName.default.code);
-        projection.setExtent(MAP_CONFIG.extent);
-
-        var map = new ol.Map({
-          controls: ol.control.defaults({
-            attribution: false,
-            rotate: false,
-            zoomOptions: {
-              target: toolbar,
-              zoomInLabel: '',
-              zoomOutLabel: '',
-              zoomInTipLabel: '',
-              zoomOutTipLabel: ''
-            }
-          }),
-          interactions: ol.interaction.defaults({
-            altShiftDragRotate: true,
-            touchRotate: false,
-            keyboard: false
-          }).extend([
-            new ol.interaction.DragZoom()
-          ]),
-          renderer: 'canvas',
-          view: new ol.View({
-            projection: projection,
-            center: ol.extent.getCenter(MAP_CONFIG.extent),
-            extent: MAP_CONFIG.extent,
-            resolution: MAP_CONFIG.resolution,
-            resolutions: MAP_CONFIG.resolutions
-          }),
-          logo: false
-        });
-
-        map.addControl(new ol.control.ZoomToExtent({
-          target: toolbar,
-          tipLabel: ''
-        }));
-
-        var dragClass = 'ga-dragging';
-        var viewport = $(map.getViewport());
-        map.on('dragstart', function() {
-          viewport.addClass(dragClass);
-        });
-        map.on('dragend', function() {
-          viewport.removeClass(dragClass);
-        });
-
-        return map;
-      }
+        gaFeaturesPermalinkManager, gaLayersPermalinkManager,
+        gaNetworkStatus, gaPermalink, gaStorage, epMap) {
 
       // Determines if the window has a height <= 550
       var isWindowTooSmall = function() {
@@ -84,7 +28,7 @@
 
       // The main controller creates the OpenLayers map object. The map object
       // is central, as most directives/components need a reference to it.
-      $scope.map = createMap();
+      $scope.map = epMap;
 
       // We add manually the keyboard interactions to have the possibility to
       // specify a condition
