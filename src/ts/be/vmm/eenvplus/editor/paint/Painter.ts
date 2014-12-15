@@ -31,10 +31,12 @@ module be.vmm.eenvplus.editor.paint {
                 geometry = <ol.geometry.SimpleGeometry> newFeature.getGeometry(),
                 first = geometry.getFirstCoordinate(),
                 last = geometry.getLastCoordinate(),
-                nodes = [createPoint(last)],
+                nodes = [createNode(last)],
                 promises;
 
-            if (!_.isEqual(first, last)) nodes.push(createPoint(first));
+            newFeature.type = type;
+
+            if (!_.isEqual(first, last)) nodes.push(createNode(first));
 
             nodeLayer
                 .getSource()
@@ -62,10 +64,10 @@ module be.vmm.eenvplus.editor.paint {
             }
         }
 
-        function createPoint(coordinates:ol.Coordinate):ol.Feature {
-            return new ol.Feature({
+        function createNode(coordinates:ol.Coordinate):feature.LocalFeature {
+            return _.merge(new ol.Feature({
                 geometry: new ol.geom.Point(coordinates)
-            });
+            }), {type: feature.FeatureType.NODE});
         }
 
         function notifySelection(json:feature.model.FeatureJSON):void {

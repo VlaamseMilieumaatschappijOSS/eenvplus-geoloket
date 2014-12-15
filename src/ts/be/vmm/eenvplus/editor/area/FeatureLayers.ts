@@ -46,6 +46,9 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         scope.$on(mask.EVENT.selected, handle(init));
         manager.signal.load.add(createLayers);
         manager.signal.remove.add(removeFromLayer);
+        select.getFeatures().on(ol.CollectionEventType.ADD, (event:ol.CollectionEvent<ol.Feature>):void => {
+            console.log(event.element);
+        });
 
         function init(extent:ol.Extent):void {
             manager.load(extent);

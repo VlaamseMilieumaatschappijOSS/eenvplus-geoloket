@@ -23,7 +23,7 @@ declare module ol {
         style:style.Static;
         tilegrid:tilegrid.Static;
 
-        CollectionEvent:CollectionEvent;
+        CollectionEvent:CollectionEvent<any>;
         CollectionEventType:CollectionEventType;
         CollectionProperty:CollectionProperty;
         DragBoxEvent:DragBoxEvent;
@@ -45,7 +45,8 @@ declare module ol {
         getArray():T[];
     }
 
-    interface CollectionEvent extends goog.events.Event {
+    interface CollectionEvent<T> extends goog.events.Event {
+        element:T;
     }
 
     interface CollectionEventType {
@@ -314,11 +315,12 @@ declare module ol {
             new (config?:any):Select;
             prototype:Select;
 
+            getFeatures():Collection<Feature>;
             handleMapBrowserEvent:handleMapBrowserEvent;
         }
 
         interface handleMapBrowserEvent {
-            (event:MapBrowserEvent):void;
+            (event:MapBrowserEvent):boolean;
         }
 
     }

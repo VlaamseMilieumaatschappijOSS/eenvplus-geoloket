@@ -78,7 +78,7 @@ declare module _ {
     /** Objects */
     interface Static {
         mapValues(object:Object, fn:any, scope?:any):any;
-        merge(object:Object, source:Object, callback?:MergingIterator, scope?:any):Object;
+        merge(object:Object, source:Object, callback?:MergingIterator, scope?:any):any;
     }
 
     interface Chain {
