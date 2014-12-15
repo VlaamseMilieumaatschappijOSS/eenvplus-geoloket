@@ -15,10 +15,11 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         };
     }
 
-    FeatureLayersController.$inject = ['$scope', 'epMap', 'epFeatureManager', 'epFeatureLayerFactory'];
+    FeatureLayersController.$inject = ['$scope', 'epMap', 'epAreaStore', 'epFeatureManager', 'epFeatureLayerFactory'];
 
     export function FeatureLayersController(scope:ApplicationScope,
                                             map:ol.Map,
+                                            store:AreaStore,
                                             manager:feature.FeatureManager,
                                             featureLayer:feature.FeatureLayerFactory):void {
 
@@ -43,7 +44,7 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         /* --- construction --- */
         /* -------------------- */
 
-        scope.$on(mask.EVENT.selected, handle(init));
+        store.selected.add(init);
         manager.signal.load.add(createLayers);
         manager.signal.remove.add(removeFromLayer);
         select.getFeatures().on(ol.CollectionEventType.ADD, (event:ol.CollectionEvent<ol.Feature>):void => {
