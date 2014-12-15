@@ -1,7 +1,6 @@
 (function() {
   goog.provide('ga_map_service');
 
-  goog.require('ga_config');
   goog.require('ga_networkstatus_service');
   goog.require('ga_offline_service');
   goog.require('ga_storage_service');
@@ -10,26 +9,26 @@
 
   var module = angular.module('ga_map_service', [
     'pascalprecht.translate',
-    'ga_config',
     'ga_networkstatus_service',
     'ga_offline_service',
     'ga_storage_service',
     'ga_styles_service',
-    'ga_urlutils_service'
+    'ga_urlutils_service',
+    'ep_config'
   ]);
 
-  module.provider('gaTileGrid', function(MAP_CONFIG) {
+  module.provider('gaTileGrid', function(epMapConfig) {
     function createTileGrid(resolutions, type) {
       if (type === 'wms') {
         return new ol.tilegrid.TileGrid({
-          tileSize: MAP_CONFIG.tileSize,
-          origin: MAP_CONFIG.origin,
+          tileSize: epMapConfig.tileSize,
+          origin: epMapConfig.origin,
           resolutions: resolutions
         });
       }
       return new ol.tilegrid.WMTS({
           matrixIds: $.map(resolutions, function(r, i) { return i + ''; }),
-          origin: MAP_CONFIG.origin,
+          origin: epMapConfig.origin,
           resolutions: resolutions
       });
     }
@@ -38,7 +37,7 @@
       return {
         get: function(resolutions, minResolution, type) {
           if (!resolutions) {
-            resolutions = MAP_CONFIG.resolutions.concat();
+            resolutions = epMapConfig.resolutions.concat();
           }
           if (minResolution) { // we remove useless resolutions
             for (var i = 0, ii = resolutions.length; i < ii; i++) {
@@ -917,12 +916,12 @@
   /**
    * Service provides map util functions.
    */
-  module.provider('gaMapUtils', function(MAP_CONFIG) {
+  module.provider('gaMapUtils', function(epMapConfig) {
     this.$get = function($window) {
       var attributions = {};
       return {
         getViewResolutionForZoom: function(zoom) {
-          return MAP_CONFIG.resolutions[zoom];
+          return epMapConfig.resolutions[zoom];
         },
         // Example of a dataURI: 'data:image/png;base64,sdsdfdfsdfdf...'
         dataURIToBlob: function(dataURI) {

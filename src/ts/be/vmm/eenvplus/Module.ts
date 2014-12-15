@@ -1,3 +1,4 @@
+/// <reference path="config/Module.ts"/>
 /// <reference path="editor/Module.ts"/>
 /// <reference path="feature/Module.ts"/>
 /// <reference path="label/Module.ts"/>
@@ -69,6 +70,7 @@ module be.vmm.eenvplus {
     goog.provide(MODULE);
 
     angular.module(MODULE, [
+        config.MODULE,
         editor.MODULE,
         feature.MODULE,
         label.MODULE,

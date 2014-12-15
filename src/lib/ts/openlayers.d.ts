@@ -194,6 +194,7 @@ declare module ol {
             defaults(options?:any):Collection<Control>;
 
             Control:Control;
+            ZoomToExtent:ZoomToExtent;
         }
 
         interface Control {
