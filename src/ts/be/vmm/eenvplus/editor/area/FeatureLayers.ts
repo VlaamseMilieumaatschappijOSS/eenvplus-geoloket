@@ -15,9 +15,10 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         };
     }
 
-    FeatureLayersController.$inject = ['$scope', 'epFeatureManager', 'epFeatureLayerFactory'];
+    FeatureLayersController.$inject = ['$scope', 'epMap', 'epFeatureManager', 'epFeatureLayerFactory'];
 
     export function FeatureLayersController(scope:ApplicationScope,
+                                            map:ol.Map,
                                             manager:feature.FeatureManager,
                                             featureLayer:feature.FeatureLayerFactory):void {
 
@@ -25,8 +26,7 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         /* --- properties --- */
         /* ------------------ */
 
-        var map:ol.Map = scope.map,
-            addLayer = map.addLayer.bind(map),
+        var addLayer = map.addLayer.bind(map),
             removeLayer = map.removeLayer.bind(map),
             featureLayers:ol.layer.Layer[],
             unRegisterModeChange:Function;

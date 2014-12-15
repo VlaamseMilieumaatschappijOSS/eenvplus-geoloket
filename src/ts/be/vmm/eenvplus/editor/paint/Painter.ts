@@ -4,6 +4,7 @@ module be.vmm.eenvplus.editor.paint {
     export function Painter(type:feature.FeatureType,
                             scope:ApplicationScope,
                             q:ng.IQService,
+                            map:ol.Map,
                             state:PainterState,
                             manager:feature.FeatureManager):void {
 
