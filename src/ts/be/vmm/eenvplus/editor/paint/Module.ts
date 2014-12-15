@@ -3,10 +3,6 @@ module be.vmm.eenvplus.editor.paint {
 
     export var MODULE:string = PREFIX + '_paint';
 
-    export var EVENT = {
-        selected: 'painterSelected'
-    };
-
     goog.provide(MODULE);
 
     angular.module(MODULE, []);
