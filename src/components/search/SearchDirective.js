@@ -6,7 +6,6 @@
   goog.require('ga_map_service');
   goog.require('ga_marker_overlay_service');
   goog.require('ga_permalink');
-  goog.require('ga_srs_name_service');
   goog.require('ga_search_service');
   goog.require('ga_urlutils_service');
 
@@ -19,7 +18,7 @@
     'pascalprecht.translate',
     'ga_urlutils_service',
     'ga_search_service',
-    'ga_srs_name_service'
+    'ep_config'
   ]);
 
   module.directive('gaSearch',
@@ -27,7 +26,7 @@
           gaLayerMetadataPopup, gaMapUtils, gaPermalink, gaUrlUtils,
           gaGetCoordinate, gaBrowserSniffer, gaLayerFilters, gaKml,
           gaPreviewLayers, gaLayers, gaPreviewFeatures, gaMarkerOverlay,
-          gaSwisssearch, gaDebounce, gaSRSName, SRID) {
+          gaSwisssearch, gaDebounce, epSRSName, SRID) {
         var currentTopic,
             footer = [
           '<div class="ga-search-footer clearfix">',
@@ -265,7 +264,7 @@
               var label = getLocationLabel(attrs);
               var origin = attrs.origin;
               var center = ol.proj.transform([attrs.lon, attrs.lat],
-                  gaSRSName.byId(SRID.WGS84).code, gaSRSName.default.code);
+                  epSRSName.byId(SRID.WGS84).code, epSRSName.default.code);
               var extent = parseExtent(attrs.geom_st_box2d);
               var template = '<div class="tt-search" ' +
                   'ng-mouseenter="addOverlay([' +

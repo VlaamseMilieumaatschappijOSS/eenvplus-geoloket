@@ -15,7 +15,7 @@ module be.vmm.eenvplus.feature {
         createLayer(type:FeatureType):ol.layer.Vector;
     }
 
-    factory.$inject = ['gaFeatureManager', 'gaSRSName'];
+    factory.$inject = ['gaFeatureManager', 'epSRSName'];
 
     function factory(service:FeatureService, srsName:config.SRSNameService):FeatureLayerFactory {
         return {

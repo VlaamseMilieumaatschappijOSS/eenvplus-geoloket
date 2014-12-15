@@ -1,10 +1,8 @@
 (function() {
   goog.provide('ga_search_service');
 
-  goog.require('ga_srs_name_service');
-
   var module = angular.module('ga_search_service', [
-    'ga_srs_name_service'
+    'ep_config'
   ]);
 
   var DMSDegree = '[0-9]{1,2}[°|º]\\s*';
@@ -26,12 +24,12 @@
     '([\\d\\.\']+)[\\s,]+([\\d\\.\']+)');
 
   module.provider('gaGetCoordinate', function() {
-    this.$get = function(gaSRSName, SRID) {
+    this.$get = function(epSRSName, SRID) {
       return function(extent, query) {
         var position;
         var valid = false;
 
-        var wgs84 = gaSRSName.byId(SRID.WGS84);
+        var wgs84 = epSRSName.byId(SRID.WGS84);
         var matchDMSN = query.match(regexpDMSN);
         var matchDMSE = query.match(regexpDMSE);
         if (matchDMSN && matchDMSN.length == 1 &&
@@ -64,7 +62,7 @@
             .replace('\'\'' , '').replace('′′' , '')
             .replace('″' , '')) / 3600;
           position = ol.proj.transform([easting, northing],
-                wgs84.code, gaSRSName.default.code);
+                wgs84.code, epSRSName.default.code);
           if (ol.extent.containsCoordinate(
             extent, position)) {
               valid = true;
@@ -87,7 +85,7 @@
                 [left < right ? left : right,
                   right > left ? right : left];
               position = ol.proj.transform(position,
-                wgs84.code, gaSRSName.default.code);
+                wgs84.code, epSRSName.default.code);
               if (ol.extent.containsCoordinate(
                 extent, position)) {
                 valid = true;

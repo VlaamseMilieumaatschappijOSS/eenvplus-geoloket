@@ -590,7 +590,7 @@
 
     this.$get = function($http, $q, $rootScope, $translate, $window,
         gaBrowserSniffer, gaDefinePropertiesForLayer, gaMapUtils,
-        gaNetworkStatus, gaSRSName, gaStorage, gaTileGrid, gaUrlUtils) {
+        gaNetworkStatus, epSRSName, gaStorage, gaTileGrid, gaUrlUtils) {
 
       var Layers = function(wmtsGetTileUrlTemplate,
           layersConfigUrlTemplate, legendUrlTemplate) {
@@ -713,7 +713,7 @@
                 dimensions: {
                   'Time': timestamp
                 },
-                projection: gaSRSName.default.code,
+                projection: epSRSName.default.code,
                 requestEncoding: 'REST',
                 tileGrid: gaTileGrid.get(layer.resolutions,
                     layer.minResolution),

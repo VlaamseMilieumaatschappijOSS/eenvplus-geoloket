@@ -7,7 +7,7 @@ module be.vmm.eenvplus {
     export module MapFactory {
         export var NAME:string = PREFIX + 'Map';
 
-        factory.$inject = ['epMapConfig', 'gaSRSName'];
+        factory.$inject = ['epMapConfig', 'epSRSName'];
 
         function factory(config:config.MapConfig, srsName:config.SRSNameService):ol.Map {
             var toolBar = $('#zoomButtons')[0];

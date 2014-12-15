@@ -3,17 +3,16 @@
 
   goog.require('ga_networkstatus_service');
   goog.require('ga_permalink');
-  goog.require('ga_srs_name_service');
 
   var module = angular.module('ga_contextpopup_directive', [
     'ga_networkstatus_service',
     'ga_permalink',
-    'ga_srs_name_service'
+    'ep_config'
   ]);
 
   module.directive('gaContextPopup',
       function($http, $q, $timeout, $window, gaBrowserSniffer, gaNetworkStatus,
-          gaPermalink, gaSRSName, SRID) {
+          gaPermalink, epSRSName, SRID) {
         return {
           restrict: 'A',
           replace: true,
@@ -72,8 +71,8 @@
                 return;
               }
 
-              var wgs84 = gaSRSName.byId(SRID.WGS84),
-                  utm = gaSRSName.byId(SRID.UTM);
+              var wgs84 = epSRSName.byId(SRID.WGS84),
+                  utm = epSRSName.byId(SRID.UTM);
               var pixel = (event.originalEvent) ?
                   map.getEventPixel(event.originalEvent) :
                   event.pixel;
@@ -81,7 +80,7 @@
                   map.getEventCoordinate(event.originalEvent) :
                   event.coordinate;
               var coordWGS84 = ol.proj.transform(coordDefault,
-                  gaSRSName.default.code, wgs84.code);
+                  epSRSName.default.code, wgs84.code);
 
               // recenter on phones
               if (gaBrowserSniffer.phone) {
