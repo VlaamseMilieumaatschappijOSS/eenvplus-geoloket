@@ -34,7 +34,7 @@ module be.vmm.eenvplus.editor.drawTools {
             this.painterStore.current = value;
         }
 
-        private state:StateStore;
+        private state:state.StateStore;
         private painterStore:paint.PainterStore;
 
 
@@ -42,7 +42,7 @@ module be.vmm.eenvplus.editor.drawTools {
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(state:StateStore, painterStore:paint.PainterStore) {
+        constructor(state:state.StateStore, painterStore:paint.PainterStore) {
             this.featureType = feature.FeatureType;
             this.state = state;
             this.painterStore = painterStore;
@@ -54,7 +54,7 @@ module be.vmm.eenvplus.editor.drawTools {
         /* ----------------- */
 
         public requestEditMode():void {
-            this.state.currentMode = applicationState.State.EDIT;
+            this.state.currentMode = state.State.EDIT;
         }
 
     }

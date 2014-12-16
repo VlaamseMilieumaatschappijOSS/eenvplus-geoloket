@@ -1,9 +1,7 @@
 ///ts:ref=Module
 /// <reference path="../Module.ts"/> ///ts:ref:generated
 
-import State = be.vmm.eenvplus.applicationState.State;
-
-module be.vmm.eenvplus {
+module be.vmm.eenvplus.state {
     'use strict';
 
     export interface StateStore {

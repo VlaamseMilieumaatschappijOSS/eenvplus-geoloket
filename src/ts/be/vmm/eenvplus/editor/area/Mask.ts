@@ -31,10 +31,10 @@ module be.vmm.eenvplus.editor.area.mask {
      *
      * @param map
      * @param store
-     * @param state
+     * @param stateStore
      * @constructor
      */
-    function MaskController(map:ol.Map, store:AreaStore, state:StateStore):void {
+    function MaskController(map:ol.Map, store:AreaStore, stateStore:state.StateStore):void {
 
         /* ------------------ */
         /* --- properties --- */
@@ -57,7 +57,7 @@ module be.vmm.eenvplus.editor.area.mask {
             })
         });
 
-        state.modeChanged.add(handleModeChange);
+        stateStore.modeChanged.add(handleModeChange);
 
 
         /* ---------------------- */
@@ -70,8 +70,8 @@ module be.vmm.eenvplus.editor.area.mask {
          *
          * @param editMode
          */
-        function handleModeChange(editMode:applicationState.State):void {
-            editMode === applicationState.State.EDIT ? activate() : deactivate();
+        function handleModeChange(editMode:state.State):void {
+            editMode === state.State.EDIT ? activate() : deactivate();
         }
 
         function handleMaskComposition(event:ol.render.Event):void {

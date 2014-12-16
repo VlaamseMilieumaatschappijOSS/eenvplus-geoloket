@@ -1,18 +1,10 @@
 ///ts:ref=Module
 /// <reference path="../Module.ts"/> ///ts:ref:generated
 
-module be.vmm.eenvplus.applicationState {
+module be.vmm.eenvplus.state.applicationState {
     'use strict';
 
     export var NAME:string = PREFIX + 'ApplicationState';
-
-    export enum State {
-        VIEW,
-        EDIT,
-        FEATURE_SELECTED,
-        OVERVIEW,
-        DETAIL
-    }
 
     var stateCls = [
         'view',

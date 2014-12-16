@@ -27,7 +27,7 @@ module be.vmm.eenvplus.editor.actions {
         /* --- properties --- */
         /* ------------------ */
 
-        private state:StateStore;
+        private state:state.StateStore;
         private manager:feature.FeatureManager;
 
 
@@ -35,7 +35,7 @@ module be.vmm.eenvplus.editor.actions {
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(state:StateStore, manager:feature.FeatureManager) {
+        constructor(state:state.StateStore, manager:feature.FeatureManager) {
             this.state = state;
             this.manager = manager;
 
@@ -52,7 +52,7 @@ module be.vmm.eenvplus.editor.actions {
         public save:Function;
 
         public discard():void {
-            this.state.currentMode = applicationState.State.VIEW;
+            this.state.currentMode = state.State.VIEW;
         }
 
     }
