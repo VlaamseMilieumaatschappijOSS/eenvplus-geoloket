@@ -147,9 +147,7 @@ module be.vmm.eenvplus.feature {
             }
 
             function discard(json:model.FeatureJSON):void {
-                if (json.id) {
-                    // don't remove but reload old geometry
-                }
+                if (json.id) deselect();
                 else {
                     getConnectedNodesByKeys(json)
                         .then(_.partialRight(_.each, discard))
