@@ -4,12 +4,13 @@
 module be.vmm.eenvplus.editor.area {
     'use strict';
 
-    Selector.$inject = ['epMap', 'epStateStore', 'epFeatureStore', 'epPainterStore'];
+    Selector.$inject = ['epMap', 'epStateStore', 'epFeatureStore', 'epPainterStore', 'epFeatureManager'];
 
     function Selector(map:ol.Map,
                       stateStore:state.StateStore,
                       featureStore:feature.FeatureStore,
-                      painterStore:paint.PainterStore):void {
+                      painterStore:paint.PainterStore,
+                      featureManager:feature.FeatureManager):void {
 
         /* ------------------ */
         /* --- properties --- */
@@ -23,9 +24,7 @@ module be.vmm.eenvplus.editor.area {
         /* --- construction --- */
         /* -------------------- */
 
-        select.getFeatures().on(ol.CollectionEventType.ADD, (event:ol.CollectionEvent<ol.Feature>):void => {
-            console.log(event.element);
-        });
+        select.getFeatures().on(ol.CollectionEventType.ADD, _.compose(selectFeature, get('element')));
 
         stateStore.modeChanged.add(invalidateState);
         featureStore.selected.add(invalidateState);
@@ -53,6 +52,12 @@ module be.vmm.eenvplus.editor.area {
         /* ----------------- */
         /* --- behaviour --- */
         /* ----------------- */
+
+        function selectFeature(selectedFeature:feature.LocalFeature):void {
+            featureManager
+                .get(feature.toLayerBodId(selectedFeature.type), selectedFeature.key)
+                .then(featureManager.select);
+        }
 
         function invalidateState():void {
             // the value of an enum can be 0, hence the explicit undefined check
