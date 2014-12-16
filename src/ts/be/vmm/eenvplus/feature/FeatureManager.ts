@@ -116,11 +116,11 @@ module be.vmm.eenvplus.feature {
             }
 
             function update(json:model.FeatureJSON):void {
-                getConnectedNodes(json)
+                getConnectedNodesByKeys(json)
                     .then(_.partialRight(_.reject, get('properties.namespaceId')))
                     .then(_.partialRight(_.each, ensureNodeSource))
                     .then(_.partialRight(_.each, updateLink))
-                    .catch(handleError('discard', json));
+                    .catch(handleError('update', json));
 
                 service
                     .update(json)
@@ -151,7 +151,7 @@ module be.vmm.eenvplus.feature {
                     // don't remove but reload old geometry
                 }
                 else {
-                    getConnectedNodes(json)
+                    getConnectedNodesByKeys(json)
                         .then(_.partialRight(_.each, discard))
                         .catch(handleError('discard', json));
 
@@ -162,9 +162,9 @@ module be.vmm.eenvplus.feature {
                 }
             }
 
-            function getConnectedNodes(json:model.FeatureJSON):ng.IPromise<model.FeatureJSON[]> {
+            function getConnectedNodesByKeys(json:model.FeatureJSON):ng.IPromise<model.FeatureJSON[]> {
                 return q.all(_(json.properties)
-                    .filter(shiftData(isNodeId))
+                    .filter(isNodeKey)
                     .map(keyToId)
                     .map(getNode)
                     .value());
@@ -178,8 +178,8 @@ module be.vmm.eenvplus.feature {
                 return parseInt(key.replace('#', ''), 10);
             }
 
-            function isNodeId(propertyName:string):boolean {
-                return propertyName.indexOf('oppelPuntId') !== -1;
+            function isNodeKey(value:string):boolean {
+                return typeof value === 'string' && value.charAt(0) === '#';
             }
 
             function select(json:model.FeatureJSON):void {
