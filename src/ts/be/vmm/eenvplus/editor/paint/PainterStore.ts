@@ -12,32 +12,23 @@ module be.vmm.eenvplus.editor.paint {
     export module PainterStore {
         export var NAME:string = PREFIX + 'PainterStore';
 
-        factory.$inject = ['epFeatureStore'];
-
-        function factory(feature:feature.FeatureStore):PainterStore {
-            var _current,
-                store = {
-                    get current():feature.FeatureType {
-                        return _current;
-                    },
-                    set current(value:feature.FeatureType) {
-                        if (value === _current) return;
-                        _current = value;
-                        store.selected.fire(value);
-                    },
-                    selected: new Trasys.Signals.TypeSignal()
-                };
-
-            feature.selected.add((json:feature.model.FeatureJSON):void => {
-                if (!json) store.current = json;
-            });
-
-            return store;
-        }
+        var current,
+            store = {
+                get current():feature.FeatureType {
+                    return current;
+                },
+                set current(value:feature.FeatureType) {
+                    if (value === current) return;
+                    current = value;
+                    store.selected.fire(value);
+                },
+                selected: new Trasys.Signals.TypeSignal()
+            };
 
         angular
             .module(MODULE)
-            .factory(NAME, factory);
+            .factory(NAME, factory(store));
+
     }
 
 }

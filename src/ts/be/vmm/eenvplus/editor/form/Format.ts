@@ -6,20 +6,18 @@ module be.vmm.eenvplus.editor.form {
 
     export interface Format {
         toFeatureLabel(json:feature.model.FeatureJSON):string;
+        toUserName(id:number):string;
+        toDate(timestamp:number):string;
     }
 
     export module Format {
         export var NAME:string = PREFIX + 'Format';
 
-        factory.$inject = [];
-
-        function factory():Format {
-            return {
-                toFeatureLabel: toFeatureLabel,
-                toUserName: toUserName,
-                toDate: toDate
-            };
-        }
+        var api = {
+            toFeatureLabel: toFeatureLabel,
+            toUserName: toUserName,
+            toDate: toDate
+        };
 
         export function toFeatureLabel(json:feature.model.FeatureJSON):string {
             // TODO get these from .properties
@@ -41,7 +39,7 @@ module be.vmm.eenvplus.editor.form {
 
         angular
             .module(MODULE)
-            .factory(NAME, factory);
+            .factory(NAME, factory(api));
 
     }
 

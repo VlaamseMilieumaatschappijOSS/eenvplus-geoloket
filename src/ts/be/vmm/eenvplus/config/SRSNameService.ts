@@ -35,16 +35,14 @@ module be.vmm.eenvplus.config {
 
         srsNames.forEach(setCode);
 
-        function factory():SRSNameService {
-            return {
-                default: byId(SRID.LAMBERT72),
-                byId: byId
-            };
-        }
+        var api = {
+            default: byId(SRID.LAMBERT72),
+            byId: byId
+        };
 
         function setCode(srsName:SRSName):void {
             srsName.authority = AUTHORITY;
-            srsName.code = AUTHORITY + ':' + srsName.srid
+            srsName.code = AUTHORITY + ':' + srsName.srid;
         }
 
         function byId(srid:number):SRSName {
@@ -55,7 +53,7 @@ module be.vmm.eenvplus.config {
             .module(MODULE)
             .constant('AUTHORITY', AUTHORITY)
             .constant('SRID', SRID)
-            .factory(NAME, factory);
+            .factory(NAME, factory(api));
 
     }
 

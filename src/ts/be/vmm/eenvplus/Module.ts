@@ -15,10 +15,12 @@ module be.vmm.eenvplus {
         (...args:any[]):any;
     }
 
-    export function factory(fn:Function):AnyFunction {
-        return function createFactory():Function {
-            return fn;
+    export function factory(value:any, dependencies?:string[]):AnyFunction {
+        var fn = function createFactory():Function {
+            return value;
         };
+        if (dependencies) fn.$inject = dependencies;
+        return fn;
     }
 
     export function shiftData(fn:Function):AnyFunction {
