@@ -6,12 +6,6 @@ module be.vmm.eenvplus.applicationState {
 
     export var NAME:string = PREFIX + 'ApplicationState';
 
-    export var EVENT = {
-        modeChange: 'modeStateChange',
-        modeRequest: 'modeRequest',
-        levelChange: 'levelStateChange'
-    };
-
     export enum State {
         VIEW,
         EDIT,
@@ -40,21 +34,16 @@ module be.vmm.eenvplus.applicationState {
         };
     }
 
-    ApplicationStateController.$inject = ['$scope'];
+    ApplicationStateController.$inject = ['$scope', 'epMap', 'epStateStore', 'epFeatureStore'];
 
-    export function ApplicationStateController(scope:ApplicationScope) {
+    export function ApplicationStateController(scope:ApplicationScope, map:ol.Map, state:StateStore, featureStore:feature.FeatureStore):void {
 
         /* ------------------ */
         /* --- properties --- */
         /* ------------------ */
 
-        var view = scope.map.getView(),
-            layers = scope.map.getLayers(),
-            currentState = {
-                mode: State.VIEW,
-                featureSelected: -1,
-                level: State.OVERVIEW
-            },
+        var view = map.getView(),
+            layers = map.getLayers(),
             threshold:number;
 
 
@@ -62,8 +51,8 @@ module be.vmm.eenvplus.applicationState {
         /* --- construction --- */
         /* -------------------- */
 
-        scope.$on(EVENT.modeRequest, handle(handleModeRequest));
-        scope.$on(feature.EVENT.selected, handle(invalidateFeatureSelection));
+        state.modeChanged.add(handleModeRequest);
+        featureStore.selected.add(invalidateFeatureSelection);
         view.on(changeEvent(ol.ViewProperty.RESOLUTION), invalidateLevel);
         layers.on(changeEvent(ol.CollectionProperty.LENGTH), setLevelThreshold);
 
@@ -84,7 +73,7 @@ module be.vmm.eenvplus.applicationState {
         /* ----------------- */
 
         function setLevelThreshold():void {
-            var resolutions = _(scope.map.getLayers().getArray())
+            var resolutions = _(map.getLayers().getArray())
                 .filter('displayInLayerManager')
                 .invoke(ol.layer.Base.prototype.get, ol.layer.LayerProperty.MAX_RESOLUTION)
                 .value();
@@ -93,30 +82,26 @@ module be.vmm.eenvplus.applicationState {
 
         function setMode(editActive:boolean):void {
             var mode = editActive ? State.EDIT : State.VIEW;
-            if (mode === currentState.mode) return;
 
             // FIXME hard reference
             if (!editActive) $('#drawTools').collapse('hide');
 
-            scope.$broadcast(EVENT.modeChange, currentState.mode = mode);
+            state.currentMode = mode;
             invalidateViewState();
         }
 
         function invalidateLevel():void {
-            var level = view.getResolution() < threshold ? State.DETAIL : State.OVERVIEW;
-            if (level === currentState.level) return;
-
-            scope.$broadcast(EVENT.levelChange, currentState.level = level);
+            state.currentLevel = view.getResolution() < threshold ? State.DETAIL : State.OVERVIEW;
             invalidateViewState();
         }
 
-        function invalidateFeatureSelection(features:feature.model.FeatureJSON[]):void {
-            currentState.featureSelected = features && features.length ? State.FEATURE_SELECTED : -1;
+        function invalidateFeatureSelection(feature:feature.model.FeatureJSON):void {
+            state.featureSelected = feature ? State.FEATURE_SELECTED : -1;
             invalidateViewState();
         }
 
         function invalidateViewState():void {
-            scope.state = _.map(currentState, (state:State):string => {
+            scope.state = _.map(state.current, (state:State):string => {
                 return stateCls[state];
             }).join(' ');
         }

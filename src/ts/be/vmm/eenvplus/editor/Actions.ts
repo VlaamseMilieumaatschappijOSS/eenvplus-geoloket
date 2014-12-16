@@ -9,7 +9,7 @@ module be.vmm.eenvplus.editor.actions {
     export var NAME:string = PREFIX + 'EditActions';
 
     function configure():ng.IDirective {
-        ActionsController.$inject = ['$rootScope', 'epFeatureManager'];
+        ActionsController.$inject = ['epStateStore', 'epFeatureManager'];
 
         return {
             restrict: 'A',
@@ -27,7 +27,7 @@ module be.vmm.eenvplus.editor.actions {
         /* --- properties --- */
         /* ------------------ */
 
-        private rootScope:ng.IScope;
+        private state:StateStore;
         private manager:feature.FeatureManager;
 
 
@@ -35,8 +35,8 @@ module be.vmm.eenvplus.editor.actions {
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(rootScope:ng.IScope, manager:feature.FeatureManager) {
-            this.rootScope = rootScope;
+        constructor(state:StateStore, manager:feature.FeatureManager) {
+            this.state = state;
             this.manager = manager;
 
             this.validate = manager.validate;
@@ -52,7 +52,7 @@ module be.vmm.eenvplus.editor.actions {
         public save:Function;
 
         public discard():void {
-            this.rootScope.$broadcast(applicationState.EVENT.modeRequest, applicationState.State.OVERVIEW);
+            this.state.currentMode = applicationState.State.VIEW;
         }
 
     }

@@ -8,10 +8,6 @@ module be.vmm.eenvplus.editor.area.mask {
 
     export var NAME:string = PREFIX + 'Mask';
 
-    export var EVENT = {
-        selected: 'selected'
-    };
-
     var style = {
         fill: {
             color: [0, 5, 25, 0.75]
@@ -36,23 +32,24 @@ module be.vmm.eenvplus.editor.area.mask {
         };
     }
 
-    MaskController.$inject = ['$scope'];
+    MaskController.$inject = ['epMap', 'epAreaStore', 'epStateStore'];
 
     /**
      * Lets the user draw a selection mask on the map.
      * The non-selected area is greyed out.
      *
-     * @param scope
+     * @param map
+     * @param store
+     * @param state
      * @constructor
      */
-    function MaskController(scope:ApplicationScope) {
+    function MaskController(map:ol.Map, store:AreaStore, state:StateStore):void {
 
         /* ------------------ */
         /* --- properties --- */
         /* ------------------ */
 
-        var map:ol.Map = scope.map,
-            currentState:State = State.OFF;
+        var currentState:State = State.OFF;
 
 
         /* -------------------- */
@@ -69,7 +66,7 @@ module be.vmm.eenvplus.editor.area.mask {
             })
         });
 
-        scope.$on(applicationState.EVENT.modeChange, handle(handleModeChange));
+        state.modeChanged.add(handleModeChange);
 
 
         /* ---------------------- */
@@ -144,7 +141,7 @@ module be.vmm.eenvplus.editor.area.mask {
 
             map.removeInteraction(boxInteraction);
 
-            scope.$broadcast(EVENT.selected, boxInteraction.getGeometry().getExtent());
+            store.current = boxInteraction.getGeometry().getExtent();
         }
 
         function startClipping(layer:ol.Observable):void {

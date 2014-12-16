@@ -15,16 +15,15 @@ module be.vmm.eenvplus.editor.area.areaZoom {
         };
     }
 
-    AreaZoomController.$inject = ['$scope'];
+    AreaZoomController.$inject = ['epMap', 'epAreaStore'];
 
-    function AreaZoomController(scope:ApplicationScope):void {
+    function AreaZoomController(map:ol.Map, store:AreaStore):void {
 
-        var map:ol.Map = scope.map,
-            view = map.getView(),
+        var view = map.getView(),
             center = _.compose(view.setCenter.bind(view), getCenter),
             zoom = _.compose(view.setResolution.bind(view), getResolution);
 
-        scope.$on(mask.EVENT.selected, handle(centerAndZoom));
+        store.selected.add(centerAndZoom);
 
         function centerAndZoom(extent:ol.Extent):void {
             center(extent);

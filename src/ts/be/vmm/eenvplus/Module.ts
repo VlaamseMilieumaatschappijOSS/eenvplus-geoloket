@@ -1,3 +1,4 @@
+/// <reference path="config/Module.ts"/>
 /// <reference path="editor/Module.ts"/>
 /// <reference path="feature/Module.ts"/>
 /// <reference path="label/Module.ts"/>
@@ -34,6 +35,12 @@ module be.vmm.eenvplus {
         };
     }
 
+    export function set(property:string, value:any):AnyFunction {
+        return function set(object:any):any {
+            return object[property] = value;
+        };
+    }
+
     export function unary(fn:Function):AnyFunction {
         return function createUnaryFunction(first:any):Function {
             return fn.call(this, first);
@@ -63,6 +70,7 @@ module be.vmm.eenvplus {
     goog.provide(MODULE);
 
     angular.module(MODULE, [
+        config.MODULE,
         editor.MODULE,
         feature.MODULE,
         label.MODULE,

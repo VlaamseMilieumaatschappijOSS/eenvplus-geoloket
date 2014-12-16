@@ -1,15 +1,13 @@
 (function() {
   goog.provide('ga_mouseposition_controller');
 
-  goog.require('ga_config');
-
   var module = angular.module('ga_mouseposition_controller', [
     'pascalprecht.translate',
-    'ga_config'
+    'ep_config'
   ]);
 
   module.controller('GaMousePositionController',
-      function($scope, $translate, $window, gaSRSName, SRID) {
+      function($scope, $translate, $window, epSRSName, SRID) {
         var coordinatesFormat = function(coordinates) {
           return $translate('coordinates_label') + ': ' +
               ol.coordinate.toStringXY(coordinates, 0).
@@ -22,12 +20,12 @@
           return coord + ' ' + zone;
         };
 
-        var wgs84 = gaSRSName.byId(SRID.WGS84),
-            utm = gaSRSName.byId(SRID.UTM);
+        var wgs84 = epSRSName.byId(SRID.WGS84),
+            utm = epSRSName.byId(SRID.UTM);
 
         $scope.mousePositionProjections = [{
-          value: gaSRSName.default.code,
-          label: gaSRSName.default.label,
+          value: epSRSName.default.code,
+          label: epSRSName.default.label,
           format: coordinatesFormat
         }, {
           value: wgs84.code,

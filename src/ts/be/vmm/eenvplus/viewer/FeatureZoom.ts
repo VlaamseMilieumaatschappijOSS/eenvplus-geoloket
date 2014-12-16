@@ -6,18 +6,12 @@ module be.vmm.eenvplus.viewer {
 
     export var NAME:string = PREFIX + 'FeatureZoom';
 
-    interface Scope extends ng.IScope {
-        map:ol.Map;
-    }
-
     function configure():ng.IDirective {
-        FeatureZoomController.$inject = ['$scope'];
+        FeatureZoomController.$inject = ['epMap'];
 
         return {
             restrict: 'A',
-            scope: {
-                map: '='
-            },
+            scope: {},
             controllerAs: 'ctrl',
             controller: FeatureZoomController,
             templateUrl: 'html/be/vmm/eenvplus/viewer/FeatureZoom.html'
@@ -37,8 +31,8 @@ module be.vmm.eenvplus.viewer {
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(scope:Scope) {
-            this.map = scope.map;
+        constructor(map:ol.Map) {
+            this.map = map;
         }
 
 

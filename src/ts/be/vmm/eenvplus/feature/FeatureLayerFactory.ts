@@ -15,7 +15,7 @@ module be.vmm.eenvplus.feature {
         createLayer(type:FeatureType):ol.layer.Vector;
     }
 
-    factory.$inject = ['gaFeatureManager', 'gaSRSName'];
+    factory.$inject = ['gaFeatureManager', 'epSRSName'];
 
     function factory(service:FeatureService, srsName:config.SRSNameService):FeatureLayerFactory {
         return {
@@ -81,9 +81,10 @@ module be.vmm.eenvplus.feature {
         _.wrap(ol.format.GeoJSON.prototype.readFeatureFromObject, addKey);
 
     function addKey(fn:Function, json:feature.model.FeatureJSON, options?:any):feature.LocalFeature {
-        var feature = fn(json, options);
-        if (json.key) feature.key = json.key;
-        return feature;
+        var olFeature = fn(json, options);
+        if (json.key) olFeature.key = json.key;
+        olFeature.type = feature.toType(json.layerBodId);
+        return olFeature;
     }
 
     angular

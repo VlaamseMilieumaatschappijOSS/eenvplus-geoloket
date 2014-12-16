@@ -243,7 +243,7 @@ itemscope itemtype="http://schema.org/WebApplication"
 
     <div id="pulldown" ng-show="!globals.offline" ng-class="{'selection-and-catalog-shown': (globals.catalogShown && globals.selectionShown)}">
       <div id="pulldown-content" class="panel-group content ${"in" if device == "desktop" else "collapse"}">
-        <div ep-feature-zoom map="map" class="panel zoom include-in-overview"></div>
+        <div ep-feature-zoom class="panel zoom include-in-overview"></div>
 
         <div class="panel share">
           <a id="shareHeading" class="panel-heading accordion-toggle collapsed" data-toggle="collapse" data-parent="#pulldown-content" href="#share">

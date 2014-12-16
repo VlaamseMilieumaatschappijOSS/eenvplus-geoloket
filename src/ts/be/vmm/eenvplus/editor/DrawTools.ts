@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.drawTools {
     export var NAME:string = PREFIX + 'DrawTools';
 
     function configure():ng.IDirective {
-        DrawToolsController.$inject = ['$scope', '$rootScope'];
+        DrawToolsController.$inject = ['epStateStore', 'epPainterStore'];
 
         return {
             restrict: 'A',
@@ -24,25 +24,28 @@ module be.vmm.eenvplus.editor.drawTools {
         /* --- properties --- */
         /* ------------------ */
 
-        public selectedItem:feature.FeatureType;
+        public featureType:any;
 
-        private scope:ng.IScope;
-        private rootScope:ng.IScope;
+        public get selectedItem():feature.FeatureType {
+            return this.painterStore.current;
+        }
+
+        public set selectedItem(value:feature.FeatureType) {
+            this.painterStore.current = value;
+        }
+
+        private state:StateStore;
+        private painterStore:paint.PainterStore;
 
 
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(scope:ng.IScope, rootScope:ng.IScope) {
-            _.bindAll(this);
-            this.scope = scope;
-            this.rootScope = rootScope;
-
-            this.requestSewerPainter = _.partial(this.selectPainter, feature.FeatureType.SEWER);
-            this.requestAppurtenancePainter = _.partial(this.selectPainter, feature.FeatureType.APPURTENANCE);
-
-            scope.$on(feature.EVENT.selected, _.partial(this.selectPainter, undefined));
+        constructor(state:StateStore, painterStore:paint.PainterStore) {
+            this.featureType = feature.FeatureType;
+            this.state = state;
+            this.painterStore = painterStore;
         }
 
 
@@ -51,15 +54,7 @@ module be.vmm.eenvplus.editor.drawTools {
         /* ----------------- */
 
         public requestEditMode():void {
-            this.rootScope.$broadcast(applicationState.EVENT.modeRequest, applicationState.State.EDIT);
-        }
-
-        public requestSewerPainter:() => void;
-        public requestAppurtenancePainter:() => void;
-
-        public selectPainter(painter:feature.FeatureType):void {
-            this.selectedItem = this.selectedItem === painter ? undefined : painter;
-            this.rootScope.$broadcast(paint.EVENT.selected, this.selectedItem);
+            this.state.currentMode = applicationState.State.EDIT;
         }
 
     }

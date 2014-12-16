@@ -6,18 +6,13 @@ module be.vmm.eenvplus.editor.form.StatusList {
 
     export var NAME:string = PREFIX + 'FeatureStatusList';
 
-    interface Scope extends ng.IScope {
-        data:feature.model.Status[];
-    }
-
     function configure():ng.IDirective {
-        StatusListController.$inject = ['$scope'];
-
         return {
             restrict: 'A',
             scope: {
                 data: '='
             },
+            bindToController: true,
             controllerAs: 'ctrl',
             controller: StatusListController,
             templateUrl: 'html/be/vmm/eenvplus/editor/form/StatusList.html'
@@ -30,16 +25,8 @@ module be.vmm.eenvplus.editor.form.StatusList {
         /* --- properties --- */
         /* ------------------ */
 
+        /** @inject */
         public data:feature.model.Status[];
-
-
-        /* -------------------- */
-        /* --- construction --- */
-        /* -------------------- */
-
-        constructor(scope:Scope) {
-            this.data = scope.data;
-        }
 
 
         /* ----------------- */

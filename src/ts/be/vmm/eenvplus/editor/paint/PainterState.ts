@@ -9,13 +9,13 @@ module be.vmm.eenvplus.editor.paint {
         (type:feature.FeatureType, activate:() => void, deactivate:() => void):void;
     }
 
-    factory.$inject = ['$rootScope'];
+    factory.$inject = ['epPainterStore'];
 
-    function factory(app:ApplicationScope):PainterState {
+    function factory(store:PainterStore):PainterState {
         return function PainterState(type:feature.FeatureType, activate:() => void, deactivate:() => void):void {
             var isActive:boolean = false;
 
-            app.$on(EVENT.selected, handle(handlePainterSelection));
+            store.selected.add(handlePainterSelection);
 
             function handlePainterSelection(newType:feature.FeatureType):void {
                 type === newType ? handleActivation() : handleDeactivation();

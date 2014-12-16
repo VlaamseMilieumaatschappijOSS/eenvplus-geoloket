@@ -2,13 +2,12 @@ module be.vmm.eenvplus.editor.paint {
     'use strict';
 
     export function Painter(type:feature.FeatureType,
-                            scope:ApplicationScope,
                             q:ng.IQService,
+                            map:ol.Map,
                             state:PainterState,
                             manager:feature.FeatureManager):void {
 
-        var map = scope.map,
-            commitFeature = commitFn(type),
+        var commitFeature = commitFn(type),
             commitNode = commitFn(feature.FeatureType.NODE),
             vectorLayer, nodeLayer, interaction, unRegisterDrawEnd;
 
@@ -31,10 +30,12 @@ module be.vmm.eenvplus.editor.paint {
                 geometry = <ol.geometry.SimpleGeometry> newFeature.getGeometry(),
                 first = geometry.getFirstCoordinate(),
                 last = geometry.getLastCoordinate(),
-                nodes = [createPoint(last)],
+                nodes = [createNode(last)],
                 promises;
 
-            if (!_.isEqual(first, last)) nodes.push(createPoint(first));
+            newFeature.type = type;
+
+            if (!_.isEqual(first, last)) nodes.push(createNode(first));
 
             nodeLayer
                 .getSource()
@@ -48,7 +49,7 @@ module be.vmm.eenvplus.editor.paint {
 
             q.all(promises)
                 .then(linkFeatures)
-                .then(notifySelection);
+                .then(manager.select);
 
             function linkFeatures(jsons:feature.model.FeatureJSON[]):feature.model.FeatureJSON {
                 var featureJson = _.find(jsons, {layerBodId: feature.toLayerBodId(type)}),
@@ -62,14 +63,10 @@ module be.vmm.eenvplus.editor.paint {
             }
         }
 
-        function createPoint(coordinates:ol.Coordinate):ol.Feature {
-            return new ol.Feature({
+        function createNode(coordinates:ol.Coordinate):feature.LocalFeature {
+            return _.merge(new ol.Feature({
                 geometry: new ol.geom.Point(coordinates)
-            });
-        }
-
-        function notifySelection(json:feature.model.FeatureJSON):void {
-            scope.$broadcast(feature.EVENT.selected, [json]);
+            }), {type: feature.FeatureType.NODE});
         }
 
         function commitFn(type:feature.FeatureType):(feature:ol.Feature) => ng.IPromise<feature.model.FeatureJSON> {

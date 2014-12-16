@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.validation.validator {
     export var NAME:string = PREFIX + 'Validator';
 
     function configure():ng.IDirective {
-        ValidatorController.$inject = ['$scope', 'epFeatureManager'];
+        ValidatorController.$inject = ['epStateStore', 'epFeatureManager'];
 
         return {
             restrict: 'A',
@@ -25,18 +25,22 @@ module be.vmm.eenvplus.editor.validation.validator {
         /* ------------------ */
 
         public results:FeatureResult[];
-        public isValid:boolean = true;
+
+        public get isActive():boolean {
+            return this.state.currentLevel === applicationState.State.DETAIL && !this.valid;
+        }
+
+        private state:StateStore;
+        private valid:boolean = true;
 
 
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(scope:ng.IScope, manager:feature.FeatureManager) {
-            _.bindAll(this);
-
-            scope.$on(applicationState.EVENT.modeRequest, handle(this.handleModeChange));
-            manager.signal.validate.add(this.handleValidation);
+        constructor(state:StateStore, manager:feature.FeatureManager) {
+            this.state = state;
+            manager.signal.validate.add(this.handleValidation.bind(this));
         }
 
 
@@ -45,12 +49,8 @@ module be.vmm.eenvplus.editor.validation.validator {
         /* ---------------------- */
 
         private handleValidation(result:ValidationResult):void {
-            this.isValid = result.valid;
+            this.valid = result.valid;
             this.results = result.results;
-        }
-
-        private handleModeChange(state:applicationState.State):void {
-            if (state === applicationState.State.OVERVIEW) this.isValid = true;
         }
 
     }
