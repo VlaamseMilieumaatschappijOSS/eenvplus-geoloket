@@ -1,5 +1,5 @@
 ///ts:ref=Module
-/// <reference path="./Module.ts"/> ///ts:ref:generated
+/// <reference path="../Module.ts"/> ///ts:ref:generated
 
 module be.vmm.eenvplus.applicationState {
     'use strict';

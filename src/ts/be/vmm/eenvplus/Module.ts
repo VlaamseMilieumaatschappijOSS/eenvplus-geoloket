@@ -2,6 +2,7 @@
 /// <reference path="editor/Module.ts"/>
 /// <reference path="feature/Module.ts"/>
 /// <reference path="label/Module.ts"/>
+/// <reference path="state/Module.ts"/>
 /// <reference path="viewer/Module.ts"/>
 
 module be.vmm.eenvplus {
@@ -57,16 +58,6 @@ module be.vmm.eenvplus {
         return 'change:' + propertyName;
     }
 
-    export function handle(handler:Function, stop:boolean = false):(event:ng.IAngularEvent, ...args:any[]) => any {
-        return function handleEvent(event:ng.IAngularEvent, ...args:any[]):any {
-            if (stop) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            handler.apply(null, Array.prototype.slice.call(arguments, 1));
-        };
-    }
-
     goog.provide(MODULE);
 
     angular.module(MODULE, [
@@ -74,6 +65,7 @@ module be.vmm.eenvplus {
         editor.MODULE,
         feature.MODULE,
         label.MODULE,
+        state.MODULE,
         viewer.MODULE,
         'ngResource'
     ]);

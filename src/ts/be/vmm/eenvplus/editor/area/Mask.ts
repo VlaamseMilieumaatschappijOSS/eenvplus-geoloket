@@ -1,5 +1,5 @@
 ///ts:ref=ApplicationState
-/// <reference path="../../ApplicationState.ts"/> ///ts:ref:generated
+/// <reference path="../../state/ApplicationState.ts"/> ///ts:ref:generated
 ///ts:ref=Module
 /// <reference path="../../Module.ts"/> ///ts:ref:generated
 
