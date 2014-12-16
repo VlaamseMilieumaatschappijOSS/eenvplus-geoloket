@@ -1,6 +1,11 @@
 module be.vmm.eenvplus.editor.paint {
     'use strict';
 
+    [
+        feature.FeatureType.SEWER,
+        feature.FeatureType.APPURTENANCE
+    ].forEach(run);
+
     export function Painter(type:feature.FeatureType,
                             q:ng.IQService,
                             map:ol.Map,
@@ -90,6 +95,15 @@ module be.vmm.eenvplus.editor.paint {
             map.removeInteraction(interaction);
         }
 
+    }
+
+    function run(type:feature.FeatureType):void {
+        var controller = _.partial(Painter, type);
+        controller.$inject = ['$q', 'epMap', 'epPainterState', 'epFeatureManager'];
+
+        angular
+            .module(MODULE)
+            .run(controller);
     }
 
 }

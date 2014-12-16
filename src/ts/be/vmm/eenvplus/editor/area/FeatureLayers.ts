@@ -6,15 +6,6 @@
 module be.vmm.eenvplus.editor.area.featureLayers {
     'use strict';
 
-    export var NAME:string = PREFIX + 'FeatureLayers';
-
-    function configure():ng.IDirective {
-        return {
-            restrict: 'A',
-            controller: FeatureLayersController
-        };
-    }
-
     FeatureLayersController.$inject = [
         'epMap', 'epStateStore', 'epAreaStore', 'epFeatureManager', 'epFeatureLayerFactory'
     ];
@@ -110,6 +101,6 @@ module be.vmm.eenvplus.editor.area.featureLayers {
 
     angular
         .module(MODULE)
-        .directive(NAME, configure);
+        .run(FeatureLayersController);
 
 }

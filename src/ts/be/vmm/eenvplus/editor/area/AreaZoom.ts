@@ -6,24 +6,24 @@
 module be.vmm.eenvplus.editor.area.areaZoom {
     'use strict';
 
-    export var NAME:string = PREFIX + 'AreaZoom';
-
-    function configure():ng.IDirective {
-        return {
-            restrict: 'A',
-            controller: AreaZoomController
-        };
-    }
-
     AreaZoomController.$inject = ['epMap', 'epAreaStore'];
 
     function AreaZoomController(map:ol.Map, store:AreaStore):void {
+
+        /* -------------------- */
+        /* --- construction --- */
+        /* -------------------- */
 
         var view = map.getView(),
             center = _.compose(view.setCenter.bind(view), getCenter),
             zoom = _.compose(view.setResolution.bind(view), getResolution);
 
         store.selected.add(centerAndZoom);
+
+
+        /* ----------------- */
+        /* --- behaviour --- */
+        /* ----------------- */
 
         function centerAndZoom(extent:ol.Extent):void {
             center(extent);
@@ -53,6 +53,6 @@ module be.vmm.eenvplus.editor.area.areaZoom {
 
     angular
         .module(MODULE)
-        .directive(NAME, configure);
+        .run(AreaZoomController);
 
 }

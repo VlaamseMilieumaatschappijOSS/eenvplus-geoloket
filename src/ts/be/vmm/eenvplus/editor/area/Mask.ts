@@ -6,8 +6,6 @@
 module be.vmm.eenvplus.editor.area.mask {
     'use strict';
 
-    export var NAME:string = PREFIX + 'Mask';
-
     var style = {
         fill: {
             color: [0, 5, 25, 0.75]
@@ -23,13 +21,6 @@ module be.vmm.eenvplus.editor.area.mask {
         EMPTY,
         SELECTING,
         ON
-    }
-
-    function configure():ng.IDirective {
-        return {
-            restrict: 'A',
-            controller: MaskController
-        };
     }
 
     MaskController.$inject = ['epMap', 'epAreaStore', 'epStateStore'];
@@ -275,6 +266,6 @@ module be.vmm.eenvplus.editor.area.mask {
 
     angular
         .module(MODULE)
-        .directive(NAME, configure);
+        .run(MaskController);
 
 }
