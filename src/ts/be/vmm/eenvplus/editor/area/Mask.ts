@@ -32,18 +32,18 @@ module be.vmm.eenvplus.editor.area.mask {
         };
     }
 
-    MaskController.$inject = ['$scope', 'epMap', 'epAreaStore'];
+    MaskController.$inject = ['epMap', 'epAreaStore', 'epStateStore'];
 
     /**
      * Lets the user draw a selection mask on the map.
      * The non-selected area is greyed out.
      *
-     * @param scope
      * @param map
      * @param store
+     * @param state
      * @constructor
      */
-    function MaskController(scope:ApplicationScope, map:ol.Map, store:AreaStore):void {
+    function MaskController(map:ol.Map, store:AreaStore, state:StateStore):void {
 
         /* ------------------ */
         /* --- properties --- */
@@ -66,7 +66,7 @@ module be.vmm.eenvplus.editor.area.mask {
             })
         });
 
-        scope.$on(applicationState.EVENT.modeChange, handle(handleModeChange));
+        state.modeChanged.add(handleModeChange);
 
 
         /* ---------------------- */

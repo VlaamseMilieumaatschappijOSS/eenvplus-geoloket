@@ -15,10 +15,12 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         };
     }
 
-    FeatureLayersController.$inject = ['$scope', 'epMap', 'epAreaStore', 'epFeatureManager', 'epFeatureLayerFactory'];
+    FeatureLayersController.$inject = [
+        'epMap', 'epStateStore', 'epAreaStore', 'epFeatureManager', 'epFeatureLayerFactory'
+    ];
 
-    export function FeatureLayersController(scope:ApplicationScope,
-                                            map:ol.Map,
+    export function FeatureLayersController(map:ol.Map,
+                                            state:StateStore,
                                             store:AreaStore,
                                             manager:feature.FeatureManager,
                                             featureLayer:feature.FeatureLayerFactory):void {
@@ -29,8 +31,7 @@ module be.vmm.eenvplus.editor.area.featureLayers {
 
         var addLayer = map.addLayer.bind(map),
             removeLayer = map.removeLayer.bind(map),
-            featureLayers:ol.layer.Layer[],
-            unRegisterModeChange:Function;
+            featureLayers:ol.layer.Layer[];
 
         var select = new ol.interaction.Select({
             condition: ol.events.condition.click
@@ -53,7 +54,7 @@ module be.vmm.eenvplus.editor.area.featureLayers {
 
         function init(extent:ol.Extent):void {
             manager.load(extent);
-            unRegisterModeChange = scope.$on(applicationState.EVENT.modeChange, handle(handleModeChange));
+            state.modeChanged.add(handleModeChange);
         }
 
         select.handleMapBrowserEvent = _.wrap(select.handleMapBrowserEvent, alwaysBubble);
@@ -91,7 +92,7 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         function clear():void {
             map.removeInteraction(select);
             map.removeInteraction(highlight);
-            unRegisterModeChange();
+            state.modeChanged.remove(handleModeChange);
             featureLayers.forEach(removeLayer);
             featureLayers = [];
         }

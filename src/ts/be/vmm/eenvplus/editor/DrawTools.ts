@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.drawTools {
     export var NAME:string = PREFIX + 'DrawTools';
 
     function configure():ng.IDirective {
-        DrawToolsController.$inject = ['$rootScope', 'epPainterStore'];
+        DrawToolsController.$inject = ['epStateStore', 'epPainterStore'];
 
         return {
             restrict: 'A',
@@ -29,11 +29,12 @@ module be.vmm.eenvplus.editor.drawTools {
         public get selectedItem():feature.FeatureType {
             return this.painterStore.current;
         }
+
         public set selectedItem(value:feature.FeatureType) {
             this.painterStore.current = value;
         }
 
-        private rootScope:ng.IScope;
+        private state:StateStore;
         private painterStore:paint.PainterStore;
 
 
@@ -41,9 +42,9 @@ module be.vmm.eenvplus.editor.drawTools {
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(rootScope:ng.IScope, painterStore:paint.PainterStore) {
+        constructor(state:StateStore, painterStore:paint.PainterStore) {
             this.featureType = feature.FeatureType;
-            this.rootScope = rootScope;
+            this.state = state;
             this.painterStore = painterStore;
         }
 
@@ -53,7 +54,7 @@ module be.vmm.eenvplus.editor.drawTools {
         /* ----------------- */
 
         public requestEditMode():void {
-            this.rootScope.$broadcast(applicationState.EVENT.modeRequest, applicationState.State.EDIT);
+            this.state.currentMode = applicationState.State.EDIT;
         }
 
     }
