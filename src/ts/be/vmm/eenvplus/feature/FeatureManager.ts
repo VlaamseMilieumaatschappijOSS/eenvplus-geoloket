@@ -1,8 +1,6 @@
 ///ts:ref=Module
 /// <reference path="../Module.ts"/> ///ts:ref:generated
 
-import signal = Trasys.Signals;
-
 module be.vmm.eenvplus.feature {
     'use strict';
 

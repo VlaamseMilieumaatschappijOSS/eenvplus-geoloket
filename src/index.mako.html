@@ -100,7 +100,7 @@ itemscope itemtype="http://schema.org/WebApplication"
     <link rel="shortcut icon" type="image/x-icon" href="${versionslashed}img/favicon.ico"/>
   </head>
 
-  <body class="{{topicId}} {{state}}" ep-application-state
+  <body class="{{topicId}} {{ctrl.getState()}}" ep-application-state
         ng-class="{
           'search-focused': globals.searchFocused,
           'touch': globals.touch,
