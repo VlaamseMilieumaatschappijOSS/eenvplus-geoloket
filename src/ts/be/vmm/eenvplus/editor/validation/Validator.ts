@@ -27,10 +27,10 @@ module be.vmm.eenvplus.editor.validation.validator {
         public results:FeatureResult[];
 
         public get isActive():boolean {
-            return this.state.currentLevel === applicationState.State.DETAIL && !this.valid;
+            return this.state.currentLevel === state.State.DETAIL && !this.valid;
         }
 
-        private state:StateStore;
+        private state:state.StateStore;
         private valid:boolean = true;
 
 
@@ -38,7 +38,7 @@ module be.vmm.eenvplus.editor.validation.validator {
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(state:StateStore, manager:feature.FeatureManager) {
+        constructor(state:state.StateStore, manager:feature.FeatureManager) {
             this.state = state;
             manager.signal.validate.add(this.handleValidation.bind(this));
         }

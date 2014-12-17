@@ -12,26 +12,22 @@ module be.vmm.eenvplus.editor.area {
     export module AreaStore {
         export var NAME:string = PREFIX + 'AreaStore';
 
-        function factory():AreaStore {
-            var _current,
-                store = {
-                    get current():ol.Extent {
-                        return _current;
-                    },
-                    set current(value:ol.Extent) {
-                        if (value === _current) return;
-                        _current = value;
-                        store.selected.fire(value);
-                    },
-                    selected: new Trasys.Signals.TypeSignal()
-                };
-
-            return store;
-        }
+        var current,
+            store = {
+                get current():ol.Extent {
+                    return current;
+                },
+                set current(value:ol.Extent) {
+                    if (value === current) return;
+                    current = value;
+                    store.selected.fire(value);
+                },
+                selected: new Trasys.Signals.TypeSignal()
+            };
 
         angular
             .module(MODULE)
-            .factory(NAME, factory);
+            .factory(NAME, factory(store));
     }
 
 }

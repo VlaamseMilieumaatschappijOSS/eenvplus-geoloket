@@ -12,26 +12,22 @@ module be.vmm.eenvplus.feature {
     export module FeatureStore {
         export var NAME:string = PREFIX + 'FeatureStore';
 
-        function factory():FeatureStore {
-            var _current,
-                store = {
-                    get current():model.FeatureJSON {
-                        return _current;
-                    },
-                    set current(value:model.FeatureJSON) {
-                        if (value === _current) return;
-                        _current = value;
-                        store.selected.fire(value);
-                    },
-                    selected: new Trasys.Signals.TypeSignal()
-                };
-
-            return store;
-        }
+        var current,
+            store = {
+                get current():model.FeatureJSON {
+                    return current;
+                },
+                set current(value:model.FeatureJSON) {
+                    if (value === current) return;
+                    current = value;
+                    store.selected.fire(value);
+                },
+                selected: new Trasys.Signals.TypeSignal()
+            };
 
         angular
             .module(MODULE)
-            .factory(NAME, factory);
+            .factory(NAME, factory(store));
     }
 
 }

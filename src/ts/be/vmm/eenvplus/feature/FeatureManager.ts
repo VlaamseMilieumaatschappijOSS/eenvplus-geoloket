@@ -21,6 +21,7 @@ module be.vmm.eenvplus.feature {
         create: FeatureJSONHandler;
         deselect: () => void;
         discard: FeatureJSONHandler;
+        get: (layerBodId:string, key:number) => ng.IPromise<model.FeatureJSON>;
         link: (featureJson:model.FeatureJSON, nodeJsons:model.FeatureJSON[]) => void;
         load: (extent:ol.Extent) => void;
         push: FeatureJSONHandler;
@@ -51,6 +52,7 @@ module be.vmm.eenvplus.feature {
                 create: create,
                 deselect: deselect,
                 discard: discard,
+                get: getFeature,
                 link: link,
                 load: load,
                 push: push,

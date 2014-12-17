@@ -334,6 +334,8 @@ declare module ol {
         }
 
         interface Interaction extends Observable {
+            getActive():boolean;
+            setActive(value:boolean):void;
         }
 
         interface Pointer extends Interaction {
