@@ -107,8 +107,13 @@
 			"apiUrl": "http://127.0.0.1:8080/eenvplus-sdi-services",
 		
 			"query" : function(layerBodId, extent, filter) {
-				var d = $q.defer();
-				var type = getType(layerBodId);
+				var d = $q.defer(),
+					type = getType(layerBodId);
+
+				if (typeof extent === 'function') {
+					filter = extent;
+					extent = undefined;
+				}
 				
 				db.then(function(db) {
 					var results = [];
@@ -116,24 +121,29 @@
 					var objectStore = db.transaction(type).objectStore(type);
 					
 					var request = objectStore.openCursor();
-					request.onsuccess = function(event) {
+					request.onsuccess = function (event) {
 						var cursor = event.target.result;
 						if (cursor) {
 							var feature = cursor.value;
-							if (feature && feature.action != "delete") {
-								if((!extent || ol.extent.intersects(extent, feature.geometry.bbox))
-										|| (!filter || filter(feature)))
-									results.push(cursor.value);
-								cursor.continue();
+							if (meetsConditions(feature)) {
+								results.push(cursor.value);
 							}
+							cursor.continue();
 						} else {
 							d.resolve(results);
 						}
 					};
-					request.onerror = function(event) {
+					request.onerror = function() {
 						d.reject("Could not get features from local storage.");
 					};
 				});
+
+				function meetsConditions(feature) {
+					return feature &&
+						feature.action != "delete" &&
+						(!extent || ol.extent.intersects(extent, feature.geometry.bbox)) &&
+						(!filter || filter(feature));
+				}
 				
 				return d.promise;
 			},
@@ -168,7 +178,7 @@
 					var objectStore = db.transaction(type).objectStore(type);
 					var index = objectStore.index("id");
 					
-					var request = index.getKey(id);
+					var request = index.get(id);
 					request.onsuccess = function(event) {
 						var feature = event.target.result;
 						if (feature && feature.action != "delete") {
@@ -231,21 +241,18 @@
 				var type = getType(feature.layerBodId);
 				
 				db.then(function(db) {
-					
-					
 					var objectStore = db.transaction(type, "readwrite").objectStore(type);
 					
 					var request;
 					if (feature.id) {
 						feature.action = "delete";
 						request = objectStore.put(feature);
-						
 					} else {
 						request = objectStore.delete(feature.key);
 					}
 
-					request.onsuccess = d.resolve;
-					request.onerror = function(event) {
+					request.onsuccess = _.partial(d.resolve, feature);
+					request.onerror = function() {
 						d.reject("Could not delete feature in local storage.");
 					};
 				});

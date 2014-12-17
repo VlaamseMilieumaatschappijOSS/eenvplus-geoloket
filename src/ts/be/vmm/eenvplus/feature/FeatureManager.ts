@@ -25,6 +25,7 @@ module be.vmm.eenvplus.feature {
         link: (featureJson:model.FeatureJSON, nodeJsons:model.FeatureJSON[]) => void;
         load: (extent:ol.Extent) => void;
         push: FeatureJSONHandler;
+        remove: FeatureJSONHandler;
         select: FeatureJSONHandler;
         signal: Signals;
         update: FeatureJSONHandler;
@@ -56,6 +57,7 @@ module be.vmm.eenvplus.feature {
                 link: link,
                 load: load,
                 push: push,
+                remove: remove,
                 select: select,
                 signal: _.mapValues(signals, unary(_.bindAll)),
                 update: update,
@@ -76,6 +78,37 @@ module be.vmm.eenvplus.feature {
                 return service
                     .get(layerBodId, key)
                     .then(ensureProperties);
+            }
+
+            function getConnectedFeatures(json?:model.FeatureJSON):ng.IPromise<model.FeatureJSON[]> {
+                json = json || store.current;
+
+                return q.all(getConnectedNodeIds(json).map(getConnectedFeaturesByNodeId))
+                    .then(_.flatten)
+                    .then(_.uniq)
+                    .then(excludeSelf);
+
+                function excludeSelf(jsons:model.FeatureJSON[]):model.FeatureJSON[] {
+                    _.remove(jsons, {key: json.key});
+                    return jsons;
+                }
+            }
+
+            function getConnectedFeaturesByNodeId(nodeId:string):ng.IPromise<model.FeatureJSON[]> {
+                return q.all([
+                    service.query(toLayerBodId(FeatureType.SEWER), _.partial(isConnectedSewer, nodeId)),
+                    service.query(toLayerBodId(FeatureType.APPURTENANCE), _.partial(isConnectedAppurtenance, nodeId))
+                ]).then(_.flatten);
+            }
+
+            function isConnectedSewer(nodeId:string, feature:model.FeatureJSON):boolean {
+                var props = <model.RioolLink> feature.properties;
+                return props.startKoppelPuntId === nodeId || props.endKoppelPuntId === nodeId;
+            }
+
+            function isConnectedAppurtenance(nodeId:string, feature:model.FeatureJSON):boolean {
+                var props = <model.RioolAppurtenance> feature.properties;
+                return props.koppelPuntId === nodeId;
             }
 
             function create(json:model.FeatureJSON):ng.IPromise<model.FeatureJSON> {
@@ -157,11 +190,35 @@ module be.vmm.eenvplus.feature {
                         .then(_.partialRight(_.each, discard))
                         .catch(handleError('discard', json));
 
-                    service
-                        .remove(json)
-                        .then(_.partial(signals.remove.fire, json))
-                        .catch(handleError('discard', json));
+                    remove(json);
                 }
+            }
+
+            function remove(json?:model.FeatureJSON):void {
+                var removeNode = _.partial(removeById, toLayerBodId(FeatureType.NODE));
+
+                json = json || store.current;
+
+                getConnectedFeatures(json)
+                    .then(_.partialRight(_.map, getConnectedNodeIds))
+                    .then(_.flatten)
+                    .then(_.uniq)
+                    .then(_.partial(_.difference, getConnectedNodeIds(json)))
+                    .then(_.partialRight(_.each, removeNode))
+                    .catch(handleError('remove', json));
+
+                service
+                    .remove(json)
+                    .then(signals.remove.fire)
+                    .catch(handleError('remove', json));
+            }
+
+            function removeById(layerBodId:string, featureId:number):void {
+                service
+                    .getById(layerBodId, featureId)
+                    .then(service.remove)
+                    .then(signals.remove.fire)
+                    .catch(handleError('removeById'));
             }
 
             function getConnectedNodesByKeys(json:model.FeatureJSON):ng.IPromise<model.FeatureJSON[]> {
@@ -174,6 +231,14 @@ module be.vmm.eenvplus.feature {
 
             function getId(json:model.FeatureJSON):string {
                 return json.id ? json.id.toString() : '#' + json.key;
+            }
+
+            function getConnectedNodeIds(json:model.FeatureJSON):string[] {
+                if (isType(FeatureType.SEWER, json.layerBodId)) {
+                    var props = <model.RioolLink> json.properties;
+                    return [props.startKoppelPuntId, props.endKoppelPuntId];
+                }
+                return [(<model.RioolAppurtenance> json.properties).koppelPuntId];
             }
 
             function keyToId(key:string):number {
