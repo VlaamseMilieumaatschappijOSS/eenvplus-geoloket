@@ -18,13 +18,14 @@ module be.vmm.eenvplus.editor.area {
 
         var select = createInteraction(ol.events.condition.click),
             highlight = createInteraction(ol.events.condition.mouseMove),
+            selection = select.getFeatures(),
             all = [select, highlight];
 
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
-        select.getFeatures().on(ol.CollectionEventType.ADD, _.compose(selectFeature, get('element')));
+        selection.on(ol.CollectionEventType.ADD, _.compose(selectFeature, get('element')));
 
         stateStore.modeChanged.add(invalidateState);
         featureStore.selected.add(invalidateState);
@@ -63,10 +64,12 @@ module be.vmm.eenvplus.editor.area {
             // the value of an enum can be 0, hence the explicit undefined check
             var active =
                 stateStore.currentMode === state.State.EDIT &&
-                featureStore.current === undefined &&
-                painterStore.current === undefined;
+                painterStore.current === undefined &&
+                !featureStore.current;
 
             _.invoke(all, 'setActive', active);
+
+            if (!featureStore.current) selection.clear();
         }
 
     }
