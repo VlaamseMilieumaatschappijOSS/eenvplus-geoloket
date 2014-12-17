@@ -159,6 +159,30 @@
 				
 				return d.promise;
 			},
+			"getById" : function(layerBodId, id) {
+				var d = $q.defer();
+				var type = getType(layerBodId);
+				
+				db.then(function(db) {
+					var objectStore = db.transaction(type).objectStore(type);
+					var index = objectStore.index("id");
+					
+					var request = index.getKey(id);
+					request.onsuccess = function(event) {
+						var feature = event.target.result;
+						if (feature && feature.action != "delete") {
+							d.resolve(feature);
+						} else {
+							d.resolve(null);
+						}
+					};
+					request.onerror = function(event) {
+						d.reject("Could not get feature from local storage.");
+					};
+				});
+				
+				return d.promise;
+			},
 			"create" : function(feature) {
 				var d = $q.defer();
 				var type = getType(feature.layerBodId);
