@@ -1,9 +1,9 @@
 ///ts:ref=Module
-/// <reference path="../Module.ts"/> ///ts:ref:generated
+/// <reference path="../../Module.ts"/> ///ts:ref:generated
 ///ts:ref=FeatureService
-/// <reference path="../feature/FeatureService.ts"/> ///ts:ref:generated
+/// <reference path="../../feature/FeatureService.ts"/> ///ts:ref:generated
 
-module be.vmm.eenvplus.editor.actions {
+module be.vmm.eenvplus.editor.area.actions {
     'use strict';
 
     export var NAME:string = PREFIX + 'EditActions';
@@ -16,7 +16,7 @@ module be.vmm.eenvplus.editor.actions {
             scope: {},
             controllerAs: 'ctrl',
             controller: ActionsController,
-            templateUrl: 'ts/be/vmm/eenvplus/editor/Actions.html'
+            templateUrl: 'ts/be/vmm/eenvplus/editor/area/Actions.html'
         };
     }
 

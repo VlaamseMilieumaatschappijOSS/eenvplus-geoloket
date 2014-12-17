@@ -1,7 +1,7 @@
 ///ts:ref=Module
-/// <reference path="../Module.ts"/> ///ts:ref:generated
+/// <reference path="../../Module.ts"/> ///ts:ref:generated
 
-module be.vmm.eenvplus.editor.drawTools {
+module be.vmm.eenvplus.editor.tools.drawTools {
     'use strict';
 
     export var NAME:string = PREFIX + 'DrawTools';
@@ -14,7 +14,7 @@ module be.vmm.eenvplus.editor.drawTools {
             scope: {},
             controllerAs: 'ctrl',
             controller: DrawToolsController,
-            templateUrl: 'ts/be/vmm/eenvplus/editor/DrawTools.html'
+            templateUrl: 'ts/be/vmm/eenvplus/editor/tools/DrawTools.html'
         };
     }
 

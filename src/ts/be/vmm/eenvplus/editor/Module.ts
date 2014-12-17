@@ -7,6 +7,7 @@
 /// <reference path="area/Module.ts"/>
 /// <reference path="form/Module.ts"/>
 /// <reference path="paint/Module.ts"/>
+/// <reference path="tools/Module.ts"/>
 /// <reference path="validation/Module.ts"/>
 
 module be.vmm.eenvplus.editor {
@@ -20,6 +21,7 @@ module be.vmm.eenvplus.editor {
         area.MODULE,
         form.MODULE,
         paint.MODULE,
+        tools.MODULE,
         validation.MODULE
     ]);
 
