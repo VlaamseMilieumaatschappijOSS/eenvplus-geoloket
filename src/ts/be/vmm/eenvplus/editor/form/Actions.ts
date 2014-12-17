@@ -38,6 +38,7 @@ module be.vmm.eenvplus.editor.form.Actions {
         constructor(manager:feature.FeatureManager) {
             this.manager = manager;
             this.discard = manager.discard;
+            this.remove = manager.remove;
         }
 
 
@@ -46,6 +47,7 @@ module be.vmm.eenvplus.editor.form.Actions {
         /* ----------------- */
 
         public discard:() => void;
+        public remove:() => void;
 
         public commit() {
             if (this.validate.valid()) this.manager.update();
