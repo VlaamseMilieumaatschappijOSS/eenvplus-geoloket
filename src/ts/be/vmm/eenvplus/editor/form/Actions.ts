@@ -15,7 +15,7 @@ module be.vmm.eenvplus.editor.form.Actions {
             scope: {},
             controllerAs: 'ctrl',
             controller: ActionsController,
-            templateUrl: 'html/be/vmm/eenvplus/editor/form/Actions.html',
+            templateUrl: 'ts/be/vmm/eenvplus/editor/form/Actions.html',
             link: injectValidator
         };
     }

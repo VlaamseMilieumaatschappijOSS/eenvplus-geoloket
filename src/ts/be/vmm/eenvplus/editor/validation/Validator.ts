@@ -14,7 +14,7 @@ module be.vmm.eenvplus.editor.validation.validator {
             scope: {},
             controllerAs: 'ctrl',
             controller: ValidatorController,
-            templateUrl: 'html/be/vmm/eenvplus/editor/validation/Validator.html'
+            templateUrl: 'ts/be/vmm/eenvplus/editor/validation/Validator.html'
         };
     }
 

@@ -14,7 +14,7 @@ module be.vmm.eenvplus.editor.drawTools {
             scope: {},
             controllerAs: 'ctrl',
             controller: DrawToolsController,
-            templateUrl: 'html/be/vmm/eenvplus/editor/DrawTools.html'
+            templateUrl: 'ts/be/vmm/eenvplus/editor/DrawTools.html'
         };
     }
 

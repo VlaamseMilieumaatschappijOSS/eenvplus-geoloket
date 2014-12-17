@@ -16,7 +16,7 @@ module be.vmm.eenvplus.editor.actions {
             scope: {},
             controllerAs: 'ctrl',
             controller: ActionsController,
-            templateUrl: 'html/be/vmm/eenvplus/editor/Actions.html'
+            templateUrl: 'ts/be/vmm/eenvplus/editor/Actions.html'
         };
     }
 

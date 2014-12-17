@@ -18,7 +18,7 @@ module be.vmm.eenvplus.editor.form.sewerForm {
             bindToController: true,
             controllerAs: 'ctrl',
             controller: SewerFormController,
-            templateUrl: 'html/be/vmm/eenvplus/editor/form/SewerForm.html',
+            templateUrl: 'ts/be/vmm/eenvplus/editor/form/SewerForm.html',
             link: injectValidator
         };
     }

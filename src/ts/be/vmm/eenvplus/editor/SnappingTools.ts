@@ -14,7 +14,7 @@ module be.vmm.eenvplus.editor.snappingTools {
             scope: {},
             controllerAs: 'ctrl',
             controller: SnappingToolsController,
-            templateUrl: 'html/be/vmm/eenvplus/editor/SnappingTools.html'
+            templateUrl: 'ts/be/vmm/eenvplus/editor/SnappingTools.html'
         };
     }
 

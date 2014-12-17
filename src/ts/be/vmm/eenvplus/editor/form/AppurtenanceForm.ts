@@ -18,7 +18,7 @@ module be.vmm.eenvplus.editor.form.appurtenanceForm {
             bindToController: true,
             controllerAs: 'ctrl',
             controller: AppurtenanceFormController,
-            templateUrl: 'html/be/vmm/eenvplus/editor/form/AppurtenanceForm.html',
+            templateUrl: 'ts/be/vmm/eenvplus/editor/form/AppurtenanceForm.html',
             link: injectValidator
         };
     }
