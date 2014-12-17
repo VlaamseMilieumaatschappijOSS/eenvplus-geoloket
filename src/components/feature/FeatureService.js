@@ -106,7 +106,7 @@
 		var featureManager = {
 			"apiUrl": "http://127.0.0.1:8080/eenvplus-sdi-services",
 		
-			"query" : function(layerBodId, extent) {
+			"query" : function(layerBodId, extent, filter) {
 				var d = $q.defer();
 				var type = getType(layerBodId);
 				
@@ -121,7 +121,8 @@
 						if (cursor) {
 							var feature = cursor.value;
 							if (feature && feature.action != "delete") {
-								if(ol.extent.intersects(extent, feature.geometry.bbox))
+								if((!extent || ol.extent.intersects(extent, feature.geometry.bbox))
+										|| (!filter || filter(feature)))
 									results.push(cursor.value);
 								cursor.continue();
 							}
