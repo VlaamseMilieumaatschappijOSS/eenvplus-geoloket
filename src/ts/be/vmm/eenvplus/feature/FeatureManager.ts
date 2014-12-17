@@ -7,7 +7,7 @@ module be.vmm.eenvplus.feature {
     'use strict';
 
     export interface FeatureJSONHandler {
-        (json:model.FeatureJSON):void;
+        (json?:model.FeatureJSON):void;
     }
 
     export interface Signals {
@@ -115,7 +115,9 @@ module be.vmm.eenvplus.feature {
                     .catch(handleError('link update', json));
             }
 
-            function update(json:model.FeatureJSON):void {
+            function update(json?:model.FeatureJSON):void {
+                json = json || store.current;
+
                 getConnectedNodesByKeys(json)
                     .then(_.partialRight(_.reject, get('properties.namespaceId')))
                     .then(_.partialRight(_.each, ensureNodeSource))
@@ -146,7 +148,9 @@ module be.vmm.eenvplus.feature {
                     .catch(handleError('push'));
             }
 
-            function discard(json:model.FeatureJSON):void {
+            function discard(json?:model.FeatureJSON):void {
+                json = json || store.current;
+
                 if (json.id) deselect();
                 else {
                     getConnectedNodesByKeys(json)

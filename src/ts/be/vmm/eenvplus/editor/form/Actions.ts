@@ -12,10 +12,7 @@ module be.vmm.eenvplus.editor.form.Actions {
         return {
             restrict: 'A',
             require: '^form',
-            scope: {
-                data: '='
-            },
-            bindToController: true,
+            scope: {},
             controllerAs: 'ctrl',
             controller: ActionsController,
             templateUrl: 'html/be/vmm/eenvplus/editor/form/Actions.html',
@@ -30,8 +27,6 @@ module be.vmm.eenvplus.editor.form.Actions {
         /* ------------------ */
 
         /** @inject */
-        private data:feature.model.FeatureJSON;
-        /** @inject */
         private validate:Validator;
         private manager:feature.FeatureManager;
 
@@ -42,7 +37,7 @@ module be.vmm.eenvplus.editor.form.Actions {
 
         constructor(manager:feature.FeatureManager) {
             this.manager = manager;
-            this.discard = _.partial(manager.discard, this.data);
+            this.discard = manager.discard;
         }
 
 
@@ -50,10 +45,10 @@ module be.vmm.eenvplus.editor.form.Actions {
         /* --- behaviour --- */
         /* ----------------- */
 
-        public discard:(json:feature.model.FeatureJSON) => void;
+        public discard:() => void;
 
         public commit() {
-            if (this.validate.valid()) this.manager.update(this.data);
+            if (this.validate.valid()) this.manager.update();
             else this.validate.setDirty();
         }
 
