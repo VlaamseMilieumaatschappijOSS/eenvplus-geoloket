@@ -248,8 +248,8 @@
               var attrs = context.attrs;
               var label = getLocationLabel(attrs);
               var origin = attrs.origin;
-              // x and y where switched
-              var center = [attrs.x, attrs.y];
+              // x and y are switched
+              var center = [attrs.y, attrs.x];
               var extent = parseExtent(attrs.geom_st_box2d);
               var template = '<div class="tt-search" ' +
                   'ng-mouseenter="addOverlay([' +
