@@ -122,18 +122,19 @@ module.exports = function (grunt) {
                         'src/lib/lodash.js',
                         'src/lib/trasys.signals.js',
                         'test/angular/angular-mocks.js',
-                        dir.test.js + '/src/ts/be/vmm/eenvplus/config/Module.js',
-                        dir.test.js + '/src/ts/be/vmm/eenvplus/editor/area/Module.js',
-                        dir.test.js + '/src/ts/be/vmm/eenvplus/editor/form/Module.js',
-                        dir.test.js + '/src/ts/be/vmm/eenvplus/editor/paint/Module.js',
-                        dir.test.js + '/src/ts/be/vmm/eenvplus/editor/tools/Module.js',
-                        dir.test.js + '/src/ts/be/vmm/eenvplus/editor/validation/Module.js',
-                        dir.test.js + '/src/ts/be/vmm/eenvplus/editor/Module.js',
-                        dir.test.js + '/src/ts/be/vmm/eenvplus/feature/Module.js',
-                        dir.test.js + '/src/ts/be/vmm/eenvplus/label/Module.js',
-                        dir.test.js + '/src/ts/be/vmm/eenvplus/state/Module.js',
-                        dir.test.js + '/src/ts/be/vmm/eenvplus/viewer/Module.js',
-                        dir.test.js + '/src/ts/be/vmm/eenvplus/Module.js',
+                        dir.test.js + 'src/ts/be/vmm/eenvplus/Prefix.js',
+                        dir.test.js + 'src/ts/be/vmm/eenvplus/config/Module.js',
+                        dir.test.js + 'src/ts/be/vmm/eenvplus/editor/area/Module.js',
+                        dir.test.js + 'src/ts/be/vmm/eenvplus/editor/form/Module.js',
+                        dir.test.js + 'src/ts/be/vmm/eenvplus/editor/paint/Module.js',
+                        dir.test.js + 'src/ts/be/vmm/eenvplus/editor/tools/Module.js',
+                        dir.test.js + 'src/ts/be/vmm/eenvplus/editor/validation/Module.js',
+                        dir.test.js + 'src/ts/be/vmm/eenvplus/editor/Module.js',
+                        dir.test.js + 'src/ts/be/vmm/eenvplus/feature/Module.js',
+                        dir.test.js + 'src/ts/be/vmm/eenvplus/label/Module.js',
+                        dir.test.js + 'src/ts/be/vmm/eenvplus/state/Module.js',
+                        dir.test.js + 'src/ts/be/vmm/eenvplus/viewer/Module.js',
+                        dir.test.js + 'src/ts/be/vmm/eenvplus/Module.js',
                         testSrc.js
                     ]
                 },
@@ -141,7 +142,14 @@ module.exports = function (grunt) {
                 exclude: [],
                 autoWatch: true,
                 frameworks: ['mocha', 'chai'],
-                browsers: ['PhantomJS']
+                browsers: ['PhantomJS'],
+                preprocessors: {
+                    '<%= dir.test.js %>src/*.js': ['coverage']
+                },
+                coverageReporter: {
+                    type: 'text-summary'
+                },
+                reporters: ['progress', 'coverage']
             }
         },
 

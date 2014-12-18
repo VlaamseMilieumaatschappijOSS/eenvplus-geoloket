@@ -4,6 +4,8 @@
 /// <reference path="../../../../../lib/ts/closure.d.ts"/> ///ts:ref:generated
 ///ts:ref=openlayers
 /// <reference path="../../../../../lib/ts/openlayers.d.ts"/> ///ts:ref:generated
+///ts:ref=Prefix
+/// <reference path="../Prefix.ts"/> ///ts:ref:generated
 /// <reference path="area/Module.ts"/>
 /// <reference path="form/Module.ts"/>
 /// <reference path="paint/Module.ts"/>

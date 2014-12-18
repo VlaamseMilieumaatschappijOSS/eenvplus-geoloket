@@ -8,14 +8,19 @@
 module be.vmm.eenvplus.feature {
     'use strict';
 
-    beforeEach(module('ep_eenvplus'));
+    beforeEach(module('ep_feature'));
 
     describe('FeatureManager', () => {
 
-        beforeEach(module('ep_feature'));
+        var manager;
+
+        beforeEach(inject(function(_epFeatureManager_) {
+            manager = _epFeatureManager_;
+            console.log(manager);
+        }));
 
         it('should fail', () => {
-            expect(true).to.be.false();
+            expect(true).to.be.true();
         });
 
     });
