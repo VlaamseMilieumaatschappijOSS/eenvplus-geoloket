@@ -645,6 +645,7 @@ itemscope itemtype="http://schema.org/WebApplication"
     <script src="lib/filesaver.js"></script>
     <script src="lib/lodash.js"></script>
     <script src="lib/trasys.signals.js"></script>
+    <script src="/auth/js/keycloak.js"></script>
 
     <!-- Use Closure to load the application scripts -->
     <script>
@@ -661,6 +662,69 @@ itemscope itemtype="http://schema.org/WebApplication"
     <script>
       goog.require('ga');
     </script>
+    
+    <script>
+		(function() {
+			var module = angular.module('ga');
+	        
+			var keycloak = Keycloak({
+			    //url: 'http://localhost:8080/auth',
+			    realm: 'eenvplus',
+			    clientId: 'mf-geoadmin3'
+			});
+			
+			keycloak.init({onLoad: /*'check-sso'*/'login-required'}).success(function() {
+				angular.bootstrap(document, ["ga"]);
+			}).error(function() {
+				alert("Failed to authenticate");
+			});
+			
+			module.constant('keycloak', keycloak);
+			
+			module.factory('auth', function($q, keycloak) {
+				
+				var auth = {
+					authenticated: keycloak.authenticated
+				};
+			    
+			    if(keycloak.authenticated) {
+			    	auth.username = keycloak.tokenParsed.preferred_username;
+			    	auth.name = keycloak.tokenParsed.name;
+			    	auth.realmRoles = keycloak.realmAccess;
+			    	auth.resourceRoles = keycloak.resourceAccess;
+			    }
+			    
+			    auth.login = function() { keycloak.login(); };
+			    auth.logout = function() { keycloak.logout(); };
+			    
+			    return auth;
+			});
+	
+			module.factory('authInterceptor', function($q, keycloak) {
+			    return {
+			        request: function (config) {
+			        	if(keycloak.authenticated) {
+				        	return $q(function(resolve, reject){
+				                keycloak.updateToken().success(function() {
+				                    config.headers = config.headers || {};
+				                    config.headers.Authorization = 'Bearer ' + keycloak.token;
+				                    resolve(config);
+				                }).error(function() {
+									reject('Failed to refresh token');
+				                });
+				        	});
+			        	} else {
+			        		return config;
+			        	}
+			        }
+			    };
+			});
+			
+			module.config(function($httpProvider) {
+			    $httpProvider.interceptors.push('authInterceptor');
+			});
+		})();
+	</script>
 
 {% endif %}
 
