@@ -229,6 +229,7 @@ declare module ol {
 
         interface Static {
             getCenter(extent:Extent):Coordinate;
+            intersects(extent1:Extent, extent2:Extent):boolean;
         }
 
     }
@@ -248,6 +249,7 @@ declare module ol {
 
             readFeature(json:GeoJSONFeature, options?:any):Feature;
             readFeatureFromObject(json:GeoJSONFeature, options?:any):Feature;
+            readGeometry(source:any, options?:any):geometry.Geometry;
             writeFeature(feature:Feature, options?:any):GeoJSONFeature;
         }
 

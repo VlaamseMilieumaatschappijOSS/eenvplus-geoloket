@@ -14,10 +14,10 @@ module be.vmm.eenvplus.feature {
 
         var manager;
 
-        beforeEach(inject(function(_epFeatureManager_) {
-            manager = _epFeatureManager_;
-            console.log(manager);
-        }));
+        //beforeEach(inject(function(_epFeatureManager_) {
+        //    manager = _epFeatureManager_;
+        //    console.log(manager);
+        //}));
 
         it('should fail', () => {
             expect(true).to.be.true();
