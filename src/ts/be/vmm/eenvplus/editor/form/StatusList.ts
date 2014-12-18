@@ -15,7 +15,7 @@ module be.vmm.eenvplus.editor.form.StatusList {
             bindToController: true,
             controllerAs: 'ctrl',
             controller: StatusListController,
-            templateUrl: 'html/be/vmm/eenvplus/editor/form/StatusList.html'
+            templateUrl: 'ts/be/vmm/eenvplus/editor/form/StatusList.html'
         };
     }
 

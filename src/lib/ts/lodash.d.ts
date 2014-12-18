@@ -22,7 +22,25 @@ declare module _ {
         compact(array:any[]):any[];
         difference(array:any[], values:any[]):any[];
         first(array:any[], fn?:any, scope?:any):any;
+        flatten(array:any[], callback:ListIterator, scope?:any):any[];
+        flatten(array:any[], isShallow:boolean, callback:ListIterator, scope?:any):any[];
+        flatten(array:any[], isShallow:boolean, pluckValue:string):any[];
+        flatten(array:any[], isShallow:boolean, whereValue:Object):any[];
+        flatten(array:any[], isShallow?:boolean):any[];
+        flatten(array:any[], pluckValue:string):any[];
+        flatten(array:any[], whereValue:Object):any[];
+        intersection(...arrays:any[][]):any[];
         last(array:any[], fn?:any, scope?:any):any;
+        remove(array:any[], callback:ListIterator, scope?:any):any[];
+        remove(array:any[], pluckValue:string):any[];
+        remove(array:any[], whereValue:Object):any[];
+        uniq(array:any[], callback:ListIterator, scope?:any):any[];
+        uniq(array:any[], isSorted:boolean, callback:ListIterator, scope?:any):any[];
+        uniq(array:any[], isSorted:boolean, pluckValue:string):any[];
+        uniq(array:any[], isSorted:boolean, whereValue:Object):any[];
+        uniq(array:any[], isSorted?:boolean):any[];
+        uniq(array:any[], pluckValue:string):any[];
+        uniq(array:any[], whereValue:Object):any[];
         unzip(...arrays:any[][]):any[][];
         zip(...arrays:any[][]):any[][];
     }
@@ -31,7 +49,25 @@ declare module _ {
         compact():Chain;
         difference(values:any[]):Chain;
         first(fn?:any, scope?:any):Chain;
+        flatten(callback:ListIterator, scope?:any):Chain;
+        flatten(isShallow:boolean, callback:ListIterator, scope?:any):Chain;
+        flatten(isShallow:boolean, pluckValue:string):Chain;
+        flatten(isShallow:boolean, whereValue:Object):Chain;
+        flatten(isShallow?:boolean):Chain;
+        flatten(pluckValue:string):Chain;
+        flatten(whereValue:Object):Chain;
+        intersection(...arrays:any[][]):any[];
         last(fn?:any, scope?:any):Chain;
+        remove(callback:ListIterator, scope?:any):Chain;
+        remove(pluckValue:string):Chain;
+        remove(whereValue:Object):Chain;
+        uniq(callback:ListIterator, scope?:any):Chain;
+        uniq(isSorted:boolean, callback:ListIterator, scope?:any):Chain;
+        uniq(isSorted:boolean, pluckValue:string):Chain;
+        uniq(isSorted:boolean, whereValue:Object):Chain;
+        uniq(isSorted?:boolean):Chain;
+        uniq(pluckValue:string):Chain;
+        uniq(whereValue:Object):Chain;
         unzip(...arrays:any[][]):any[][];
         zip(...arrays:any[][]):any[][];
     }
@@ -88,6 +124,10 @@ declare module _ {
     /** Iterators */
     interface ComparingIterator {
         (valueA:any, valueB:any):boolean;
+    }
+
+    interface ListIterator {
+        (value:any, index:number, list:any[]):any;
     }
 
     interface MemoIterator {

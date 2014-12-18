@@ -14,7 +14,7 @@ module be.vmm.eenvplus.viewer {
             scope: {},
             controllerAs: 'ctrl',
             controller: FeatureZoomController,
-            templateUrl: 'html/be/vmm/eenvplus/viewer/FeatureZoom.html'
+            templateUrl: 'ts/be/vmm/eenvplus/viewer/FeatureZoom.html'
         };
     }
 

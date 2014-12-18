@@ -35,6 +35,8 @@ module be.vmm.eenvplus.state.applicationState {
         /* --- properties --- */
         /* ------------------ */
 
+        public isEditing:boolean;
+
         private state:StateStore;
 
 
@@ -44,7 +46,7 @@ module be.vmm.eenvplus.state.applicationState {
 
         constructor(state:StateStore) {
             this.state = state;
-            state.modeChanged.add(ApplicationStateController.updateState);
+            state.modeChanged.add(this.updateState.bind(this));
         }
 
 
@@ -52,9 +54,11 @@ module be.vmm.eenvplus.state.applicationState {
         /* --- behaviour --- */
         /* ----------------- */
 
-        private static updateState(mode:State):void {
+        private updateState(mode:State):void {
+            this.isEditing = mode === State.EDIT;
+
             // FIXME hard reference
-            if (mode !== State.EDIT) $('#drawTools').collapse('hide');
+            if (!this.isEditing) $('#drawTools').collapse('hide');
         }
 
         public getState():string {

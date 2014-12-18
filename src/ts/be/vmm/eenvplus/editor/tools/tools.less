@@ -1,4 +1,4 @@
-@import "../../../../app";
+@import "../../../../../../style/app";
 
 #pulldown {
 
@@ -54,4 +54,27 @@
       margin: 3px;
     }
   }
+}
+
+.edit-tools {
+  padding: 5px 15px;
+  background-color: @alert-info-bg;
+
+  .btn-group {
+    display: inline-block;
+    margin-right: 15px;
+  }
+
+  .btn {
+
+    span {
+      display: none;
+    }
+
+    &:hover span {
+      display: inline-block;
+    }
+
+  }
+
 }

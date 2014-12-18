@@ -42,9 +42,11 @@ declare module ol {
     }
 
     interface Collection<T> extends Object {
+        clear():void;
         extend(array:T[]):Collection<T>;
         forEach(fn:(value:T, index:number, array:T[]) => void, scope?:any):void;
         getArray():T[];
+        remove(item:T):T;
     }
 
     interface CollectionEvent<T> extends goog.events.Event {

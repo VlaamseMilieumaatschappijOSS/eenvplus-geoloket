@@ -18,7 +18,7 @@ module be.vmm.eenvplus.editor.form.Status {
             bindToController: true,
             controllerAs: 'ctrl',
             controller: StatusController,
-            templateUrl: 'html/be/vmm/eenvplus/editor/form/Status.html',
+            templateUrl: 'ts/be/vmm/eenvplus/editor/form/Status.html',
             link: injectValidator
         };
     }

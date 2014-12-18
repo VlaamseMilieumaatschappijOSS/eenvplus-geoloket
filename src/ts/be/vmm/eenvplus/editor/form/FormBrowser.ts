@@ -14,7 +14,7 @@ module be.vmm.eenvplus.editor.form.formBrowser {
             scope: {},
             controllerAs: 'ctrl',
             controller: FormBrowserController,
-            templateUrl: 'html/be/vmm/eenvplus/editor/form/FormBrowser.html'
+            templateUrl: 'ts/be/vmm/eenvplus/editor/form/FormBrowser.html'
         };
     }
 
