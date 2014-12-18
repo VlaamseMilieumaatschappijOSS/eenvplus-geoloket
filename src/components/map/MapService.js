@@ -738,7 +738,8 @@
 
             var wmsParams = {
               LAYERS: layer.wmsLayers,
-              FORMAT: 'image/' + layer.format
+              FORMAT: 'image/' + layer.format,
+              STYLES: layer.style
             };
 
             if (timestamp) {
