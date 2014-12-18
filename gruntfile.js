@@ -8,7 +8,11 @@ var dir = {
         js: 'src/js/',
         less: 'src/style/',
         lib: 'src/lib/',
-        ts: 'src/ts/'
+        ts: 'src/ts/',
+        test: {
+            js: 'test/specs/',
+            ts: 'test/ts/'
+        }
     },
     file = {
         dependency: dir.build + 'deps.js',
@@ -26,6 +30,10 @@ var dir = {
         less: [dir.ts + '**/*.less', dir.comp + '**/*.less'],
         ts: [dir.ts + '**/*.ts'],
         typeDefs: [dir.lib + '**/*.d.ts']
+    },
+    testSrc = {
+        js: [dir.test.js + 'src/**/*.js', dir.test.js + 'test/**/*.js'],
+        ts: [dir.test.ts + '**/*.ts']
     };
 
 
@@ -99,6 +107,44 @@ module.exports = function (grunt) {
             }
         },
 
+        karma: {
+            test: {
+                // the 'options' thing here is a workaround
+                options: {
+                    files: [
+                        'src/lib/jquery-2.0.3.js',
+                        'src/lib/angular/angular.js',
+                        'src/lib/angular-animate/angular-animate.js',
+                        'src/lib/angular-resource/angular-resource.js',
+                        'src/lib/angular-translate-1.1.1.js',
+                        'src/lib/angular-translate-loader-static-files-0.1.5.js',
+                        'src/lib/ol-debug.js',
+                        'src/lib/lodash.js',
+                        'src/lib/trasys.signals.js',
+                        'test/angular/angular-mocks.js',
+                        dir.test.js + '/src/ts/be/vmm/eenvplus/config/Module.js',
+                        dir.test.js + '/src/ts/be/vmm/eenvplus/editor/area/Module.js',
+                        dir.test.js + '/src/ts/be/vmm/eenvplus/editor/form/Module.js',
+                        dir.test.js + '/src/ts/be/vmm/eenvplus/editor/paint/Module.js',
+                        dir.test.js + '/src/ts/be/vmm/eenvplus/editor/tools/Module.js',
+                        dir.test.js + '/src/ts/be/vmm/eenvplus/editor/validation/Module.js',
+                        dir.test.js + '/src/ts/be/vmm/eenvplus/editor/Module.js',
+                        dir.test.js + '/src/ts/be/vmm/eenvplus/feature/Module.js',
+                        dir.test.js + '/src/ts/be/vmm/eenvplus/label/Module.js',
+                        dir.test.js + '/src/ts/be/vmm/eenvplus/state/Module.js',
+                        dir.test.js + '/src/ts/be/vmm/eenvplus/viewer/Module.js',
+                        dir.test.js + '/src/ts/be/vmm/eenvplus/Module.js',
+                        testSrc.js
+                    ]
+                },
+                basePath: '',
+                exclude: [],
+                autoWatch: true,
+                frameworks: ['mocha', 'chai'],
+                browsers: ['PhantomJS']
+            }
+        },
+
         less: {
             options: {
                 relativeUrls: true
@@ -157,6 +203,13 @@ module.exports = function (grunt) {
                     removeComments: false,
                     sourceMap: true
                 }
+            },
+            test: {
+                src: [src.typeDefs, src.ts, testSrc.ts],
+                outDir: dir.test.js,
+                options: {
+                    fast: 'never'
+                }
             }
         },
 
@@ -188,6 +241,10 @@ module.exports = function (grunt) {
             ts: {
                 files: src.ts,
                 tasks: ['ts:dev']
+            },
+            tsTest: {
+                files: testSrc.ts,
+                tasks: ['ts:test']
             }
         }
     });
@@ -202,7 +259,7 @@ module.exports = function (grunt) {
     grunt.registerTask(
         'dev',
         'Monitors source html, js and less files and executes their corresponding dev build tasks when needed',
-        ['build-dev', 'watch']
+        ['build-dev', 'ts:test', 'watch']
     );
     grunt.registerTask('default', 'Default task: build dev environment', ['dev']);
 
