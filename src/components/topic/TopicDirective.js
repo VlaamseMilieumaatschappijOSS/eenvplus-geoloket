@@ -66,6 +66,10 @@
                 value.langs = extendLangs(value.langs);
               });
               initTopics();
+            }).catch(function (result) {
+              if (result.status)
+                throw new Error("Unexpexted error calling main service (" + result.status + "): " + result.statusText);
+              else throw new Error("Server down!");
             });
 
             // Because ng-repeat creates a new scope for each item in the
