@@ -1,3 +1,5 @@
+///ts:ref=Prefix
+/// <reference path="./Prefix.ts"/> ///ts:ref:generated
 /// <reference path="config/Module.ts"/>
 /// <reference path="editor/Module.ts"/>
 /// <reference path="feature/Module.ts"/>
@@ -8,7 +10,6 @@
 module be.vmm.eenvplus {
     'use strict';
 
-    export var PREFIX:string = 'ep';
     export var MODULE:string = PREFIX + '_eenvplus';
 
     interface AnyFunction {

@@ -1,7 +1,10 @@
+///ts:ref=Prefix
+/// <reference path="../Prefix.ts"/> ///ts:ref:generated
+
 module be.vmm.eenvplus.config {
     'use strict';
 
-    export var MODULE:string = 'ep_config';
+    export var MODULE:string = PREFIX + '_config';
 
     goog.provide(MODULE);
 

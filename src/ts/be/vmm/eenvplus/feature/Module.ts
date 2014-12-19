@@ -1,3 +1,6 @@
+///ts:ref=Prefix
+/// <reference path="../Prefix.ts"/> ///ts:ref:generated
+
 module be.vmm.eenvplus.feature {
     'use strict';
 

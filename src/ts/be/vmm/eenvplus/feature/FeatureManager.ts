@@ -35,7 +35,7 @@ module be.vmm.eenvplus.feature {
     export module FeatureManager {
         export var NAME:string = PREFIX + 'FeatureManager';
 
-        factory.$inject = ['$q', 'gaFeatureManager', 'epFeatureStore'];
+        factory.$inject = ['$q', 'epFeatureService', 'epFeatureStore'];
 
         function factory(q:ng.IQService, service:FeatureService, store:FeatureStore):FeatureManager {
             var getNode = _.partial(getFeature, toLayerBodId(FeatureType.NODE)),

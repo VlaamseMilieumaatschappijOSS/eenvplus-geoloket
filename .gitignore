@@ -17,8 +17,11 @@
 rc_branch
 target*
 .baseDir.js*
+.baseDir.ts
 .tscache
 eenvplus.js*
+test/specs/src
+test/specs/test
 # FIXME
 # The following are developer-specific and should probably be in the
 # developers' .gitconfig file.
