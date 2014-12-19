@@ -52,24 +52,17 @@ module be.vmm.eenvplus.feature {
         }
 
         function createLayer(type:FeatureType):ol.layer.Vector {
+        	var defaultStyle = createStyle(type, "default");
+        	var modifiedStyle = createStyle(type, "modified");
             var layer = new ol.layer.Vector({
                 source: createSource(type),
-                style: new ol.style.Style({
-                    stroke: new ol.style.Stroke({
-                        color: '#FF0000',
-                        width: 2
-                    }),
-                    image: new ol.style.Circle({
-                        radius: 4,
-                        fill: new ol.style.Fill({
-                            color: '#880000'
-                        }),
-                        stroke: new ol.style.Stroke({
-                            color: '#ff0000',
-                            width: 2
-                        })
-                    })
-                })
+                style: function(feature, resolution) {
+                	if(feature.getProperties().action) {
+                		return modifiedStyle(feature, resolution);
+                	} else {
+                		return defaultStyle(feature, resolution);
+                	}
+                }
             });
             layer.set(model.LayerProperty.TYPE_ID, feature.toLayerBodId(type));
             layer.set(model.LayerProperty.FEATURE_TYPE, type);
