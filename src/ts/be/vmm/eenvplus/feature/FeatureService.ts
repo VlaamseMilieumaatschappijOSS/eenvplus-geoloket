@@ -3,18 +3,18 @@ module be.vmm.eenvplus.feature {
 
     export interface FeatureService {
         clear():ng.IPromise<void>;
-        create(feature:ol.format.GeoJSONFeature):ng.IPromise<number>;
+        create(feature:model.FeatureJSON):ng.IPromise<number>;
         dirty():ng.IPromise<boolean>;
-        get(layerBodId:string, key:number):ng.IPromise<ol.format.GeoJSONFeature>;
-        getById(layerBodId:string, id:number):ng.IPromise<ol.format.GeoJSONFeature>;
+        get(layerBodId:string, key:number):ng.IPromise<model.FeatureJSON>;
+        getById(layerBodId:string, id:number):ng.IPromise<model.FeatureJSON>;
         pull(bbox?:ol.Extent):ng.IPromise<void>;
         push():ng.IPromise<any>;
-        query(layerBodId:string, extent:ol.Extent):ng.IPromise<ol.format.GeoJSONFeature[]>;
-        query(layerBodId:string, filter:filterFeature):ng.IPromise<ol.format.GeoJSONFeature[]>;
-        query(layerBodId:string, extent:ol.Extent, filter:filterFeature):ng.IPromise<ol.format.GeoJSONFeature[]>;
-        remove(feature:ol.format.GeoJSONFeature):ng.IPromise<ol.format.GeoJSONFeature>;
+        query(layerBodId:string, extent:ol.Extent):ng.IPromise<model.FeatureJSON[]>;
+        query(layerBodId:string, filter:filterFeature):ng.IPromise<model.FeatureJSON[]>;
+        query(layerBodId:string, extent:ol.Extent, filter:filterFeature):ng.IPromise<model.FeatureJSON[]>;
+        remove(feature:model.FeatureJSON):ng.IPromise<model.FeatureJSON>;
         test():ng.IPromise<any>;
-        update(feature:ol.format.GeoJSONFeature):ng.IPromise<void>;
+        update(feature:model.FeatureJSON):ng.IPromise<void>;
     }
 
     export interface filterFeature {
@@ -26,7 +26,6 @@ module be.vmm.eenvplus.feature {
 
         var VERSION:number = 3,
             apiUrl:string = 'http://127.0.0.1:8080/eenvplus-sdi-services',
-            indexedDB = window.indexedDB || window['mozIndexedDB'] || window['webkitIndexedDB'] || window.msIndexedDB,
             IDBTransaction = window['IDBTransaction'] || window['webkitIDBTransaction'] || window['msIDBTransaction'],
             IDBKeyRange = window['IDBKeyRange'] || window['webkitIDBKeyRange'] || window['msIDBKeyRange'];
 
@@ -34,9 +33,9 @@ module be.vmm.eenvplus.feature {
 
         function factory(http, q, typeModelMap):FeatureService {
             var types = typeModelMap,
-                db = openDB();
+                db;
 
-            return <any>{
+            return {
                 clear: clear,
                 create: create,
                 dirty: dirty,
@@ -47,12 +46,23 @@ module be.vmm.eenvplus.feature {
                 query: query,
                 remove: remove,
                 test: test,
-                update: update
+                update: update,
+                getIndexedDB: getIndexedDB
             };
 
-            function openDB() {
+            function getIndexedDB():IDBFactory {
+                return window.indexedDB ||
+                    window['mozIndexedDB'] ||
+                    window['webkitIndexedDB'] ||
+                    window.msIndexedDB ||
+                    mockIndexedDB;
+            }
+
+            function getDB() {
+                if (db) return db;
+
                 var d = q.defer(),
-                    openRequest = indexedDB.open('Feature', VERSION);
+                    openRequest = getIndexedDB().open('Feature', VERSION);
 
                 openRequest.onupgradeneeded = (event:IDBVersionChangeEvent) => {
                     var db = (<IDBRequest> event.target).result;
@@ -74,10 +84,10 @@ module be.vmm.eenvplus.feature {
                 return d.promise;
             }
 
-            function clear() {
+            function clear():ng.IPromise<void> {
                 var d = q.defer();
 
-                db.then((db) => {
+                getDB().then((db) => {
                     var transaction = db.transaction(types, "readwrite"),
                         i = 0;
 
@@ -101,11 +111,11 @@ module be.vmm.eenvplus.feature {
                 return d.promise;
             }
 
-            function create(feature) {
+            function create(feature:model.FeatureJSON):ng.IPromise<number> {
                 var d = q.defer();
                 var type = getType(feature.layerBodId);
 
-                db.then((db) => {
+                getDB().then((db) => {
                     var objectStore = db.transaction(type, "readwrite").objectStore(type);
 
                     addBbox(feature);
@@ -123,10 +133,10 @@ module be.vmm.eenvplus.feature {
                 return d.promise;
             }
 
-            function dirty() {
+            function dirty():ng.IPromise<boolean> {
                 var d = q.defer();
 
-                db.then((db) => {
+                getDB().then((db) => {
                     var transaction = db.transaction(types, "readwrite"),
                         i = 0;
 
@@ -157,11 +167,11 @@ module be.vmm.eenvplus.feature {
                 return d.promise;
             }
 
-            function get(layerBodId, key) {
+            function get(layerBodId:string, key:number):ng.IPromise<model.FeatureJSON> {
                 var d = q.defer(),
                     type = getType(layerBodId);
 
-                db.then((db) => {
+                getDB().then((db) => {
                     var objectStore = db.transaction(type).objectStore(type),
                         request = objectStore.get(key);
 
@@ -181,11 +191,11 @@ module be.vmm.eenvplus.feature {
                 return d.promise;
             }
 
-            function getById(layerBodId, id) {
+            function getById(layerBodId:string, id:number):ng.IPromise<model.FeatureJSON> {
                 var d = q.defer(),
                     type = getType(layerBodId);
 
-                db.then((db) => {
+                getDB().then((db) => {
                     var objectStore = db.transaction(type).objectStore(type),
                         index = objectStore.index("id"),
                         request = index.get(id);
@@ -209,7 +219,7 @@ module be.vmm.eenvplus.feature {
             function merge(features) {
                 var d = q.defer();
 
-                db.then((db) => {
+                getDB().then((db) => {
                     var transaction = db.transaction(types, "readwrite"),
                         i = 0;
 
@@ -253,7 +263,7 @@ module be.vmm.eenvplus.feature {
                 return d.promise;
             }
 
-            function pull(bbox) {
+            function pull(bbox?:ol.Extent):ng.IPromise<void> {
                 var d = q.defer(),
                     url = apiUrl + "/rest/services/api/MapServer/pull?types=" + types.join(",");
 
@@ -269,7 +279,7 @@ module be.vmm.eenvplus.feature {
                 return d.promise;
             }
 
-            function push() {
+            function push():ng.IPromise<any> {
                 var d = q.defer();
 
                 modifications().then((results) => {
@@ -322,7 +332,10 @@ module be.vmm.eenvplus.feature {
                 return d.promise;
             }
 
-            function query(layerBodId, extent, filter) {
+            function query(layerBodId:string, extent:ol.Extent):ng.IPromise<model.FeatureJSON[]>;
+            function query(layerBodId:string, filter:filterFeature):ng.IPromise<model.FeatureJSON[]>;
+            function query(layerBodId:string, extent:ol.Extent, filter:filterFeature):ng.IPromise<model.FeatureJSON[]>;
+            function query(layerBodId:string, extent:any, filter?:any):ng.IPromise<model.FeatureJSON[]> {
                 var d = q.defer(),
                     type = getType(layerBodId);
 
@@ -331,7 +344,9 @@ module be.vmm.eenvplus.feature {
                     extent = undefined;
                 }
 
-                db.then((db) => {
+                console.log('TEST');
+                getDB().then((db) => {
+                    console.log(db);
                     var results = [],
                         objectStore = db.transaction(type).objectStore(type),
                         request = objectStore.openCursor();
@@ -363,11 +378,11 @@ module be.vmm.eenvplus.feature {
                 return d.promise;
             }
 
-            function remove(feature) {
+            function remove(feature:model.FeatureJSON):ng.IPromise<model.FeatureJSON> {
                 var d = q.defer(),
                     type = getType(feature.layerBodId);
 
-                db.then((db) => {
+                getDB().then((db) => {
                     var objectStore = db.transaction(type, "readwrite").objectStore(type),
                         request;
 
@@ -387,7 +402,7 @@ module be.vmm.eenvplus.feature {
                 return d.promise;
             }
 
-            function test() {
+            function test():ng.IPromise<any> {
                 var d = q.defer();
 
                 modifications().then(function (results) {
@@ -401,11 +416,11 @@ module be.vmm.eenvplus.feature {
                 return d.promise;
             }
 
-            function update(feature) {
+            function update(feature:model.FeatureJSON):ng.IPromise<void> {
                 var d = q.defer(),
                     type = getType(feature.layerBodId);
 
-                db.then((db) => {
+                getDB().then((db) => {
                     var objectStore = db.transaction(type, "readwrite").objectStore(type);
 
                     addBbox(feature);
@@ -425,7 +440,7 @@ module be.vmm.eenvplus.feature {
             function modifications() {
                 var d = q.defer();
 
-                db.then((db) => {
+                getDB().then((db) => {
                     var results = [],
                         transaction = db.transaction(types, "readwrite"),
                         i = 0;
