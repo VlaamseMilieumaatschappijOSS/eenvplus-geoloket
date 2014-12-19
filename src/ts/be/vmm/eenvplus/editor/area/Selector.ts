@@ -30,10 +30,21 @@ module be.vmm.eenvplus.editor.area {
         stateStore.modeChanged.add(invalidateState);
         featureStore.selected.add(invalidateState);
         painterStore.selected.add(invalidateState);
+        
+        var stylesByType = {};
 
         function createInteraction(condition):ol.interaction.Select {
             var interaction = new ol.interaction.Select({
-                condition: condition
+                condition: condition,
+                style: function (feature, resolution) {
+                	var type = feature.type;
+                	var style = stylesByType[type];
+                	if(!style) {
+                		style = be.vmm.eenvplus.feature.createStyle(type, "selected");
+                		stylesByType[type] = style;
+                	}
+                	return style(feature, resolution);
+                }
             });
 
             interaction.setActive(false);
