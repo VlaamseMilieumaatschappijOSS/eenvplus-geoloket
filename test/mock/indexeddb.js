@@ -30,6 +30,40 @@ var mockIndexedDB_deleteDBFail = false;
 // used for reading objects
 var mockIndexedDB_cursorResultsIndex = 0;
 
+function syncWrapMethods(object) {
+    _.each(object, function (value, key) {
+        if (typeof value === 'function' && key.indexOf('Handler') !== -1)
+            object[key] = syncWrap(value);
+    });
+}
+
+function syncWrap(fn) {
+    return function () {
+        var deferred = false;
+
+        if (this.onsuccess)
+            _.bind(fn, this).apply(this, arguments);
+        else {
+            deferred = arguments;
+            Object.defineProperty(this, 'onsuccess', {
+                get: function () {
+                    return this._onsuccess;
+                },
+                set: function (fn) {
+                    this._onsuccess = fn;
+                    if (deferred) {
+                        this.callSuccessHandler.apply(this, deferred);
+                        deferred = false;
+                        delete this._onsuccess;
+                        delete this.onsuccess;
+                    }
+                },
+                configurable: true
+            });
+        }
+    }
+}
+
 function setTimeout(fn) {
     fn();
 }
@@ -213,9 +247,16 @@ var mockIndexedDBCursorRequest = {
 };
 
 var mockIndexedDBStoreTransaction = {
-    'callSuccessHandler': function () {
+    'callSuccessHandler': function (result) {
         if (this.onsuccess !== null) {
-            var event = new CustomEvent("success", {bubbles: false, cancelable: true});
+            var event = {
+                'type': 'error',
+                'bubbles': false,
+                'cancelable': true,
+                'target': {
+                    result: result
+                }
+            };
             this.onsuccess(event);
         }
     },
@@ -256,6 +297,20 @@ var mockIndexedDBStore = {
         }
 
         return mockIndexedDBTransaction;
+    },
+
+    get: function(key) {
+        var result = _(mockIndexedDBItems)
+            .filter({key: this.name})
+            .map('value')
+            .find({key: key});
+
+        mockIndexedDB_storeAddTimer = setTimeout(function () {
+            mockIndexedDBStoreTransaction.callSuccessHandler(result);
+            mockIndexedDB_saveSuccess = true;
+        }, 20);
+
+        return mockIndexedDBStoreTransaction;
     },
 
     // for now, treating put just like an add.
@@ -300,6 +355,7 @@ var mockIndexedDBStore = {
     'clear': function (data_id) {
         if (mockIndexedDBTestFlags.canClear === true) {
             mockIndexedDB_storeClearTimer = setTimeout(function () {
+                mockIndexedDBItems.length = 0;
                 mockIndexedDBStoreTransaction.callSuccessHandler();
                 mockIndexedDB_clearSuccess = true;
             }, 20);
@@ -359,6 +415,7 @@ var mockIndexedDBStore = {
 
 var mockIndexedDBTransaction = {
     'objectStore': function (name) {
+        mockIndexedDBStore.name = name;
         return mockIndexedDBStore;
     },
 
@@ -417,27 +474,16 @@ var mockIndexedDBDatabase = {
 };
 
 var mockIndexedDBOpenDBRequest = {
-    set onsuccess(fn) {
-        this._onsuccess = fn;
-        if (this.deferredSuccess) {
-            this.callSuccessHandler();
-            this.deferredSuccess = false;
-        }
-    },
     'callSuccessHandler': function () {
-        if (!this._onsuccess) {
-            this.deferredSuccess = true;
-            return;
-        }
         var event = {
             type: 'success',
             bubbles: false,
             cancelable: true,
             target: {
-                result: mockIndexedDBStore
+                result: mockIndexedDBDatabase
             }
         };
-        this._onsuccess(event);
+        this.onsuccess(event);
     },
 
     'callErrorHandler': function () {
@@ -641,3 +687,11 @@ var mockIndexedDB = {
     }
 
 };
+
+[
+    mockIndexedDBCursorRequest,
+    mockIndexedDBDeleteDBRequest,
+    mockIndexedDBOpenDBRequest,
+    mockIndexedDBStoreTransaction,
+    mockIndexedDBTransaction
+].forEach(syncWrapMethods);

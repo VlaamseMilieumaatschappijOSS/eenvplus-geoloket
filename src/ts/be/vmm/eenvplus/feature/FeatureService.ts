@@ -59,8 +59,6 @@ module be.vmm.eenvplus.feature {
             }
 
             function getDB() {
-                if (db) return db;
-
                 var d = q.defer(),
                     openRequest = getIndexedDB().open('Feature', VERSION);
 
@@ -344,9 +342,7 @@ module be.vmm.eenvplus.feature {
                     extent = undefined;
                 }
 
-                console.log('TEST');
                 getDB().then((db) => {
-                    console.log(db);
                     var results = [],
                         objectStore = db.transaction(type).objectStore(type),
                         request = objectStore.openCursor();
