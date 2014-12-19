@@ -121,7 +121,8 @@ module.exports = function (grunt) {
                         'src/lib/ol-debug.js',
                         'src/lib/lodash.js',
                         'src/lib/trasys.signals.js',
-                        'test/angular/angular-mocks.js',
+                        'node_modules/angular-mocks/angular-mocks.js',
+                        'test/mock/*.js',
                         dir.test.js + 'src/ts/be/vmm/eenvplus/Prefix.js',
                         dir.test.js + 'src/ts/be/vmm/eenvplus/config/Module.js',
                         dir.test.js + 'src/ts/be/vmm/eenvplus/editor/area/Module.js',
@@ -141,7 +142,7 @@ module.exports = function (grunt) {
                 basePath: '',
                 exclude: [],
                 autoWatch: true,
-                frameworks: ['mocha', 'chai'],
+                frameworks: ['mocha', 'chai', 'sinon'],
                 browsers: ['PhantomJS'],
                 preprocessors: {
                     '<%= dir.test.js %>src/*.js': ['coverage']
@@ -251,7 +252,7 @@ module.exports = function (grunt) {
                 tasks: ['ts:dev']
             },
             tsTest: {
-                files: testSrc.ts,
+                files: [src.ts, testSrc.ts],
                 tasks: ['ts:test']
             }
         }

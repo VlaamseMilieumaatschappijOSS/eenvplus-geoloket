@@ -8,6 +8,7 @@ module be.vmm.eenvplus.feature.model {
         key:number;
         layerBodId:string;
         modified:string;
+        action:string;
 
         properties:FeatureProperties;
 
