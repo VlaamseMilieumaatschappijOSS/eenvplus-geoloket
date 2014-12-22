@@ -15,9 +15,12 @@ module be.vmm.eenvplus.feature {
         createLayer(type:FeatureType):ol.layer.Vector;
     }
 
-    factory.$inject = ['epFeatureService', 'epSRSName'];
+    factory.$inject = ['epFeatureService', 'epSRSName', 'epFeatureStyleFactory'];
 
-    function factory(service:FeatureService, srsName:config.SRSNameService):FeatureLayerFactory {
+    function factory(service:FeatureService,
+                     srsName:config.SRSNameService,
+                     createStyle:StyleFactory):FeatureLayerFactory {
+
         return {
             createSource: createSource,
             createLayer: createLayer
