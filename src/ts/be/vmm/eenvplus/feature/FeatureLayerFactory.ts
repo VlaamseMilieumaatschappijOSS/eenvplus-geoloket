@@ -52,32 +52,35 @@ module be.vmm.eenvplus.feature {
         }
 
         function createLayer(type:FeatureType):ol.layer.Vector {
-        	var defaultStyle = createStyle(type, "default");
-        	var modifiedStyle = createStyle(type, "modified");
-            var layer = new ol.layer.Vector({
-                source: createSource(type),
-                style: function(feature, resolution) {
-                	if(feature.getProperties().action) {
-                		return modifiedStyle(feature, resolution);
-                	} else {
-                		return defaultStyle(feature, resolution);
-                	}
-                }
-            });
-            layer.set(model.LayerProperty.TYPE_ID, feature.toLayerBodId(type));
+            var defaultStyle = createStyle(type, FeatureMode.DEFAULT),
+                modifiedStyle = createStyle(type, FeatureMode.MODIFIED),
+                layer = new ol.layer.Vector({
+                    source: createSource(type),
+                    style: getStyle
+                });
+
+            layer.set(model.LayerProperty.TYPE_ID, toLayerBodId(type));
             layer.set(model.LayerProperty.FEATURE_TYPE, type);
             return layer;
+
+            function getStyle(feature:LocalFeature):ol.style.Style[] {
+                if (feature.getProperties()['action']) {
+                    return modifiedStyle(feature);
+                } else {
+                    return defaultStyle(feature);
+                }
+            }
         }
     }
 
     ol.format.GeoJSON.prototype.readFeatureFromObject =
         _.wrap(ol.format.GeoJSON.prototype.readFeatureFromObject, addKey);
 
-    function addKey(fn:Function, json:feature.model.FeatureJSON, options?:any):feature.LocalFeature {
-        var olFeature = fn(json, options);
-        if (json.key) olFeature.key = json.key;
-        olFeature.type = feature.toType(json.layerBodId);
-        return olFeature;
+    function addKey(fn:Function, json:model.FeatureJSON, options?:any):LocalFeature {
+        var feature = fn(json, options);
+        if (json.key) feature.key = json.key;
+        feature.type = toType(json.layerBodId);
+        return feature;
     }
 
     angular

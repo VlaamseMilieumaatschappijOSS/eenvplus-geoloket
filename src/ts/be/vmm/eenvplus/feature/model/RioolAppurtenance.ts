@@ -4,13 +4,10 @@
 module be.vmm.eenvplus.feature.model {
     'use strict';
 
-    export interface RioolAppurtenance extends FeatureProperties {
+    export interface RioolAppurtenance extends RioolBase {
 
         koppelPuntId:string;
-        label:string;
-        omschrijving:string;
         rioolAppurtenanceTypeId:number;
-        statussen:Status[];
         vhaSegmentId:number;
 
     }

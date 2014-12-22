@@ -19,7 +19,9 @@ module be.vmm.eenvplus.editor.area {
         var select = createInteraction(ol.events.condition.click),
             highlight = createInteraction(ol.events.condition.mouseMove),
             selection = select.getFeatures(),
+            stylesByType:feature.getStyle[] = [],
             all = [select, highlight];
+
 
         /* -------------------- */
         /* --- construction --- */
@@ -30,21 +32,11 @@ module be.vmm.eenvplus.editor.area {
         stateStore.modeChanged.add(invalidateState);
         featureStore.selected.add(invalidateState);
         painterStore.selected.add(invalidateState);
-        
-        var stylesByType = {};
 
         function createInteraction(condition):ol.interaction.Select {
             var interaction = new ol.interaction.Select({
                 condition: condition,
-                style: function (feature, resolution) {
-                	var type = feature.type;
-                	var style = stylesByType[type];
-                	if(!style) {
-                		style = be.vmm.eenvplus.feature.createStyle(type, "selected");
-                		stylesByType[type] = style;
-                	}
-                	return style(feature, resolution);
-                }
+                style: getStyle
             });
 
             interaction.setActive(false);
@@ -64,6 +56,17 @@ module be.vmm.eenvplus.editor.area {
         /* ----------------- */
         /* --- behaviour --- */
         /* ----------------- */
+
+        function getStyle(olFeature:feature.LocalFeature):ol.style.Style[] {
+            var type = olFeature.type,
+                style = stylesByType[type];
+
+            if (!style) {
+                style = feature.createStyle(type, feature.FeatureMode.SELECTED);
+                stylesByType[type] = style;
+            }
+            return style(olFeature);
+        }
 
         function selectFeature(selectedFeature:feature.LocalFeature):void {
             featureManager

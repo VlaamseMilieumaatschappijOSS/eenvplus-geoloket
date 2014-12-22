@@ -147,6 +147,7 @@ declare module ol {
 
     interface Object extends Observable {
         get(key:string):any;
+        getProperties<T>():T;
         set(key:string, value:any):any;
     }
 
@@ -506,6 +507,7 @@ declare module ol {
         interface Static {
             Circle:Circle;
             Fill:Fill;
+            Icon:Icon;
             Stroke:Stroke;
             Style:Style;
         }
@@ -516,6 +518,10 @@ declare module ol {
 
         interface Fill {
             new (config:any):Fill;
+        }
+
+        interface Icon {
+            new (config:any):Icon;
         }
 
         interface Stroke {
