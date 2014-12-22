@@ -3,12 +3,12 @@ module be.vmm.eenvplus.feature.model {
 
     export interface FeatureProperties {
 
-        alternatieveId:string;
-        beginLifeSpanVersion:number;
-        creationDate:number;
-        endLifeSpanVersion:number;
-        namespaceId:number;
-        userId:number;
+        alternatieveId?:string;
+        beginLifespanVersion?:number;
+        creationDate?:number;
+        endLifespanVersion?:number;
+        namespaceId?:number;
+        userId?:number;
 
     }
 
@@ -16,9 +16,9 @@ module be.vmm.eenvplus.feature.model {
     export var FeatureProperty = {
 
         ALTERNATIEVE_ID: 'alternatieveId',
-        BEGIN_LIFESPAN_VERSION: 'beginLifeSpanVersion',
+        BEGIN_LIFESPAN_VERSION: 'beginLifespanVersion',
         CREATION_DATE: 'creationDate',
-        END_LIFESPAN_VERSION: 'endLifeSpanVersion',
+        END_LIFESPAN_VERSION: 'endLifespanVersion',
         NAMESPACE_ID: 'namespaceId',
         USER_ID: 'userId'
 

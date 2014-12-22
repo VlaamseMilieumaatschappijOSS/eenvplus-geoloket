@@ -263,7 +263,7 @@ declare module ol {
 
         interface GeoJSONFeature {
             geometry:{
-                coordinates:Coordinate[];
+                coordinates:any; //Coordinate|Coordinate[];
                 type:string;
             };
             type:string;

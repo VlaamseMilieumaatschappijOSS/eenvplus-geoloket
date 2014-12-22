@@ -3,7 +3,7 @@
  */
 
 // mock saves objects here
-var mockIndexedDBItems = [];
+var mockIndexedDBItems = {};
 
 // used for waitFor()'s in tests
 var mockIndexedDB_openDBSuccess = false;
@@ -29,6 +29,7 @@ var mockIndexedDB_deleteDBFail = false;
 
 // used for reading objects
 var mockIndexedDB_cursorResultsIndex = 0;
+var mockIndexedDB_table = undefined;
 
 function syncWrapMethods(object) {
     _.each(object, function (value, key) {
@@ -96,7 +97,7 @@ var mockIndexedDB_deleteDBTimer;
  * call this in beforeEach() to reset the mock
  */
 function resetIndexedDBMock() {
-    mockIndexedDBItems.length = 0;
+    mockIndexedDBItems = {};
 
     mockIndexedDB_openDBSuccess = false;
     mockIndexedDB_openDBFail = false;
@@ -120,6 +121,7 @@ function resetIndexedDBMock() {
     mockIndexedDB_deleteDBFail = false;
 
     mockIndexedDB_cursorResultsIndex = 0;
+    mockIndexedDB_table = undefined;
 
     mockIndexedDBTestFlags.canOpenDB = true;
     mockIndexedDBTestFlags.openDBShouldBlock = false;
@@ -143,13 +145,14 @@ function resetIndexedDBMock() {
 /**
  * call this in beforeEach() to "save" data before a test
  */
-function commitIndexedDBMockData(key, value) {
+function commitIndexedDBMockData(table, value) {
     var item = {
-        'key': key,
+        'key': value.key,
         'value': value
     };
 
-    mockIndexedDBItems.push(item);
+    if (!mockIndexedDBItems[table]) mockIndexedDBItems[table] = [];
+    mockIndexedDBItems[table].push(item);
 }
 
 /**
@@ -178,8 +181,8 @@ var mockIndexedDBCursor = {
  * have a key and value property. these are defined by the getters.
  */
 mockIndexedDBCursor.__defineGetter__("key", function () {
-    if (mockIndexedDB_cursorResultsIndex < mockIndexedDBItems.length) {
-        var item = mockIndexedDBItems[mockIndexedDB_cursorResultsIndex];
+    if (mockIndexedDB_cursorResultsIndex < mockIndexedDBItems[mockIndexedDB_table].length) {
+        var item = mockIndexedDBItems[mockIndexedDB_table][mockIndexedDB_cursorResultsIndex];
         return item.key;
     }
     else {
@@ -188,8 +191,8 @@ mockIndexedDBCursor.__defineGetter__("key", function () {
 });
 
 mockIndexedDBCursor.__defineGetter__("value", function () {
-    if (mockIndexedDB_cursorResultsIndex < mockIndexedDBItems.length) {
-        var item = mockIndexedDBItems[mockIndexedDB_cursorResultsIndex];
+    if (mockIndexedDB_cursorResultsIndex < mockIndexedDBItems[mockIndexedDB_table].length) {
+        var item = mockIndexedDBItems[mockIndexedDB_table][mockIndexedDB_cursorResultsIndex];
         return item.value;
     }
     else {
@@ -198,7 +201,7 @@ mockIndexedDBCursor.__defineGetter__("value", function () {
 });
 
 mockIndexedDBCursor.__defineGetter__("resultCount", function () {
-    return mockIndexedDBItems.length;
+    return mockIndexedDBItems[mockIndexedDB_table].length;
 });
 
 var mockIndexedDBCursorRequest = {
@@ -207,12 +210,13 @@ var mockIndexedDBCursorRequest = {
 
             var cursorToReturn;
 
-            if (mockIndexedDB_cursorResultsIndex < mockIndexedDBItems.length) {
+            if (mockIndexedDB_cursorResultsIndex < mockIndexedDBItems[mockIndexedDB_table].length) {
                 cursorToReturn = mockIndexedDBCursor;
                 mockIndexedDB_cursorReadingDone = false;
             }
             else {
                 cursorToReturn = null;
+                mockIndexedDB_cursorResultsIndex = 0;
                 mockIndexedDB_cursorReadingDone = true;
             }
 
@@ -283,7 +287,7 @@ var mockIndexedDBStore = {
     // attached to the txn that returned the store.
     'add': function (data) {
         if (mockIndexedDBTestFlags.canSave === true) {
-            mockIndexedDBItems.push(data);
+            mockIndexedDBItems[mockIndexedDB_table].push(data);
             mockIndexedDB_storeAddTimer = _setTimeout(function () {
                 mockIndexedDBTransaction.callCompleteHandler();
                 mockIndexedDB_saveSuccess = true;
@@ -299,9 +303,8 @@ var mockIndexedDBStore = {
         return mockIndexedDBTransaction;
     },
 
-    get: function(key) {
-        var result = _(mockIndexedDBItems)
-            .filter({key: this.name})
+    get: function (key) {
+        var result = _(mockIndexedDBItems[mockIndexedDB_table])
             .map('value')
             .find({key: key});
 
@@ -317,9 +320,9 @@ var mockIndexedDBStore = {
     // TODO: do an update instead of adding
     'put': function (data) {
         if (mockIndexedDBTestFlags.canSave === true) {
-            mockIndexedDBItems.push(data);
+            mockIndexedDBItems[mockIndexedDB_table].push(data);
             mockIndexedDB_storeAddTimer = _setTimeout(function () {
-                mockIndexedDBTransaction.callCompleteHandler();
+                mockIndexedDBTransaction.callSuccessHandler();
                 mockIndexedDB_saveSuccess = true;
             }, 20);
         }
@@ -355,7 +358,7 @@ var mockIndexedDBStore = {
     'clear': function (data_id) {
         if (mockIndexedDBTestFlags.canClear === true) {
             mockIndexedDB_storeClearTimer = _setTimeout(function () {
-                mockIndexedDBItems.length = 0;
+                mockIndexedDBItems[mockIndexedDB_table].length = 0;
                 mockIndexedDBStoreTransaction.callSuccessHandler();
                 mockIndexedDB_clearSuccess = true;
             }, 20);
@@ -415,14 +418,19 @@ var mockIndexedDBStore = {
 
 var mockIndexedDBTransaction = {
     'objectStore': function (name) {
-        mockIndexedDBStore.name = name;
+        mockIndexedDB_table = mockIndexedDBStore.name = name;
         return mockIndexedDBStore;
     },
 
-    'callCompleteHandler': function () {
-        if (this.oncomplete !== null) {
-            var event = new CustomEvent("complete", {bubbles: false, cancelable: true});
-            this.oncomplete(event);
+    'callSuccessHandler': function () {
+        if (this.onsuccess !== null) {
+            var event = {
+                'type': 'error',
+                'bubbles': false,
+                'cancelable': true,
+                'target': {}
+            };
+            this.onsuccess(event);
         }
     },
 
