@@ -320,7 +320,12 @@ var mockIndexedDBStore = {
     // TODO: do an update instead of adding
     'put': function (data) {
         if (mockIndexedDBTestFlags.canSave === true) {
-            mockIndexedDBItems[mockIndexedDB_table].push(data);
+            var result = _(mockIndexedDBItems[mockIndexedDB_table]).find({key: data.key}),
+                index = mockIndexedDBItems[mockIndexedDB_table].indexOf(result);
+            mockIndexedDBItems[mockIndexedDB_table][index] = {
+                key: data.key,
+                value: data
+            };
             mockIndexedDB_storeAddTimer = _setTimeout(function () {
                 mockIndexedDBTransaction.callSuccessHandler();
                 mockIndexedDB_saveSuccess = true;
@@ -337,8 +342,11 @@ var mockIndexedDBStore = {
     },
 
     // for delete, the listeners are attached to a request returned from the store.
-    'delete': function (data_id) {
+    'delete': function (key) {
         if (mockIndexedDBTestFlags.canDelete === true) {
+            var result = _(mockIndexedDBItems[mockIndexedDB_table]).find({key: key}),
+                index = mockIndexedDBItems[mockIndexedDB_table].indexOf(result);
+            mockIndexedDBItems[mockIndexedDB_table].splice(index, 1);
             mockIndexedDB_storeDeleteTimer = _setTimeout(function () {
                 mockIndexedDBStoreTransaction.callSuccessHandler();
                 mockIndexedDB_deleteSuccess = true;

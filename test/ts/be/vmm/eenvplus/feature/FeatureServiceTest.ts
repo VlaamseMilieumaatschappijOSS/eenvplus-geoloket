@@ -15,9 +15,9 @@ module be.vmm.eenvplus.feature {
             ng = _$rootScope_;
             service = _epFeatureService_;
 
-            sewers.forEach(_.partial(commitIndexedDBMockData, sewer.replace('all:', '')));
-            appurtenances.forEach(_.partial(commitIndexedDBMockData, appurtenance.replace('all:', '')));
-            nodes.forEach(_.partial(commitIndexedDBMockData, node.replace('all:', '')));
+            sewers.forEach(_.partial(commitIndexedDBMockData, sewer));
+            appurtenances.forEach(_.partial(commitIndexedDBMockData, appurtenance));
+            nodes.forEach(_.partial(commitIndexedDBMockData, node));
 
             FeatureService.indexedDB = mockIndexedDB;
         }));
@@ -66,11 +66,34 @@ module be.vmm.eenvplus.feature {
             ng.$digest();
         });
 
-        it('removes a specific feature', (done) => {
+        it('removes a specific feature with ID', (done) => {
             service
-                .remove(sewers[2])
+                .remove(_.cloneDeep(sewers[2]))
                 .then((result) => {
                     expect(result.key).to.equal(2);
+                    expect(result.action).to.equal('delete');
+                    expect(mockIndexedDBItems[sewer].length).to.equal(sewers.length);
+
+                    service
+                        .query(sewer, () => {
+                            return true;
+                        })
+                        .then((results) => {
+                            expect(results.length).to.equal(sewers.length - 1);
+                            done();
+                        });
+                });
+
+            ng.$digest();
+        });
+
+        it('removes a specific feature without ID', (done) => {
+            service
+                .remove(_.cloneDeep(sewers[7]))
+                .then((result) => {
+                    expect(result.key).to.equal(7);
+                    expect(result.action).not.to.equal('delete');
+                    expect(mockIndexedDBItems[sewer].length).to.equal(sewers.length - 1);
 
                     service
                         .query(sewer, () => {

@@ -1,9 +1,9 @@
 module be.vmm.eenvplus.feature {
     'use strict';
 
-    export var sewer = toLayerBodId(FeatureType.SEWER),
-        appurtenance = toLayerBodId(FeatureType.APPURTENANCE),
-        node = toLayerBodId(FeatureType.NODE);
+    export var sewer = toLayerBodId(FeatureType.SEWER).replace('all:', ''),
+        appurtenance = toLayerBodId(FeatureType.APPURTENANCE).replace('all:', ''),
+        node = toLayerBodId(FeatureType.NODE).replace('all:', '');
 
     export var sewers:model.FeatureJSON[] = [
             {"layerBodId":"all:be.vmm.eenvplus.sdi.model.RioolLink","id":882615,"featureId":882615,"properties":{"alternatieveId":"6549909","beginLifespanVersion":1390441635000,"creationDate":1390441635000,"diameter":3,"endKoppelPuntId":474492,"endLifespanVersion":null,"label":null,"namespaceId":2,"omschrijving":"Gemeente","pressure":1,"rioolLinkTypeId":1,"sewerWaterTypeId":2,"startKoppelPuntId":317372,"statussen":[{"id":4517,"statusId":0,"geldigVanaf":2366838000000,"geldigTot":null}],"straatId":33813,"userId":null},"type":"Feature","geometry":{"type":"LineString","coordinates":[[167163.31047956116,168799.7121720696],[167122.19045333882,168838.64207498543],[167106.48706800438,168793.19701653533],[167103.75039236786,168753.9520422658],[167112.88550456348,168717.6148382835],[167119.24955444972,168676.20811670925],[167125.02302028012,168662.23021528684],[167163.9181171866,168609.96499435417],[167173.00136980964,168595.36687483918]],"crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:EPSG:31370"}},"bbox":[167103.75039236786,168595.36687483918,167173.00136980964,168838.64207498543]},"key":0},
