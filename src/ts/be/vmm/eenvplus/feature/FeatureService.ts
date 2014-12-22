@@ -24,6 +24,9 @@ module be.vmm.eenvplus.feature {
     export module FeatureService {
         export var NAME = PREFIX + 'FeatureService';
 
+        export var indexedDB:IDBFactory =
+            window.indexedDB || window['mozIndexedDB'] || window['webkitIndexedDB'] || window.msIndexedDB;
+
         var VERSION:number = 3,
             apiUrl:string = 'http://127.0.0.1:8080/eenvplus-sdi-services',
             IDBTransaction = window['IDBTransaction'] || window['webkitIDBTransaction'] || window['msIDBTransaction'],
@@ -31,7 +34,7 @@ module be.vmm.eenvplus.feature {
 
         factory.$inject = ['$http', '$q', 'typeModelMap'];
 
-        function factory(http, q, typeModelMap):FeatureService {
+        function factory(http:ng.IHttpService, q:ng.IQService, typeModelMap:string[]):FeatureService {
             var types = typeModelMap,
                 db;
 
@@ -46,21 +49,12 @@ module be.vmm.eenvplus.feature {
                 query: query,
                 remove: remove,
                 test: test,
-                update: update,
-                getIndexedDB: getIndexedDB
+                update: update
             };
-
-            function getIndexedDB():IDBFactory {
-                return window.indexedDB ||
-                    window['mozIndexedDB'] ||
-                    window['webkitIndexedDB'] ||
-                    window.msIndexedDB ||
-                    mockIndexedDB;
-            }
 
             function getDB() {
                 var d = q.defer(),
-                    openRequest = getIndexedDB().open('Feature', VERSION);
+                    openRequest = indexedDB.open('Feature', VERSION);
 
                 openRequest.onupgradeneeded = (event:IDBVersionChangeEvent) => {
                     var db = (<IDBRequest> event.target).result;
@@ -83,9 +77,9 @@ module be.vmm.eenvplus.feature {
             }
 
             function clear():ng.IPromise<void> {
-                var d = q.defer();
+                var d = q.defer<void>();
 
-                getDB().then((db) => {
+                getDB().then((db:IDBDatabase):void => {
                     var transaction = db.transaction(types, "readwrite"),
                         i = 0;
 
@@ -110,10 +104,10 @@ module be.vmm.eenvplus.feature {
             }
 
             function create(feature:model.FeatureJSON):ng.IPromise<number> {
-                var d = q.defer();
+                var d = q.defer<number>();
                 var type = getType(feature.layerBodId);
 
-                getDB().then((db) => {
+                getDB().then((db:IDBDatabase):void => {
                     var objectStore = db.transaction(type, "readwrite").objectStore(type);
 
                     addBbox(feature);
@@ -121,7 +115,7 @@ module be.vmm.eenvplus.feature {
 
                     var request = objectStore.add(feature);
                     request.onsuccess = (event) => {
-                        d.resolve(event.target.result);
+                        d.resolve((<IDBRequest> event.target).result);
                     };
                     request.onerror = () => {
                         d.reject("Could not add feature to local storage.");
@@ -132,9 +126,9 @@ module be.vmm.eenvplus.feature {
             }
 
             function dirty():ng.IPromise<boolean> {
-                var d = q.defer();
+                var d = q.defer<boolean>();
 
-                getDB().then((db) => {
+                getDB().then((db:IDBDatabase):void => {
                     var transaction = db.transaction(types, "readwrite"),
                         i = 0;
 
@@ -146,7 +140,7 @@ module be.vmm.eenvplus.feature {
                                 request = index.getKey(IDBKeyRange.lowerBound("0"));
 
                             request.onsuccess = (event) => {
-                                if (event.target.result != null) {
+                                if ((<IDBRequest> event.target).result != null) {
                                     d.resolve(true);
                                 } else {
                                     next();
@@ -166,10 +160,10 @@ module be.vmm.eenvplus.feature {
             }
 
             function get(layerBodId:string, key:number):ng.IPromise<model.FeatureJSON> {
-                var d = q.defer(),
+                var d = q.defer<model.FeatureJSON>(),
                     type = getType(layerBodId);
 
-                getDB().then((db) => {
+                getDB().then((db:IDBDatabase):void => {
                     var objectStore = db.transaction(type).objectStore(type),
                         request = objectStore.get(key);
 
@@ -190,10 +184,10 @@ module be.vmm.eenvplus.feature {
             }
 
             function getById(layerBodId:string, id:number):ng.IPromise<model.FeatureJSON> {
-                var d = q.defer(),
+                var d = q.defer<model.FeatureJSON>(),
                     type = getType(layerBodId);
 
-                getDB().then((db) => {
+                getDB().then((db:IDBDatabase):void => {
                     var objectStore = db.transaction(type).objectStore(type),
                         index = objectStore.index("id"),
                         request = index.get(id);
@@ -214,10 +208,10 @@ module be.vmm.eenvplus.feature {
                 return d.promise;
             }
 
-            function merge(features) {
-                var d = q.defer();
+            function merge(features):ng.IPromise<void> {
+                var d = q.defer<void>();
 
-                getDB().then((db) => {
+                getDB().then((db:IDBDatabase):void => {
                     var transaction = db.transaction(types, "readwrite"),
                         i = 0;
 
@@ -232,7 +226,7 @@ module be.vmm.eenvplus.feature {
                             request.onsuccess = (event) => {
                                 addBbox(feature);
 
-                                var key = event.target.result,
+                                var key = (<IDBRequest> event.target).result,
                                     request;
 
                                 if (key) {
@@ -262,7 +256,7 @@ module be.vmm.eenvplus.feature {
             }
 
             function pull(bbox?:ol.Extent):ng.IPromise<void> {
-                var d = q.defer(),
+                var d = q.defer<void>(),
                     url = apiUrl + "/rest/services/api/MapServer/pull?types=" + types.join(",");
 
                 if (bbox)
@@ -278,12 +272,12 @@ module be.vmm.eenvplus.feature {
             }
 
             function push():ng.IPromise<any> {
-                var d = q.defer();
+                var d = q.defer<any>();
 
                 modifications().then((results) => {
                     http
                         .post(apiUrl + "/rest/services/api/MapServer/push", results)
-                        .success((report) => {
+                        .success((report:any) => {
                             if (report.completed) {
                                 var results = report.results;
 
@@ -334,7 +328,7 @@ module be.vmm.eenvplus.feature {
             function query(layerBodId:string, filter:filterFeature):ng.IPromise<model.FeatureJSON[]>;
             function query(layerBodId:string, extent:ol.Extent, filter:filterFeature):ng.IPromise<model.FeatureJSON[]>;
             function query(layerBodId:string, extent:any, filter?:any):ng.IPromise<model.FeatureJSON[]> {
-                var d = q.defer(),
+                var d = q.defer<model.FeatureJSON[]>(),
                     type = getType(layerBodId);
 
                 if (typeof extent === 'function') {
@@ -342,7 +336,7 @@ module be.vmm.eenvplus.feature {
                     extent = undefined;
                 }
 
-                getDB().then((db) => {
+                getDB().then((db:IDBDatabase):void => {
                     var results = [],
                         objectStore = db.transaction(type).objectStore(type),
                         request = objectStore.openCursor();
@@ -375,10 +369,10 @@ module be.vmm.eenvplus.feature {
             }
 
             function remove(feature:model.FeatureJSON):ng.IPromise<model.FeatureJSON> {
-                var d = q.defer(),
+                var d = q.defer<model.FeatureJSON>(),
                     type = getType(feature.layerBodId);
 
-                getDB().then((db) => {
+                getDB().then((db:IDBDatabase):void => {
                     var objectStore = db.transaction(type, "readwrite").objectStore(type),
                         request;
 
@@ -399,7 +393,7 @@ module be.vmm.eenvplus.feature {
             }
 
             function test():ng.IPromise<any> {
-                var d = q.defer();
+                var d = q.defer<any>();
 
                 modifications().then(function (results) {
                     http.post(apiUrl + "/rest/services/api/MapServer/test", results).success(function (report) {
@@ -413,10 +407,10 @@ module be.vmm.eenvplus.feature {
             }
 
             function update(feature:model.FeatureJSON):ng.IPromise<model.FeatureJSON> {
-                var d = q.defer(),
+                var d = q.defer<model.FeatureJSON>(),
                     type = getType(feature.layerBodId);
 
-                getDB().then((db) => {
+                getDB().then((db:IDBDatabase):void => {
                     var objectStore = db.transaction(type, "readwrite").objectStore(type);
 
                     addBbox(feature);
@@ -424,7 +418,7 @@ module be.vmm.eenvplus.feature {
 
                     var request = objectStore.put(feature);
                     request.onsuccess = () => {
-                        d.resolve(feature);
+                        d.resolve();
                     };
                     request.onerror = () => {
                         d.reject("Could not update feature in local storage.");
@@ -438,7 +432,7 @@ module be.vmm.eenvplus.feature {
             function modifications() {
                 var d = q.defer();
 
-                getDB().then((db) => {
+                getDB().then((db:IDBDatabase):void => {
                     var results = [],
                         transaction = db.transaction(types, "readwrite"),
                         i = 0;
@@ -451,7 +445,7 @@ module be.vmm.eenvplus.feature {
                                 request = index.openCursor(IDBKeyRange.lowerBound("0"));
 
                             request.onsuccess = (event) => {
-                                var cursor = event.target.result;
+                                var cursor = (<IDBRequest> event.target).result;
                                 if (cursor) {
                                     var feature = cursor.value;
                                     if (feature) {

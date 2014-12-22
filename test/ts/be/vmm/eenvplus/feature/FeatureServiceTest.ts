@@ -39,6 +39,8 @@ module be.vmm.eenvplus.feature {
             sewers.forEach(_.partial(commitIndexedDBMockData, sewer.replace('all:', '')));
             appurtenances.forEach(_.partial(commitIndexedDBMockData, appurtenance.replace('all:', '')));
             nodes.forEach(_.partial(commitIndexedDBMockData, node.replace('all:', '')));
+
+            FeatureService.indexedDB = mockIndexedDB;
         }));
 
         it('fetches all features', (done) => {

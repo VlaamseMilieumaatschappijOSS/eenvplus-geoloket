@@ -64,7 +64,7 @@ function syncWrap(fn) {
     }
 }
 
-function setTimeout(fn) {
+function _setTimeout(fn) {
     fn();
 }
 
@@ -164,7 +164,7 @@ var mockIndexedDBCursor = {
         mockIndexedDB_cursorResultsIndex++;
         mockIndexedDB_openCursorSuccess = false;
 
-        mockIndexedDB_cursorContinueTimer = setTimeout(function () {
+        mockIndexedDB_cursorContinueTimer = _setTimeout(function () {
             mockIndexedDBCursorRequest.callSuccessHandler();
             mockIndexedDB_openCursorSuccess = true;
         }, 20);
@@ -284,13 +284,13 @@ var mockIndexedDBStore = {
     'add': function (data) {
         if (mockIndexedDBTestFlags.canSave === true) {
             mockIndexedDBItems.push(data);
-            mockIndexedDB_storeAddTimer = setTimeout(function () {
+            mockIndexedDB_storeAddTimer = _setTimeout(function () {
                 mockIndexedDBTransaction.callCompleteHandler();
                 mockIndexedDB_saveSuccess = true;
             }, 20);
         }
         else {
-            mockIndexedDB_storeAddTimer = setTimeout(function () {
+            mockIndexedDB_storeAddTimer = _setTimeout(function () {
                 mockIndexedDBTransaction.callErrorHandler();
                 mockIndexedDB_saveFail = true;
             }, 20);
@@ -305,7 +305,7 @@ var mockIndexedDBStore = {
             .map('value')
             .find({key: key});
 
-        mockIndexedDB_storeAddTimer = setTimeout(function () {
+        mockIndexedDB_storeAddTimer = _setTimeout(function () {
             mockIndexedDBStoreTransaction.callSuccessHandler(result);
             mockIndexedDB_saveSuccess = true;
         }, 20);
@@ -318,13 +318,13 @@ var mockIndexedDBStore = {
     'put': function (data) {
         if (mockIndexedDBTestFlags.canSave === true) {
             mockIndexedDBItems.push(data);
-            mockIndexedDB_storeAddTimer = setTimeout(function () {
+            mockIndexedDB_storeAddTimer = _setTimeout(function () {
                 mockIndexedDBTransaction.callCompleteHandler();
                 mockIndexedDB_saveSuccess = true;
             }, 20);
         }
         else {
-            mockIndexedDB_storeAddTimer = setTimeout(function () {
+            mockIndexedDB_storeAddTimer = _setTimeout(function () {
                 mockIndexedDBTransaction.callErrorHandler();
                 mockIndexedDB_saveFail = true;
             }, 20);
@@ -336,13 +336,13 @@ var mockIndexedDBStore = {
     // for delete, the listeners are attached to a request returned from the store.
     'delete': function (data_id) {
         if (mockIndexedDBTestFlags.canDelete === true) {
-            mockIndexedDB_storeDeleteTimer = setTimeout(function () {
+            mockIndexedDB_storeDeleteTimer = _setTimeout(function () {
                 mockIndexedDBStoreTransaction.callSuccessHandler();
                 mockIndexedDB_deleteSuccess = true;
             }, 20);
         }
         else {
-            mockIndexedDB_storeDeleteTimer = setTimeout(function () {
+            mockIndexedDB_storeDeleteTimer = _setTimeout(function () {
                 mockIndexedDBStoreTransaction.callErrorHandler();
                 mockIndexedDB_deleteFail = true;
             }, 20);
@@ -354,14 +354,14 @@ var mockIndexedDBStore = {
     // for clear, the listeners are attached to a request returned from the store.
     'clear': function (data_id) {
         if (mockIndexedDBTestFlags.canClear === true) {
-            mockIndexedDB_storeClearTimer = setTimeout(function () {
+            mockIndexedDB_storeClearTimer = _setTimeout(function () {
                 mockIndexedDBItems.length = 0;
                 mockIndexedDBStoreTransaction.callSuccessHandler();
                 mockIndexedDB_clearSuccess = true;
             }, 20);
         }
         else {
-            mockIndexedDB_storeClearTimer = setTimeout(function () {
+            mockIndexedDB_storeClearTimer = _setTimeout(function () {
                 mockIndexedDBStoreTransaction.callErrorHandler();
                 mockIndexedDB_clearFail = true;
             }, 20);
@@ -397,13 +397,13 @@ var mockIndexedDBStore = {
 
     'openCursor': function () {
         if (mockIndexedDBTestFlags.canReadDB === true) {
-            mockIndexedDB_storeOpenCursorTimer = setTimeout(function () {
+            mockIndexedDB_storeOpenCursorTimer = _setTimeout(function () {
                 mockIndexedDBCursorRequest.callSuccessHandler();
                 mockIndexedDB_openCursorSuccess = true;
             }, 20);
         }
         else {
-            mockIndexedDB_storeOpenCursorTimer = setTimeout(function () {
+            mockIndexedDB_storeOpenCursorTimer = _setTimeout(function () {
                 mockIndexedDBCursorRequest.callErrorHandler();
                 mockIndexedDB_openCursorFail = true;
             }, 20);
@@ -457,13 +457,13 @@ var mockIndexedDBDatabase = {
 
     'createObjectStore': function (name, params) {
         if (mockIndexedDBTestFlags.canCreateStore === true) {
-            mockIndexedDB_createObjectStoreTimer = setTimeout(function () {
+            mockIndexedDB_createObjectStoreTimer = _setTimeout(function () {
                 mockIndexedDBStore.callSuccessHandler();
                 mockIndexedDB_createStoreSuccess = true;
             }, 20);
         }
         else {
-            mockIndexedDB_createObjectStoreTimer = setTimeout(function () {
+            mockIndexedDB_createObjectStoreTimer = _setTimeout(function () {
                 mockIndexedDBStore.callErrorHandler();
                 mockIndexedDB_createStoreFail = true;
             }, 20);
@@ -633,19 +633,19 @@ var mockIndexedDB = {
     // note: the mock does not simulate separate stores, so dbname is ignored
     'open': function (dbname, version) {
         if (mockIndexedDBTestFlags.openDBShouldBlock === true) {
-            mockIndexedDB_openDBTimer = setTimeout(function () {
+            mockIndexedDB_openDBTimer = _setTimeout(function () {
                 mockIndexedDBOpenDBRequest.callBlockedHandler();
                 mockIndexedDB_openDBBlocked = true;
             }, 20);
         }
         else if (mockIndexedDBTestFlags.openDBShouldAbort === true) {
-            mockIndexedDB_openDBTimer = setTimeout(function () {
+            mockIndexedDB_openDBTimer = _setTimeout(function () {
                 mockIndexedDBOpenDBRequest.callAbortHandler();
                 mockIndexedDB_openDBAbort = true;
             }, 20);
         }
         else if (mockIndexedDBTestFlags.upgradeNeeded === true) {
-            mockIndexedDB_openDBTimer = setTimeout(function () {
+            mockIndexedDB_openDBTimer = _setTimeout(function () {
                 mockIndexedDBOpenDBRequest.callUpgradeNeeded();
                 mockIndexedDB_openDBUpgradeNeeded = true;
             }, 20);
@@ -654,13 +654,13 @@ var mockIndexedDB = {
         // flags in the test. can leave 'canOpenDB' in its default
         // true state, so long as the other fail vars are checked first.
         else if (mockIndexedDBTestFlags.canOpenDB === true) {
-            mockIndexedDB_openDBTimer = setTimeout(function () {
+            mockIndexedDB_openDBTimer = _setTimeout(function () {
                 mockIndexedDBOpenDBRequest.callSuccessHandler();
                 mockIndexedDB_openDBSuccess = true;
             }, 20);
         }
         else {
-            mockIndexedDB_openDBTimer = setTimeout(function () {
+            mockIndexedDB_openDBTimer = _setTimeout(function () {
                 mockIndexedDBOpenDBRequest.callErrorHandler();
                 mockIndexedDB_openDBFail = true;
             }, 20);
@@ -671,13 +671,13 @@ var mockIndexedDB = {
 
     'deleteDatabase': function (dbname) {
         if (mockIndexedDBTestFlags.canDeleteDB === true) {
-            mockIndexedDB_deleteDBTimer = setTimeout(function () {
+            mockIndexedDB_deleteDBTimer = _setTimeout(function () {
                 mockIndexedDBDeleteDBRequest.callSuccessHandler();
                 mockIndexedDB_deleteDBSuccess = true;
             }, 20);
         }
         else {
-            mockIndexedDB_deleteDBTimer = setTimeout(function () {
+            mockIndexedDB_deleteDBTimer = _setTimeout(function () {
                 mockIndexedDBDeleteDBRequest.callErrorHandler();
                 mockIndexedDB_deleteDBFail = true;
             }, 20);
