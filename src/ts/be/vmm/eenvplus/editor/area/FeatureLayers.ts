@@ -10,6 +10,11 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         'epMap', 'epStateStore', 'epAreaStore', 'epFeatureManager', 'epFeatureLayerFactory'
     ];
 
+    interface FeatureInfo {
+        olFeature:feature.LocalFeature;
+        layer:ol.layer.Vector;
+    }
+
     export function FeatureLayersController(map:ol.Map,
                                             stateStore:state.StateStore,
                                             store:AreaStore,
@@ -31,6 +36,7 @@ module be.vmm.eenvplus.editor.area.featureLayers {
 
         store.selected.add(init);
         manager.signal.load.add(createLayers);
+        manager.signal.update.add(updateFeature);
         manager.signal.remove.add(removeFromLayer);
 
         function init(extent:ol.Extent):void {
@@ -53,10 +59,23 @@ module be.vmm.eenvplus.editor.area.featureLayers {
             featureLayers.forEach(addLayer);
         }
 
+        function updateFeature(json:feature.model.FeatureJSON):void {
+            var info = getFeatureInfo(json);
+            info.olFeature.action = json.action;
+            info.layer.changed();
+        }
+
         function removeFromLayer(json:feature.model.FeatureJSON):void {
-            var layer:ol.layer.Vector = _.where(featureLayers, {values_: {layerBodId: json.layerBodId}})[0],
-                feature = _.find(layer.getSource().getFeatures(), {key: json.key});
-            layer.getSource().removeFeature(feature);
+            var info = getFeatureInfo(json);
+            info.layer.getSource().removeFeature(info.olFeature);
+        }
+
+        function getFeatureInfo(json:feature.model.FeatureJSON):FeatureInfo {
+            var layer:ol.layer.Vector = _.where(featureLayers, {values_: {layerBodId: json.layerBodId}})[0];
+            return {
+                layer: layer,
+                olFeature: _.find(layer.getSource().getFeatures(), {key: json.key})
+            };
         }
 
         function clear():void {

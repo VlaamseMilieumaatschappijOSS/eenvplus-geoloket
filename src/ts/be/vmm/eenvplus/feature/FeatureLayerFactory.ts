@@ -64,11 +64,7 @@ module be.vmm.eenvplus.feature {
             return layer;
 
             function getStyle(feature:LocalFeature):ol.style.Style[] {
-                if (feature.getProperties()['action']) {
-                    return modifiedStyle(feature);
-                } else {
-                    return defaultStyle(feature);
-                }
+                return feature.action ? modifiedStyle(feature) : defaultStyle(feature);
             }
         }
     }

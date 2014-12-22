@@ -146,6 +146,7 @@ declare module ol {
     }
 
     interface Object extends Observable {
+        changed():void;
         get(key:string):any;
         getProperties<T>():T;
         set(key:string, value:any):any;

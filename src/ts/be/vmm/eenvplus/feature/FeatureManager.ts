@@ -14,6 +14,7 @@ module be.vmm.eenvplus.feature {
         create:signal.ITypeSignal<model.FeatureJSON>;
         load:signal.ISignal;
         remove:signal.ITypeSignal<model.FeatureJSON>;
+        update:signal.ITypeSignal<model.FeatureJSON>;
         validate:signal.ITypeSignal<editor.validation.ValidationResult>;
     }
 
@@ -44,6 +45,7 @@ module be.vmm.eenvplus.feature {
                     create: new signal.TypeSignal<model.FeatureJSON>(),
                     load: new signal.Signal(),
                     remove: new signal.TypeSignal<model.FeatureJSON>(),
+                    update: new signal.TypeSignal<model.FeatureJSON>(),
                     validate: new signal.TypeSignal<editor.validation.ValidationResult>()
                 };
 
@@ -159,6 +161,7 @@ module be.vmm.eenvplus.feature {
 
                 service
                     .update(json)
+                    .then(signals.update.fire)
                     .then(deselect)
                     .catch(handleError('update', json));
 

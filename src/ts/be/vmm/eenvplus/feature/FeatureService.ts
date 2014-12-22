@@ -14,7 +14,7 @@ module be.vmm.eenvplus.feature {
         query(layerBodId:string, extent:ol.Extent, filter:filterFeature):ng.IPromise<model.FeatureJSON[]>;
         remove(feature:model.FeatureJSON):ng.IPromise<model.FeatureJSON>;
         test():ng.IPromise<any>;
-        update(feature:model.FeatureJSON):ng.IPromise<void>;
+        update(feature:model.FeatureJSON):ng.IPromise<model.FeatureJSON>;
     }
 
     export interface filterFeature {
@@ -412,7 +412,7 @@ module be.vmm.eenvplus.feature {
                 return d.promise;
             }
 
-            function update(feature:model.FeatureJSON):ng.IPromise<void> {
+            function update(feature:model.FeatureJSON):ng.IPromise<model.FeatureJSON> {
                 var d = q.defer(),
                     type = getType(feature.layerBodId);
 
@@ -423,7 +423,9 @@ module be.vmm.eenvplus.feature {
                     feature.action = feature.id ? "update" : "create";
 
                     var request = objectStore.put(feature);
-                    request.onsuccess = d.resolve;
+                    request.onsuccess = () => {
+                        d.resolve(feature);
+                    };
                     request.onerror = () => {
                         d.reject("Could not update feature in local storage.");
                     };

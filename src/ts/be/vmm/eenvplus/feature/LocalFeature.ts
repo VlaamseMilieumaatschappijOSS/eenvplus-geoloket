@@ -3,6 +3,7 @@ module be.vmm.eenvplus.feature {
 
     export interface LocalFeature extends ol.Feature {
 
+        action:string;
         key:number;
         type:FeatureType;
 
