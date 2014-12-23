@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.tools.EditTools {
     export var NAME:string = PREFIX + 'EditTools';
 
     function configure():ng.IDirective {
-        EditToolsController.$inject = [];
+        EditToolsController.$inject = ['epGeometryEditorStore'];
 
         return {
             restrict: 'A',
@@ -20,25 +20,21 @@ module be.vmm.eenvplus.editor.tools.EditTools {
 
     class EditToolsController {
 
-        constructor() {
+        constructor(store:geometry.EditorStore) {
+            this.move = _.partial(select, geometry.EditorType.MOVE);
+            this.cut = _.partial(select, geometry.EditorType.CUT);
+            this.add = _.partial(select, geometry.EditorType.ADD);
+            this.remove = _.partial(select, geometry.EditorType.REMOVE);
 
+            function select(editor:geometry.EditorType):void {
+                store.current = editor;
+            }
         }
 
-        public move() {
-
-        }
-
-        public cut() {
-
-        }
-
-        public add() {
-
-        }
-
-        public remove() {
-
-        }
+        public move:() => void;
+        public cut:() => void;
+        public add:() => void;
+        public remove:() => void;
 
     }
 

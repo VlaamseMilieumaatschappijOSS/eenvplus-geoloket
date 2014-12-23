@@ -16,6 +16,7 @@ module.exports = function (config) {
             'test/specs/src/ts/be/vmm/eenvplus/config/Module.js',
             'test/specs/src/ts/be/vmm/eenvplus/editor/area/Module.js',
             'test/specs/src/ts/be/vmm/eenvplus/editor/form/Module.js',
+            'test/specs/src/ts/be/vmm/eenvplus/editor/geometry/Module.js',
             'test/specs/src/ts/be/vmm/eenvplus/editor/paint/Module.js',
             'test/specs/src/ts/be/vmm/eenvplus/editor/tools/Module.js',
             'test/specs/src/ts/be/vmm/eenvplus/editor/validation/Module.js',
