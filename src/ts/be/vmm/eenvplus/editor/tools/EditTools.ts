@@ -27,7 +27,7 @@ module be.vmm.eenvplus.editor.tools.EditTools {
             this.remove = _.partial(select, geometry.EditorType.REMOVE);
 
             function select(editor:geometry.EditorType):void {
-                store.current = editor;
+                store.current = editor === store.current ? undefined : editor;
             }
         }
 

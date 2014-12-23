@@ -46,6 +46,7 @@ declare module ol {
         extend(array:T[]):Collection<T>;
         forEach(fn:(value:T, index:number, array:T[]) => void, scope?:any):void;
         getArray():T[];
+        push(item:T):number;
         remove(item:T):T;
     }
 
@@ -98,8 +99,9 @@ declare module ol {
     }
 
     interface FeatureOverlay {
-        new (config:any):FeatureOverlay;
+        new (config?:any):FeatureOverlay;
 
+        getFeatures():Collection<Feature>;
         setMap(map:any):void;
         setStyle(style:style.Style):void;
     }
