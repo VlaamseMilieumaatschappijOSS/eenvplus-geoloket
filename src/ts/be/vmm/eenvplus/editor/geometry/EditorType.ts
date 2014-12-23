@@ -3,7 +3,8 @@ module be.vmm.eenvplus.editor.geometry {
 
     export enum EditorType {
         MODIFY,
-        CUT
+        SPLIT,
+        MERGE
     }
 
 }

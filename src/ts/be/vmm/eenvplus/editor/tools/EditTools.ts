@@ -22,7 +22,8 @@ module be.vmm.eenvplus.editor.tools.EditTools {
 
         constructor(store:geometry.EditorStore) {
             this.modify = _.partial(select, geometry.EditorType.MODIFY);
-            this.cut = _.partial(select, geometry.EditorType.CUT);
+            this.split = _.partial(select, geometry.EditorType.SPLIT);
+            this.merge = _.partial(select, geometry.EditorType.MERGE);
 
             function select(editor:geometry.EditorType):void {
                 store.current = editor === store.current ? undefined : editor;
@@ -30,7 +31,8 @@ module be.vmm.eenvplus.editor.tools.EditTools {
         }
 
         public modify:() => void;
-        public cut:() => void;
+        public split:() => void;
+        public merge:() => void;
 
     }
 

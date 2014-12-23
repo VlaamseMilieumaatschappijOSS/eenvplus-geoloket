@@ -66,15 +66,26 @@
   }
 
   .btn {
+    padding: 5px;
+  }
 
-    span {
-      display: none;
-    }
+  .icon {
+    display: block;
+    width: 32px;
+    height: 32px;
+    background: url('/img/edit-icons.png');
+  }
 
-    &:hover span {
-      display: inline-block;
-    }
+  .icon.modify-geometry {
+    background-position: 0;
+  }
 
+  .icon.split-geometry {
+    background-position: -32px;
+  }
+
+  .icon.merge-geometry {
+    background-position: -64px;
   }
 
 }
