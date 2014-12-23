@@ -57,7 +57,14 @@ declare var describe : {
     only(description: string, spec: () => void): void;
     skip(description: string, spec: () => void): void;
     timeout(ms: number): void;
-}
+};
+
+declare var xdescribe : {
+    (description: string, spec: () => void): void;
+    only(description: string, spec: () => void): void;
+    skip(description: string, spec: () => void): void;
+    timeout(ms: number): void;
+};
 
 // alias for `describe`
 declare var context : {
@@ -65,9 +72,19 @@ declare var context : {
     only(contextTitle: string, spec: () => void): void;
     skip(contextTitle: string, spec: () => void): void;
     timeout(ms: number): void;
-}
+};
 
 declare var it: {
+    (expectation: string, assertion?: () => void): void;
+    (expectation: string, assertion?: (done: MochaDone) => void): void;
+    only(expectation: string, assertion?: () => void): void;
+    only(expectation: string, assertion?: (done: MochaDone) => void): void;
+    skip(expectation: string, assertion?: () => void): void;
+    skip(expectation: string, assertion?: (done: MochaDone) => void): void;
+    timeout(ms: number): void;
+};
+
+declare var xit: {
     (expectation: string, assertion?: () => void): void;
     (expectation: string, assertion?: (done: MochaDone) => void): void;
     only(expectation: string, assertion?: () => void): void;

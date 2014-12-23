@@ -15,11 +15,13 @@ module be.vmm.eenvplus.feature {
     describe('FeatureManager', () => {
 
         var manager,
+            service,
             ng;
 
-        beforeEach(inject(function(_epFeatureManager_, _$rootScope_) {
+        beforeEach(inject(function(_epFeatureManager_, _epFeatureService_, _$rootScope_) {
             ng = _$rootScope_;
             manager = _epFeatureManager_;
+            service = _epFeatureService_;
 
             sewers.forEach(_.partial(commitIndexedDBMockData, sewer.replace('all:', '')));
             appurtenances.forEach(_.partial(commitIndexedDBMockData, appurtenance.replace('all:', '')));
@@ -28,12 +30,32 @@ module be.vmm.eenvplus.feature {
             FeatureService.indexedDB = mockIndexedDB;
         }));
 
-        it('should fail', () => {
-            expect(true).to.be.true();
+        // indexeddb mock doesn't support parallel access
+        xit('removes a feature and connected nodes', (done) => {
+            var i = 0;
+            manager.signal.remove.add((result:model.FeatureJSON):void => {
+                expect(result.action).to.equal('delete');
+
+                if (i === 3) {
+                    expect(mockIndexedDBItems[sewer].length).to.equal(sewers.length);
+                    expect(mockIndexedDBItems[node].length).to.equal(nodes.length);
+                    expect(getDeleted(mockIndexedDBItems[sewer]).length).to.equal(sewers.length - 1);
+                    expect(getDeleted(mockIndexedDBItems[node]).length).to.equal(nodes.length - 2);
+
+                    done();
+                }
+            });
+            manager.remove(_.cloneDeep(sewers[2]));
+
+            ng.$digest();
         });
 
         afterEach(resetIndexedDBMock);
 
     });
+
+    function getDeleted(list) {
+        return _(list).map('value').reject({action: 'delete'}).value();
+    }
 
 }

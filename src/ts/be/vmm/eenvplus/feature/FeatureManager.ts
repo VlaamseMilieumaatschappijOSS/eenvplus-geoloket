@@ -188,17 +188,11 @@ module be.vmm.eenvplus.feature {
                 json = json || store.current;
 
                 if (json.id) deselect();
-                else {
-                    getConnectedNodesByKeys(json)
-                        .then(_.partialRight(_.each, discard))
-                        .catch(handleError('discard', json));
-
-                    remove(json);
-                }
+                else remove(json);
             }
 
             function remove(json?:model.FeatureJSON):void {
-                var removeNode = _.partial(removeById, toLayerBodId(FeatureType.NODE));
+                var removeNode = _.partial(removeByIdOrKey, toLayerBodId(FeatureType.NODE));
 
                 json = json || store.current;
 
@@ -216,12 +210,14 @@ module be.vmm.eenvplus.feature {
                     .catch(handleError('remove', json));
             }
 
-            function removeById(layerBodId:string, featureId:number):void {
-                service
-                    .getById(layerBodId, featureId)
+            function removeByIdOrKey(layerBodId:string, featureIdOrKey:string):void {
+                var call = isNodeKey(featureIdOrKey) ? service.get : service.getById,
+                    numericIdOrKey = parseInt(featureIdOrKey.toString().replace('#', ''), 10);
+
+                call.call(service, layerBodId, numericIdOrKey)
                     .then(service.remove)
                     .then(signals.remove.fire)
-                    .catch(handleError('removeById'));
+                    .catch(handleError('removeByIdOrKey'));
             }
 
             function getConnectedNodesByKeys(json:model.FeatureJSON):ng.IPromise<model.FeatureJSON[]> {

@@ -109,48 +109,7 @@ module.exports = function (grunt) {
 
         karma: {
             test: {
-                // the 'options' thing here is a workaround
-                options: {
-                    files: [
-                        'src/lib/jquery-2.0.3.js',
-                        'src/lib/angular/angular.js',
-                        'src/lib/angular-animate/angular-animate.js',
-                        'src/lib/angular-resource/angular-resource.js',
-                        'src/lib/angular-translate-1.1.1.js',
-                        'src/lib/angular-translate-loader-static-files-0.1.5.js',
-                        'src/lib/ol-debug.js',
-                        'src/lib/lodash.js',
-                        'src/lib/trasys.signals.js',
-                        'node_modules/angular-mocks/angular-mocks.js',
-                        'test/mock/*.js',
-                        dir.test.js + 'src/ts/be/vmm/eenvplus/Prefix.js',
-                        dir.test.js + 'src/ts/be/vmm/eenvplus/config/Module.js',
-                        dir.test.js + 'src/ts/be/vmm/eenvplus/editor/area/Module.js',
-                        dir.test.js + 'src/ts/be/vmm/eenvplus/editor/form/Module.js',
-                        dir.test.js + 'src/ts/be/vmm/eenvplus/editor/paint/Module.js',
-                        dir.test.js + 'src/ts/be/vmm/eenvplus/editor/tools/Module.js',
-                        dir.test.js + 'src/ts/be/vmm/eenvplus/editor/validation/Module.js',
-                        dir.test.js + 'src/ts/be/vmm/eenvplus/editor/Module.js',
-                        dir.test.js + 'src/ts/be/vmm/eenvplus/feature/Module.js',
-                        dir.test.js + 'src/ts/be/vmm/eenvplus/label/Module.js',
-                        dir.test.js + 'src/ts/be/vmm/eenvplus/state/Module.js',
-                        dir.test.js + 'src/ts/be/vmm/eenvplus/viewer/Module.js',
-                        dir.test.js + 'src/ts/be/vmm/eenvplus/Module.js',
-                        testSrc.js
-                    ]
-                },
-                basePath: '',
-                exclude: [],
-                autoWatch: true,
-                frameworks: ['mocha', 'chai', 'sinon'],
-                browsers: ['PhantomJS'],
-                preprocessors: {
-                    '<%= dir.test.js %>src/*.js': ['coverage']
-                },
-                coverageReporter: {
-                    type: 'text-summary'
-                },
-                reporters: ['progress', 'coverage']
+                configFile: 'test/karma.conf.js'
             }
         },
 
