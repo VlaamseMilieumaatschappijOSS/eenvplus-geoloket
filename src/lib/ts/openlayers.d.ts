@@ -112,6 +112,7 @@ declare module ol {
         addControl(control:control.Control):void;
         addInteraction(interaction:interaction.Interaction):void;
         addLayer(layer:layer.Base):void;
+        getInteractions():Collection<ol.interaction.Interaction>;
         getLayers():ol.Collection<layer.Base>;
         getPixelFromCoordinate(coordinate:Coordinate):Pixel;
         getSize():Size;
@@ -318,6 +319,7 @@ declare module ol {
             DragZoom:DragZoom;
             Draw:Draw;
             DrawMode:DrawMode;
+            Modify:Modify;
             Select:Select;
         }
 
@@ -344,6 +346,10 @@ declare module ol {
         interface Interaction extends Observable {
             getActive():boolean;
             setActive(value:boolean):void;
+        }
+
+        interface Modify extends Pointer {
+            new (config:any):Modify;
         }
 
         interface Pointer extends Interaction {
