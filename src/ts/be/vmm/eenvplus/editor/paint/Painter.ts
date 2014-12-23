@@ -9,7 +9,7 @@ module be.vmm.eenvplus.editor.paint {
     export function Painter(type:feature.FeatureType,
                             q:ng.IQService,
                             map:ol.Map,
-                            state:PainterState,
+                            state:StateController<feature.FeatureType>,
                             manager:feature.FeatureManager):void {
 
         var commitFeature = commitFn(type),
