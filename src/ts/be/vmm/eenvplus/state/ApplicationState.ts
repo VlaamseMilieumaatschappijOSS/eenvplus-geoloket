@@ -10,6 +10,7 @@ module be.vmm.eenvplus.state.applicationState {
         'view',
         'edit',
         'feature-selected',
+        'invalid',
         'overview',
         'detail'
     ];

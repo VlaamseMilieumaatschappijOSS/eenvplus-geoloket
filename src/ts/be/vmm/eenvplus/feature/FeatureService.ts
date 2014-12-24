@@ -418,7 +418,7 @@ module be.vmm.eenvplus.feature {
 
                     var request = objectStore.put(feature);
                     request.onsuccess = () => {
-                        d.resolve();
+                        d.resolve(feature);
                     };
                     request.onerror = () => {
                         d.reject("Could not update feature in local storage.");

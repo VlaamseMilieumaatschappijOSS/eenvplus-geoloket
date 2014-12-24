@@ -9,6 +9,7 @@ module be.vmm.eenvplus.state {
         currentMode:State;
         currentLevel:State;
         featureSelected:State;
+        invalid:State;
         modeChanged:Trasys.Signals.ITypeSignal<State>;
         levelChanged:Trasys.Signals.ITypeSignal<State>;
     }
@@ -20,13 +21,14 @@ module be.vmm.eenvplus.state {
             currentLevel = State.OVERVIEW,
             store = {
                 get current():State[] {
-                    return [currentMode, currentLevel, store.featureSelected];
+                    return [currentMode, currentLevel, store.featureSelected, store.invalid];
                 },
                 get currentMode():State {
                     return currentMode;
                 },
                 set currentMode(value:State) {
                     if (value === currentMode) return;
+                    if (value === State.VIEW) store.invalid = State;
                     currentMode = value;
                     store.modeChanged.fire(value);
                 },
@@ -39,6 +41,7 @@ module be.vmm.eenvplus.state {
                     store.levelChanged.fire(value);
                 },
                 featureSelected: State,
+                invalid: State,
                 modeChanged: new Trasys.Signals.TypeSignal(),
                 levelChanged: new Trasys.Signals.TypeSignal()
             };

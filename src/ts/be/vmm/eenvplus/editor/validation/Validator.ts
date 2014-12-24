@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.validation.validator {
     export var NAME:string = PREFIX + 'Validator';
 
     function configure():ng.IDirective {
-        ValidatorController.$inject = ['epStateStore', 'epFeatureManager'];
+        ValidatorController.$inject = ['epFeatureManager'];
 
         return {
             restrict: 'A',
@@ -26,20 +26,12 @@ module be.vmm.eenvplus.editor.validation.validator {
 
         public results:FeatureResult[];
 
-        public get isActive():boolean {
-            return this.state.currentLevel === state.State.DETAIL && !this.valid;
-        }
-
-        private state:state.StateStore;
-        private valid:boolean = true;
-
 
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(state:state.StateStore, manager:feature.FeatureManager) {
-            this.state = state;
+        constructor(manager:feature.FeatureManager) {
             manager.signal.validate.add(this.handleValidation.bind(this));
         }
 
@@ -49,7 +41,6 @@ module be.vmm.eenvplus.editor.validation.validator {
         /* ---------------------- */
 
         private handleValidation(result:ValidationResult):void {
-            this.valid = result.valid;
             this.results = result.results;
         }
 

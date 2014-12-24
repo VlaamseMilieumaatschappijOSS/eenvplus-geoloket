@@ -5,6 +5,7 @@ module be.vmm.eenvplus.state {
         VIEW,
         EDIT,
         FEATURE_SELECTED,
+        INVALID,
         OVERVIEW,
         DETAIL
     }

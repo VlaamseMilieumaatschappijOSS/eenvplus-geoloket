@@ -4,9 +4,12 @@
 module be.vmm.eenvplus.state {
     'use strict';
 
-    StateManager.$inject = ['epStateStore', 'epMap', 'epFeatureStore'];
+    StateManager.$inject = ['epStateStore', 'epMap', 'epFeatureStore', 'epFeatureManager'];
 
-    function StateManager(store:StateStore, map:ol.Map, featureStore:feature.FeatureStore):void {
+    function StateManager(store:StateStore,
+                          map:ol.Map,
+                          featureStore:feature.FeatureStore,
+                          featureManager:feature.FeatureManager):void {
 
         /* ------------------ */
         /* --- properties --- */
@@ -24,6 +27,7 @@ module be.vmm.eenvplus.state {
         view.on(changeEvent(ol.ViewProperty.RESOLUTION), invalidateLevel);
         layers.on(changeEvent(ol.CollectionProperty.LENGTH), setLevelThreshold);
         featureStore.selected.add(invalidateFeatureSelection);
+        featureManager.signal.validate.add(invalidateValidity);
 
 
         /* ----------------- */
@@ -44,6 +48,10 @@ module be.vmm.eenvplus.state {
 
         function invalidateFeatureSelection(feature:feature.model.FeatureJSON):void {
             store.featureSelected = feature ? State.FEATURE_SELECTED : -1;
+        }
+
+        function invalidateValidity(result:editor.validation.ValidationResult):void {
+            store.invalid = result.valid ? -1 : State.INVALID;
         }
 
     }

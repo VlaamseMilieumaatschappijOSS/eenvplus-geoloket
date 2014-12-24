@@ -1,21 +1,19 @@
-<div ng-show="ctrl.isActive" class="content">
-    <ul>
-        <li ng-repeat="result in ctrl.results">
-            <div ng-class="{'alert-success': result.valid, 'alert-warning': !result.valid}"
-                 class="alert checkbox">
+<ul>
+    <li ng-repeat="result in ctrl.results">
+        <div ng-class="{'alert-success': result.valid, 'alert-warning': !result.valid}"
+             class="alert checkbox">
 
-                <label>
-                    <input type="checkbox" ng-model="result.valid">
-                    <strong>{{result | epFeatureLabel}}</strong> ({{result.key}})
-                </label>
-            </div>
+            <label>
+                <input type="checkbox" ng-model="result.valid">
+                <strong>{{result | epFeatureLabel}}</strong> ({{result.key}})
+            </label>
+        </div>
 
-            <ul ng-hide="result.valid">
-                <li ng-repeat="message in result.messages"
-                    class="{{message.level}}">
-                    <strong>{{message.path}}:</strong> {{message.description}}
-                </li>
-            </ul>
-        </li>
-    </ul>
-</div>
+        <ul ng-hide="result.valid">
+            <li ng-repeat="message in result.messages"
+                class="{{message.level}}">
+                <strong>{{message.path}}:</strong> {{message.description}}
+            </li>
+        </ul>
+    </li>
+</ul>
