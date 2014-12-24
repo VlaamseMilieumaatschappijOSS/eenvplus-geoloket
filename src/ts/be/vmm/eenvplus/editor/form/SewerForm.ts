@@ -30,7 +30,15 @@ module be.vmm.eenvplus.editor.form.sewerForm {
         /* ------------------ */
 
         /** @inject */
-        public data:feature.model.FeatureJSON;
+        private _data:feature.model.FeatureJSON;
+        public get data():feature.model.FeatureJSON {
+            return this._data;
+        }
+        public set data(value:feature.model.FeatureJSON) {
+            this._data = value;
+            this.initProxies();
+        }
+
         /** @inject */
         public validate:Validator;
         public selectedSource:label.Label;
@@ -51,7 +59,9 @@ module be.vmm.eenvplus.editor.form.sewerForm {
             this.sources = labelService.getLabels(label.LabelType.SOURCE);
             this.types = labelService.getLabels(label.LabelType.SEWER_TYPE);
             this.waterTypes = labelService.getLabels(label.LabelType.WATER_TYPE);
+        }
 
+        private initProxies():void {
             label.proxy(this, this.data.properties)
                 .map(this.sources, 'selectedSource', 'namespaceId')
                 .map(this.types, 'selectedType', 'rioolLinkTypeId')

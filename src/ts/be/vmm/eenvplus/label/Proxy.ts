@@ -14,7 +14,8 @@ module be.vmm.eenvplus.label {
     export function map(proxyObj:any, dataObj:any, labels:Label[], proxyProp:string, idProp:string):Proxy {
         var accessor = {
             get: getter(labels, dataObj, idProp),
-            set: setter(dataObj, idProp)
+            set: setter(dataObj, idProp),
+            configurable: true
         };
 
         Object.defineProperty(proxyObj, proxyProp, accessor);
