@@ -5,12 +5,14 @@ module be.vmm.eenvplus.editor.area {
     'use strict';
 
     Selector.$inject = [
-        'epMap', 'epStateStore', 'epFeatureStore', 'epPainterStore', 'epFeatureManager', 'epFeatureStyleFactory'
+        'epMap', 'epStateStore', 'epFeatureStore', 'epFeatureLayerStore', 'epPainterStore',
+        'epFeatureManager', 'epFeatureStyleFactory'
     ];
 
     function Selector(map:ol.Map,
                       stateStore:state.StateStore,
                       featureStore:feature.FeatureStore,
+                      featureLayerStore:feature.FeatureLayerStore,
                       painterStore:paint.PainterStore,
                       featureManager:feature.FeatureManager,
                       createStyle:feature.StyleFactory):void {
@@ -86,7 +88,10 @@ module be.vmm.eenvplus.editor.area {
 
             _.invoke(all, 'setActive', active);
 
-            if (!featureStore.current) selection.clear();
+            if (!featureStore.current)
+                selection.clear();
+            else if (!selection.getLength())
+                selection.push(featureLayerStore.getInfo(featureStore.current).olFeature);
         }
 
     }

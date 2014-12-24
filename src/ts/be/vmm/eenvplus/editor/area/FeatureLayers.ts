@@ -7,27 +7,22 @@ module be.vmm.eenvplus.editor.area.featureLayers {
     'use strict';
 
     FeatureLayersController.$inject = [
-        'epMap', 'epStateStore', 'epAreaStore', 'epFeatureManager', 'epFeatureLayerFactory'
+        'epMap', 'epStateStore', 'epAreaStore', 'epFeatureManager', 'epFeatureLayerStore', 'epFeatureLayerFactory'
     ];
-
-    interface FeatureInfo {
-        olFeature:feature.LocalFeature;
-        layer:ol.layer.Vector;
-    }
 
     export function FeatureLayersController(map:ol.Map,
                                             stateStore:state.StateStore,
                                             store:AreaStore,
                                             manager:feature.FeatureManager,
-                                            featureLayer:feature.FeatureLayerFactory):void {
+                                            featureLayerStore:feature.FeatureLayerStore,
+                                            featureLayerFactory:feature.FeatureLayerFactory):void {
 
         /* ------------------ */
         /* --- properties --- */
         /* ------------------ */
 
         var addLayer = map.addLayer.bind(map),
-            removeLayer = map.removeLayer.bind(map),
-            featureLayers:ol.layer.Layer[];
+            removeLayer = map.removeLayer.bind(map);
 
 
         /* -------------------- */
@@ -45,52 +40,44 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         }
 
 
-        /* ----------------- */
-        /* --- behaviour --- */
-        /* ----------------- */
-
-        function createLayers():void {
-            featureLayers = _(map.getLayers().getArray())
-                .invoke(ol.layer.Base.prototype.get, 'bodId')
-                .filter(feature.isEditable)
-                .map(feature.toType)
-                .map(featureLayer.createLayer)
-                .value();
-            featureLayers.forEach(addLayer);
-        }
-
-        function updateFeature(json:feature.model.FeatureJSON):void {
-            var info = getFeatureInfo(json);
-            info.olFeature.action = json.action;
-            info.layer.changed();
-        }
-
-        function removeFromLayer(json:feature.model.FeatureJSON):void {
-            var info = getFeatureInfo(json);
-            info.layer.getSource().removeFeature(info.olFeature);
-        }
-
-        function getFeatureInfo(json:feature.model.FeatureJSON):FeatureInfo {
-            var layer:ol.layer.Vector = _.where(featureLayers, {values_: {layerBodId: json.layerBodId}})[0];
-            return {
-                layer: layer,
-                olFeature: _.find(layer.getSource().getFeatures(), {key: json.key})
-            };
-        }
-
-        function clear():void {
-            stateStore.modeChanged.remove(handleModeChange);
-            featureLayers.forEach(removeLayer);
-            featureLayers = [];
-        }
-
-
         /* ---------------------- */
         /* --- event handlers --- */
         /* ---------------------- */
 
         function handleModeChange(editMode:state.State):void {
             if (editMode === state.State.VIEW) clear();
+        }
+
+
+        /* ----------------- */
+        /* --- behaviour --- */
+        /* ----------------- */
+
+        function createLayers():void {
+            featureLayerStore.layers = _(map.getLayers().getArray())
+                .invoke(ol.layer.Base.prototype.get, 'bodId')
+                .filter(feature.isEditable)
+                .map(feature.toType)
+                .map(featureLayerFactory.createLayer)
+                .value();
+            featureLayerStore.layers.forEach(addLayer);
+        }
+
+        function updateFeature(json:feature.model.FeatureJSON):void {
+            var info = featureLayerStore.getInfo(json);
+            info.olFeature.action = json.action;
+            info.layer.changed();
+        }
+
+        function removeFromLayer(json:feature.model.FeatureJSON):void {
+            var info = featureLayerStore.getInfo(json);
+            info.layer.getSource().removeFeature(info.olFeature);
+        }
+
+        function clear():void {
+            stateStore.modeChanged.remove(handleModeChange);
+            featureLayerStore.layers.forEach(removeLayer);
+            featureLayerStore.layers = [];
         }
 
     }
