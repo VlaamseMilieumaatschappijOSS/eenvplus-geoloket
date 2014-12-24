@@ -26,6 +26,8 @@ module be.vmm.eenvplus.editor.area.areaZoom {
         /* ----------------- */
 
         function centerAndZoom(extent:ol.Extent):void {
+            if (!extent) return;
+
             center(extent);
             zoom(extent);
         }

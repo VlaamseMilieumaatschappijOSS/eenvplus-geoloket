@@ -1,57 +1,75 @@
 ///ts:ref=Module
 /// <reference path="../Module.ts"/> ///ts:ref:generated
 
-module be.vmm.eenvplus.editor.cursor {
+module be.vmm.eenvplus.editor {
     'use strict';
 
-    export var NAME:string = PREFIX + 'Cursor';
 
-    directive.$inject = ['epStateStore', 'epAreaStore', 'epPainterStore'];
+    Cursor.$inject = ['epMap', 'epStateStore', 'epAreaStore', 'epPainterStore'];
 
-    function directive(stateStore:state.StateStore, areaStore:area.AreaStore, painterStore:paint.PainterStore):ng.IDirective {
+    function Cursor(map:ol.Map,
+                    stateStore:state.StateStore,
+                    areaStore:area.AreaStore,
+                    painterStore:paint.PainterStore):void {
+
+        /* ------------------ */
+        /* --- properties --- */
+        /* ------------------ */
+
+        var el = $(map.getViewport());
+
 
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
-        var setCursor:(value:string) => void;
-
-        stateStore.modeChanged.add(handleModeChange);
+        stateStore.modeChanged.add(<any>invalidateState);
         areaStore.selected.add(handleAreaSelection);
-        painterStore.selected.add(handlePainterSelection);
-
-        return {
-            restrict: 'C',
-            link: init
-        };
-
-        function init(scope:ng.IScope, el:ng.IAugmentedJQuery):void {
-            setCursor = function setCursor(value:string):void {
-                el.css('cursor', value);
-            };
-        }
+        painterStore.selected.add(<any>invalidateState);
 
 
         /* ---------------------- */
         /* --- event handlers --- */
         /* ---------------------- */
 
-        function handleModeChange(editMode:state.State):void {
-            setCursor(editMode === state.State.EDIT ? 'crosshair' : 'default');
-        }
-
         function handleAreaSelection(extent:ol.Extent):void {
-            if (extent) setCursor('default');
+            extent ?
+                el.on('mousemove', handleMouseMove) :
+                el.off('mousemove', handleMouseMove);
+            invalidateState();
         }
 
-        function handlePainterSelection(type:feature.FeatureType):void {
-            setCursor(type === undefined ? 'default' : 'crosshair');
+        function handleMouseMove(event:any):void {
+            invalidateState(map.getEventCoordinate(event));
+        }
+
+
+        /* ----------------- */
+        /* --- behaviour --- */
+        /* ----------------- */
+
+        /**
+         * Crosshair is shown:
+         * - only in 'edit' mode, never in 'view' mode
+         * - when no area has been selected yet
+         * - when the user is painting and the mouse is inside the selected area
+         * 
+         * @param mouseCoordinate
+         */
+        function invalidateState(mouseCoordinate?:ol.Coordinate):void {
+            var isDrawing = stateStore.currentMode === state.State.EDIT &&
+                (!areaStore.current || painterStore.current !== undefined && inArea(mouseCoordinate));
+            el.css('cursor', isDrawing ? 'crosshair' : 'default');
+        }
+
+        function inArea(mouseCoordinate:ol.Coordinate):boolean {
+            return ol.extent.containsCoordinate(areaStore.current, mouseCoordinate);
         }
 
     }
 
     angular
         .module(MODULE)
-        .directive(NAME, directive);
+        .run(Cursor);
 
 }

@@ -113,6 +113,8 @@ declare module ol {
         addControl(control:control.Control):void;
         addInteraction(interaction:interaction.Interaction):void;
         addLayer(layer:layer.Base):void;
+        getEventCoordinate(event:MouseEvent):Coordinate;
+        getEventPixel(event:MouseEvent):Pixel;
         getInteractions():Collection<ol.interaction.Interaction>;
         getLayers():ol.Collection<layer.Base>;
         getPixelFromCoordinate(coordinate:Coordinate):Pixel;
@@ -234,6 +236,7 @@ declare module ol {
     module extent {
 
         interface Static {
+            containsCoordinate(extent:Extent, coordinate:Coordinate):boolean;
             getCenter(extent:Extent):Coordinate;
             intersects(extent1:Extent, extent2:Extent):boolean;
         }
