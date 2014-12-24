@@ -8,7 +8,7 @@ module be.vmm.eenvplus.editor.paint {
 
     function PainterManager(store:PainterStore, feature:feature.FeatureStore) {
         feature.selected.add((json:feature.model.FeatureJSON):void => {
-            if (!json) store.current = undefined;
+            if (json) store.current = undefined;
         });
     }
 
