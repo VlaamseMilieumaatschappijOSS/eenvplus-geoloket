@@ -7,6 +7,7 @@ module be.vmm.eenvplus.feature {
     export interface FeatureStore {
         current:model.FeatureJSON;
         selected:Trasys.Signals.ITypeSignal<model.FeatureJSON>;
+        selection:ol.Collection<ol.Feature>;
     }
 
     export module FeatureStore {
@@ -22,7 +23,8 @@ module be.vmm.eenvplus.feature {
                     current = value;
                     store.selected.fire(value);
                 },
-                selected: new Trasys.Signals.TypeSignal()
+                selected: new Trasys.Signals.TypeSignal(),
+                selection: undefined
             };
 
         angular

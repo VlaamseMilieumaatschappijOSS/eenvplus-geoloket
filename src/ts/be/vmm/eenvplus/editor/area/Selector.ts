@@ -23,7 +23,7 @@ module be.vmm.eenvplus.editor.area {
 
         var select = createInteraction(ol.events.condition.click),
             highlight = createInteraction(ol.events.condition.mouseMove),
-            selection = select.getFeatures(),
+            selection = featureStore.selection = select.getFeatures(),
             stylesByType:feature.getStyle[] = [],
             all = [select, highlight];
 
