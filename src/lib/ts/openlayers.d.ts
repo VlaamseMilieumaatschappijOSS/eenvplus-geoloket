@@ -134,6 +134,7 @@ declare module ol {
         browserEvent:goog.events.BrowserEvent;
         originalEvent:Event;
         pixel:ol.Pixel;
+        type:string;
     }
 
     interface MapEvent extends goog.events.Event {
@@ -388,6 +389,8 @@ declare module ol {
 
         interface Interaction extends Observable {
             getActive():boolean;
+            handleEvent(event:MapBrowserEvent):boolean;
+            handleMapBrowserEvent(event:MapBrowserEvent):boolean;
             setActive(value:boolean):void;
         }
 

@@ -55,6 +55,16 @@ module be.vmm.eenvplus.editor.geometry {
         /* --- event handlers --- */
         /* ---------------------- */
 
+        function handleKey(event:KeyboardEvent):void {
+            hasKeyModifier = event.altKey;
+
+            if (modify.vertexFeature_) {
+                var vertex = <ol.geometry.Point> modify.vertexFeature_.getGeometry();
+                actionStore.current = determineAction(vertex.getCoordinates());
+            }
+            else actionStore.current = Action.NONE;
+        }
+
         function handleMouseMove(event:ol.MapBrowserEvent):void {
             hasKeyModifier = ol.events.condition.altKeyOnly(event);
             modify.lastPixel_ = event.pixel;
@@ -73,6 +83,8 @@ module be.vmm.eenvplus.editor.geometry {
         /* ----------------- */
 
         function activate():void {
+            document.onkeydown = handleKey;
+            document.onkeyup = handleKey;
             map.addInteraction(modify);
         }
 
@@ -140,15 +152,9 @@ module be.vmm.eenvplus.editor.geometry {
             }
         }
 
-        function remove():void {
-            var geometry = this.vertexFeature_.getGeometry();
-            console.log(geometry);
-            goog.asserts.assertInstanceof(geometry, ol.geom.Point);
-            modify.removeVertex_();
-        }
-
         function deactivate():void {
             map.removeInteraction(modify);
+            document.onkeydown = document.onkeyup = null;
         }
 
     }

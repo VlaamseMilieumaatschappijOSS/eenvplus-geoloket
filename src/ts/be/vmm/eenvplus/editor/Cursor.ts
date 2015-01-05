@@ -70,6 +70,7 @@ module be.vmm.eenvplus.editor {
 
         function setAction($action:geometry.Action):void {
             action = $action;
+            el.css('cursor', actionCursor[action]);
         }
 
         /**
