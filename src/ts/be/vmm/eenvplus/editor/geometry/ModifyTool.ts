@@ -2,7 +2,9 @@ module be.vmm.eenvplus.editor.geometry {
     'use strict';
 
     interface ModifyPrivate extends ol.interaction.Modify {
+        dragSegments_:any[];
         overlay_:ol.Overlay;
+        lastPixel_:ol.Pixel;
         pixelTolerance_:number;
         rBush_:ol.struct.RBush<ol.interaction.SegmentDataType>;
         snappedToVertex_:boolean;
@@ -10,7 +12,11 @@ module be.vmm.eenvplus.editor.geometry {
         vertexSegments_:SegmentMap;
 
         createOrUpdateVertexFeature_(vertex:ol.Coordinate):void;
+        handleDownEvent_(event:ol.MapBrowserEvent):void;
         handlePointerAtPixel_(pixel:ol.Pixel):void;
+        handlePointerMove_(event:ol.MapBrowserEvent):void;
+        handleUpEvent_(event:ol.MapBrowserEvent):void;
+        removeVertex_():void;
     }
 
     interface SegmentMap {
@@ -29,9 +35,11 @@ module be.vmm.eenvplus.editor.geometry {
         /* --- properties --- */
         /* ------------------ */
 
-        var modify:ModifyPrivate = <ModifyPrivate> new ol.interaction.Modify({
-            features: featureStore.selection
-        });
+        var hasKeyModifier:boolean = false,
+            modify:ModifyPrivate = <ModifyPrivate> new ol.interaction.Modify({
+                features: featureStore.selection,
+                deleteCondition: goog.functions.and(ol.events.condition.altKeyOnly, ol.events.condition.singleClick)
+            });
 
 
         /* -------------------- */
@@ -39,12 +47,19 @@ module be.vmm.eenvplus.editor.geometry {
         /* -------------------- */
 
         state(EditorType.MODIFY, activate, deactivate);
+        modify.handlePointerMove_ = handleMouseMove;
         modify.handlePointerAtPixel_ = handlePointerAtPixel;
 
 
         /* ---------------------- */
         /* --- event handlers --- */
         /* ---------------------- */
+
+        function handleMouseMove(event:ol.MapBrowserEvent):void {
+            hasKeyModifier = ol.events.condition.altKeyOnly(event);
+            modify.lastPixel_ = event.pixel;
+            handlePointerAtPixel(event.pixel);
+        }
 
         function handlePointerAtPixel(pixel:ol.Pixel):void {
             var pixelCoordinate = map.getCoordinateFromPixel(pixel),
@@ -87,12 +102,34 @@ module be.vmm.eenvplus.editor.geometry {
                 dist = Math.sqrt(Math.min(squaredDist1, squaredDist2));
 
             modify.snappedToVertex_ = dist <= modify.pixelTolerance_;
-            if (modify.snappedToVertex_) vertex = squaredDist1 > squaredDist2 ? segment[1] : segment[0];
-            actionStore.current = modify.snappedToVertex_ ? Action.MOVE : Action.ADD;
+            if (modify.snappedToVertex_)
+                vertex = squaredDist1 > squaredDist2 ? segment[1] : segment[0];
 
+            actionStore.current = determineAction(vertex);
             modify.createOrUpdateVertexFeature_(vertex);
             modify.vertexSegments_ = {};
             modify.vertexSegments_[goog.getUid(segment)] = true;
+        }
+
+        /**
+         * Determine the action to take based on the snapped vertex:
+         * - if it's on a segment, we can add a vertex
+         * - if it's on a vertex, we can move it around
+         * - if it's on a vertex with the Alt key pressed, we can delete it,
+         * unless it's the start/end vertex of the geometry
+         *
+         * @param vertex
+         * @returns The action to take.
+         */
+        function determineAction(vertex:ol.Coordinate):Action {
+            if (!modify.snappedToVertex_) return Action.ADD;
+
+            var featureCoordinates = featureStore.current.geometry.coordinates,
+                isEndVertex =
+                    ol.coordinate.equals(vertex, _.first(featureCoordinates)) ||
+                    ol.coordinate.equals(vertex, _.last(featureCoordinates));
+
+            return isEndVertex || !hasKeyModifier ? Action.MOVE : Action.REMOVE;
         }
 
         function unsnap():void {
@@ -101,6 +138,13 @@ module be.vmm.eenvplus.editor.geometry {
                 modify.vertexFeature_ = null;
                 actionStore.current = Action.NONE;
             }
+        }
+
+        function remove():void {
+            var geometry = this.vertexFeature_.getGeometry();
+            console.log(geometry);
+            goog.asserts.assertInstanceof(geometry, ol.geom.Point);
+            modify.removeVertex_();
         }
 
         function deactivate():void {

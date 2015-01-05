@@ -4,7 +4,9 @@ declare module goog {
 
     interface ClosureStatic {
 
+        asserts:asserts.Static;
         events:events.Static;
+        functions:functions.Static;
 
         addDependency(relPath:string, provides:string[], requires:string[]):void;
         base(instance:Function, ...args:any[]):void;
@@ -20,12 +22,25 @@ declare module goog {
 
     }
 
+    module asserts {
+
+        interface Static {
+            assertInstanceof(instance:any, klass:any):void;
+        }
+
+    }
+
     module events {
 
         interface Static {
+            BrowserEvent:BrowserEvent;
             Event:Event;
             EventType:EventType;
             Key:Key<any>;
+        }
+
+        interface BrowserEvent extends Event {
+            ctrlKey:boolean;
         }
 
         interface Key<T> {
@@ -37,6 +52,14 @@ declare module goog {
 
         interface EventType {
             CHANGE:string;
+        }
+
+    }
+
+    module functions {
+
+        interface Static {
+            and(fnA:(data?:any) => boolean, fnB:(data?:any) => boolean):boolean;
         }
 
     }

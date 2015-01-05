@@ -131,9 +131,13 @@ declare module ol {
     }
 
     interface MapBrowserEvent extends MapEvent {
+        browserEvent:goog.events.BrowserEvent;
+        originalEvent:Event;
+        pixel:ol.Pixel;
     }
 
     interface MapEvent extends goog.events.Event {
+        map:ol.Map;
     }
 
     interface MapConfig {
@@ -241,8 +245,11 @@ declare module ol {
         module condition {
 
             interface Static {
+                altKeyOnly:interaction.handleMapBrowserEvent;
                 click:interaction.handleMapBrowserEvent;
                 mouseMove:interaction.handleMapBrowserEvent;
+                noModifierKeys:interaction.handleMapBrowserEvent;
+                singleClick:interaction.handleMapBrowserEvent;
             }
 
         }
