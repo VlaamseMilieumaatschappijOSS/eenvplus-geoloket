@@ -1,14 +1,17 @@
 <div class="btn-group" role="group">
     <button type="button" ng-click="ctrl.modify()"
-            class="btn btn-default">
+            class="btn btn-default"
+            ng-class="{selected: ctrl.modifySelected()}">
         <i class="icon modify-geometry"></i>
     </button>
     <button type="button" ng-click="ctrl.split()"
-            class="btn btn-default">
+            class="btn btn-default"
+            ng-class="{selected: ctrl.splitSelected()}">
         <i class="icon split-geometry"></i>
     </button>
     <button type="button" ng-click="ctrl.merge()"
-            class="btn btn-default">
+            class="btn btn-default"
+            ng-class="{selected: ctrl.mergeSelected()}">
         <i class="icon merge-geometry"></i>
     </button>
 </div>

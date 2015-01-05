@@ -24,15 +24,26 @@ module be.vmm.eenvplus.editor.tools.EditTools {
             this.modify = _.partial(select, geometry.EditorType.MODIFY);
             this.split = _.partial(select, geometry.EditorType.SPLIT);
             this.merge = _.partial(select, geometry.EditorType.MERGE);
+            this.modifySelected = _.partial(isSelected, geometry.EditorType.MODIFY);
+            this.splitSelected = _.partial(isSelected, geometry.EditorType.SPLIT);
+            this.mergeSelected = _.partial(isSelected, geometry.EditorType.MERGE);
 
             function select(editor:geometry.EditorType):void {
-                store.current = editor === store.current ? undefined : editor;
+                store.current = isSelected(editor) ? undefined : editor;
+            }
+
+            function isSelected(editor:geometry.EditorType):boolean {
+                return store.current === editor;
             }
         }
 
         public modify:() => void;
         public split:() => void;
         public merge:() => void;
+
+        public modifySelected:() => boolean;
+        public splitSelected:() => boolean;
+        public mergeSelected:() => boolean;
 
     }
 
