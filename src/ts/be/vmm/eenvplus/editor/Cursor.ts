@@ -1,24 +1,41 @@
 ///ts:ref=Module
 /// <reference path="../Module.ts"/> ///ts:ref:generated
+///ts:ref=Action
+/// <reference path="./geometry/Action.ts"/> ///ts:ref:generated
 
 module be.vmm.eenvplus.editor {
     'use strict';
 
 
-    Cursor.$inject = ['epMap', 'epStateStore', 'epAreaStore', 'epPainterStore', 'epGeometryEditorStore'];
+    Cursor.$inject = [
+        'epMap', 'epStateStore', 'epAreaStore', 'epPainterStore', 'epGeometryEditorStore', 'epGeometryActionStore'
+    ];
+
+    var actionCursor = [
+        'add',
+        'forbidden',
+        'move',
+        'modify',
+        'remove'
+    ].map(toCSS);
+
+    function toCSS(name:string):string {
+        return 'url("img/cursor/' + name + '.png"), default'
+    }
 
     function Cursor(map:ol.Map,
                     stateStore:state.StateStore,
                     areaStore:area.AreaStore,
                     painterStore:paint.PainterStore,
-                    editorStore:geometry.EditorStore):void {
+                    editorStore:geometry.EditorStore,
+                    actionStore:geometry.ActionStore):void {
 
         /* ------------------ */
         /* --- properties --- */
         /* ------------------ */
 
         var el = $(map.getViewport()),
-            modifier = false;
+            action = geometry.Action.NONE;
 
 
         /* -------------------- */
@@ -28,6 +45,7 @@ module be.vmm.eenvplus.editor {
         stateStore.modeChanged.add(<any>invalidateState);
         areaStore.selected.add(handleAreaSelection);
         painterStore.selected.add(<any>invalidateState);
+        actionStore.selected.add(setAction);
 
 
         /* ---------------------- */
@@ -42,7 +60,6 @@ module be.vmm.eenvplus.editor {
         }
 
         function handleMouseMove(event:any):void {
-            modifier = event.ctrlKey;
             invalidateState(map.getEventCoordinate(event));
         }
 
@@ -51,25 +68,30 @@ module be.vmm.eenvplus.editor {
         /* --- behaviour --- */
         /* ----------------- */
 
+        function setAction($action:geometry.Action):void {
+            action = $action;
+        }
+
         /**
          * Crosshair is shown:
          * - only in 'edit' mode, never in 'view' mode
          * - when no area has been selected yet
          * - when the user is painting and the mouse is inside the selected area
          *
+         * Action cursor is shown (inside the selected area only) when editing geometry.
+         *
          * @param mouseCoordinate
          */
         function invalidateState(mouseCoordinate?:ol.Coordinate):void {
             var isDrawing = stateStore.currentMode === state.State.EDIT &&
-                (!areaStore.current || painterStore.current !== undefined && inArea(mouseCoordinate));
-            var isModifying = editorStore.current !== undefined && inArea(mouseCoordinate);
+                    (!areaStore.current || painterStore.current !== undefined && inArea(mouseCoordinate)),
+                isModifying = editorStore.current !== undefined && inArea(mouseCoordinate),
+                cursor = 'default';
 
-            if (isModifying) {
-                var type = 'modify';
-                if (modifier) type = 'remove';
-                el.css('cursor', 'url("img/cursor/' + type + '.png"), default');
-            }
-            else el.css('cursor', isDrawing ? 'crosshair' : 'default');
+            if (isModifying) cursor = actionCursor[action];
+            else if (isDrawing) cursor = 'crosshair';
+
+            el.css('cursor', cursor);
         }
 
         function inArea(mouseCoordinate:ol.Coordinate):boolean {

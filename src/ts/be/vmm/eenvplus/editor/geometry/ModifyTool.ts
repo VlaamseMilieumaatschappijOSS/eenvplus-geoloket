@@ -1,8 +1,6 @@
 module be.vmm.eenvplus.editor.geometry {
     'use strict';
 
-    ModifyTool.$inject = ['epMap', 'epGeometryEditorState', 'epFeatureStore'];
-
     interface ModifyPrivate extends ol.interaction.Modify {
         overlay_:ol.Overlay;
         pixelTolerance_:number;
@@ -19,7 +17,13 @@ module be.vmm.eenvplus.editor.geometry {
         [uid:string]: boolean;
     }
 
-    export function ModifyTool(map:ol.Map, state:StateController<EditorType>, featureStore:feature.FeatureStore):void {
+
+    ModifyTool.$inject = ['epMap', 'epGeometryEditorState', 'epGeometryActionStore', 'epFeatureStore'];
+
+    export function ModifyTool(map:ol.Map,
+                               state:StateController<EditorType>,
+                               actionStore:ActionStore,
+                               featureStore:feature.FeatureStore):void {
 
         /* ------------------ */
         /* --- properties --- */
@@ -84,6 +88,7 @@ module be.vmm.eenvplus.editor.geometry {
 
             modify.snappedToVertex_ = dist <= modify.pixelTolerance_;
             if (modify.snappedToVertex_) vertex = squaredDist1 > squaredDist2 ? segment[1] : segment[0];
+            actionStore.current = modify.snappedToVertex_ ? Action.MOVE : Action.ADD;
 
             modify.createOrUpdateVertexFeature_(vertex);
             modify.vertexSegments_ = {};
@@ -94,6 +99,7 @@ module be.vmm.eenvplus.editor.geometry {
             if (!goog.isNull(modify.vertexFeature_)) {
                 modify.overlay_.removeFeature(modify.vertexFeature_);
                 modify.vertexFeature_ = null;
+                actionStore.current = Action.NONE;
             }
         }
 
