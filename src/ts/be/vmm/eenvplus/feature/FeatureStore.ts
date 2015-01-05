@@ -6,6 +6,7 @@ module be.vmm.eenvplus.feature {
 
     export interface FeatureStore {
         current:model.FeatureJSON;
+        geometry:ol.geometry.Geometry;
         selected:Trasys.Signals.ITypeSignal<model.FeatureJSON>;
         selection:ol.Collection<ol.Feature>;
     }
@@ -22,6 +23,9 @@ module be.vmm.eenvplus.feature {
                     if (value === current) return;
                     current = value;
                     store.selected.fire(value);
+                },
+                get geometry():ol.geometry.Geometry {
+                    return store.selection ? store.selection.item(0).getGeometry() : undefined;
                 },
                 selected: new Trasys.Signals.TypeSignal(),
                 selection: undefined

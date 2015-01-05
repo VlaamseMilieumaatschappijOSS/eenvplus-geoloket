@@ -13,7 +13,7 @@ module be.vmm.eenvplus.editor.geometry {
         /* ------------------ */
 
         var layer = new ol.FeatureOverlay(),
-            features = layer.getFeatures(),
+            vertices = new ol.geom.MultiPoint([]),
             active = false;
 
 
@@ -21,6 +21,9 @@ module be.vmm.eenvplus.editor.geometry {
         /* --- construction --- */
         /* -------------------- */
 
+        layer.getFeatures().push(new ol.Feature({
+            geometry: vertices
+        }));
         editorStore.selected.add(handleEditorSelection);
         featureStore.selected.add(handleFeatureSelection);
 
@@ -35,6 +38,7 @@ module be.vmm.eenvplus.editor.geometry {
 
         function handleFeatureSelection(feature:feature.model.FeatureJSON):void {
             if (feature === undefined) deactivate();
+            else updateGeometry();
         }
 
 
@@ -46,15 +50,13 @@ module be.vmm.eenvplus.editor.geometry {
             if (active) return;
 
             active = true;
-            featureStore.current.geometry.coordinates
-                .forEach(createVertex);
             layer.setMap(map);
+            featureStore.geometry.on(goog.events.EventType.CHANGE, updateGeometry);
         }
 
-        function createVertex(coordinate:ol.Coordinate):void {
-            features.push(new ol.Feature({
-                geometry: new ol.geom.Point(coordinate)
-            }));
+        function updateGeometry():void {
+            var geometry = <ol.geometry.LineString> featureStore.geometry;
+            vertices.setCoordinates(geometry.getCoordinates());
         }
 
         function deactivate() {
@@ -62,6 +64,7 @@ module be.vmm.eenvplus.editor.geometry {
 
             active = false;
             layer.setMap(null);
+            featureStore.geometry.un(goog.events.EventType.CHANGE, updateGeometry);
         }
 
     }

@@ -47,6 +47,7 @@ declare module ol {
         forEach(fn:(value:T, index:number, array:T[]) => void, scope?:any):void;
         getArray():T[];
         getLength():number;
+        item(index:number):T;
         push(item:T):number;
         remove(item:T):T;
     }
@@ -284,6 +285,7 @@ declare module ol {
     module geometry {
 
         interface Static {
+            MultiPoint:MultiPoint;
             Point:Point;
             Polygon:Polygon;
         }
@@ -293,6 +295,19 @@ declare module ol {
         }
 
         interface GeometryLayout extends String {
+        }
+
+        interface LineString extends SimpleGeometry {
+            new (coordinates:Coordinate[], layout?:GeometryLayout):LineString;
+
+            getCoordinates():Coordinate[];
+        }
+
+        interface MultiPoint extends SimpleGeometry {
+            new (coordinates:Coordinate[], layout?:GeometryLayout):MultiPoint;
+
+            getCoordinates():Coordinate[];
+            setCoordinates(coordinates:Coordinate[]):void;
         }
 
         interface SimpleGeometry extends Geometry {

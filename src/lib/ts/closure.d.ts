@@ -19,6 +19,7 @@ declare module goog {
 
         interface Static {
             Event:Event;
+            EventType:EventType;
             Key:Key<any>;
         }
 
@@ -27,6 +28,10 @@ declare module goog {
         }
 
         interface Event {
+        }
+
+        interface EventType {
+            CHANGE:string;
         }
 
     }
