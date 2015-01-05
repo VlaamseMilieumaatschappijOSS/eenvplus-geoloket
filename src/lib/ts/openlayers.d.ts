@@ -11,6 +11,7 @@ declare module ol {
         }
 
         control:control.Static;
+        coordinate:coordinate.Static;
         events:events.Static;
         extent:extent.Static;
         format:format.Static;
@@ -21,6 +22,7 @@ declare module ol {
         proj:proj.Static;
         render:render.Static;
         source:source.Static;
+        struct:struct.Static;
         style:style.Static;
         tilegrid:tilegrid.Static;
 
@@ -114,6 +116,7 @@ declare module ol {
         addControl(control:control.Control):void;
         addInteraction(interaction:interaction.Interaction):void;
         addLayer(layer:layer.Base):void;
+        getCoordinateFromPixel(pixel:Pixel):Coordinate;
         getEventCoordinate(event:MouseEvent):Coordinate;
         getEventPixel(event:MouseEvent):Pixel;
         getInteractions():Collection<ol.interaction.Interaction>;
@@ -171,7 +174,8 @@ declare module ol {
         unByKey(key:goog.events.Key<Observable>):void;
     }
 
-    interface Overlay {
+    interface Overlay extends Object {
+        removeFeature(feature:ol.Feature):void;
     }
 
     interface Pixel extends Array<number> {
@@ -217,6 +221,17 @@ declare module ol {
 
     }
 
+    module coordinate {
+
+        interface Static {
+            closestOnSegment(coordinate:Coordinate, segment:Coordinate[]):Coordinate;
+            equals(coordinateA:Coordinate, coordinateB:Coordinate):boolean;
+            squaredDistance(coordinateA:Coordinate, coordinateB:Coordinate):number;
+            squaredDistanceToSegment(coordinate:Coordinate, segment:Coordinate[]):number;
+        }
+
+    }
+
     module events {
 
         interface Static {
@@ -237,6 +252,7 @@ declare module ol {
     module extent {
 
         interface Static {
+            boundingExtent(coordinates:Coordinate[]):Extent;
             containsCoordinate(extent:Extent, coordinate:Coordinate):boolean;
             getCenter(extent:Extent):Coordinate;
             intersects(extent1:Extent, extent2:Extent):boolean;
@@ -339,6 +355,7 @@ declare module ol {
             Draw:Draw;
             DrawMode:DrawMode;
             Modify:Modify;
+            SegmentDataType:SegmentDataType;
             Select:Select;
         }
 
@@ -372,6 +389,14 @@ declare module ol {
         }
 
         interface Pointer extends Interaction {
+        }
+
+        interface SegmentDataType {
+            depth:number[];
+            feature:ol.Feature;
+            geometry:ol.geometry.SimpleGeometry;
+            index:number;
+            segment:ol.Coordinate[];
         }
 
         interface Select extends Interaction {
@@ -528,6 +553,18 @@ declare module ol {
 
         interface VectorConfig {
         }
+    }
+
+    module struct {
+
+        interface Static {
+            RBush:RBush<any>;
+        }
+
+        interface RBush<T> {
+            getInExtent(extent:Extent):T[];
+        }
+
     }
 
     module style {

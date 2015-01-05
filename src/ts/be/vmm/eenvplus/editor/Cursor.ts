@@ -5,18 +5,20 @@ module be.vmm.eenvplus.editor {
     'use strict';
 
 
-    Cursor.$inject = ['epMap', 'epStateStore', 'epAreaStore', 'epPainterStore'];
+    Cursor.$inject = ['epMap', 'epStateStore', 'epAreaStore', 'epPainterStore', 'epGeometryEditorStore'];
 
     function Cursor(map:ol.Map,
                     stateStore:state.StateStore,
                     areaStore:area.AreaStore,
-                    painterStore:paint.PainterStore):void {
+                    painterStore:paint.PainterStore,
+                    editorStore:geometry.EditorStore):void {
 
         /* ------------------ */
         /* --- properties --- */
         /* ------------------ */
 
-        var el = $(map.getViewport());
+        var el = $(map.getViewport()),
+            modifier = false;
 
 
         /* -------------------- */
@@ -40,6 +42,7 @@ module be.vmm.eenvplus.editor {
         }
 
         function handleMouseMove(event:any):void {
+            modifier = event.ctrlKey;
             invalidateState(map.getEventCoordinate(event));
         }
 
@@ -53,13 +56,20 @@ module be.vmm.eenvplus.editor {
          * - only in 'edit' mode, never in 'view' mode
          * - when no area has been selected yet
          * - when the user is painting and the mouse is inside the selected area
-         * 
+         *
          * @param mouseCoordinate
          */
         function invalidateState(mouseCoordinate?:ol.Coordinate):void {
             var isDrawing = stateStore.currentMode === state.State.EDIT &&
                 (!areaStore.current || painterStore.current !== undefined && inArea(mouseCoordinate));
-            el.css('cursor', isDrawing ? 'crosshair' : 'default');
+            var isModifying = editorStore.current !== undefined && inArea(mouseCoordinate);
+
+            if (isModifying) {
+                var type = 'modify';
+                if (modifier) type = 'remove';
+                el.css('cursor', 'url("img/cursor/' + type + '.png"), default');
+            }
+            else el.css('cursor', isDrawing ? 'crosshair' : 'default');
         }
 
         function inArea(mouseCoordinate:ol.Coordinate):boolean {

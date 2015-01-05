@@ -85,7 +85,7 @@ declare module _ {
         invoke(collection:any, methodName:string, ...args:any[]):any;
         isEqual(valueA:any, valueB:any, compare?:ComparingIterator, scope?:any):boolean;
         map(collection:any, fn:any, scope?:any):any;
-        reduce(collection:any, fn:MemoIterator, accumulator:any, scope?:any):any;
+        reduce(collection:any, fn:MemoIterator, accumulator?:any, scope?:any):any;
         reject(collection:any, fn:any, scope?:any):any[];
         where(collection:any, query:Object):any;
     }
@@ -131,7 +131,7 @@ declare module _ {
     }
 
     interface MemoIterator {
-        (prev:any, curr:any, key?:any, collection?:any):boolean;
+        (prev:any, curr:any, key?:any, collection?:any):any;
     }
 
     interface MergingIterator {

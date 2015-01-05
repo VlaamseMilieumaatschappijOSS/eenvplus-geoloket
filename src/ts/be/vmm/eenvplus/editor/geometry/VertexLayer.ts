@@ -25,7 +25,8 @@ module be.vmm.eenvplus.editor.geometry {
             geometry: vertices
         }));
         editorStore.selected.add(handleEditorSelection);
-        featureStore.selected.add(handleFeatureSelection);
+        featureStore.selecting.add(handleFeatureBeforeSelection);
+        featureStore.selected.add(updateGeometry);
 
 
         /* ---------------------- */
@@ -36,9 +37,15 @@ module be.vmm.eenvplus.editor.geometry {
             editor === undefined ? deactivate() : activate();
         }
 
-        function handleFeatureSelection(feature:feature.model.FeatureJSON):void {
+        /**
+         * Deactivate the VertexLayer when a the Feature is deselected.
+         * This needs to be done *before* the actual selection or we won't be able to deregister the geometry change
+         * listener, causing a memory leak.
+         *
+         * @param feature
+         */
+        function handleFeatureBeforeSelection(feature:feature.model.FeatureJSON):void {
             if (feature === undefined) deactivate();
-            else updateGeometry();
         }
 
 
@@ -51,12 +58,16 @@ module be.vmm.eenvplus.editor.geometry {
 
             active = true;
             layer.setMap(map);
-            featureStore.geometry.on(goog.events.EventType.CHANGE, updateGeometry);
+            getGeometry().on(goog.events.EventType.CHANGE, updateGeometry);
+        }
+
+        function getGeometry():ol.geometry.Geometry {
+            return featureStore.selectedView ? featureStore.selectedView.getGeometry() : undefined;
         }
 
         function updateGeometry():void {
-            var geometry = <ol.geometry.LineString> featureStore.geometry;
-            vertices.setCoordinates(geometry.getCoordinates());
+            var geometry = <ol.geometry.LineString> getGeometry();
+            if (geometry) vertices.setCoordinates(geometry.getCoordinates());
         }
 
         function deactivate() {
@@ -64,7 +75,7 @@ module be.vmm.eenvplus.editor.geometry {
 
             active = false;
             layer.setMap(null);
-            featureStore.geometry.un(goog.events.EventType.CHANGE, updateGeometry);
+            getGeometry().un(goog.events.EventType.CHANGE, updateGeometry);
         }
 
     }

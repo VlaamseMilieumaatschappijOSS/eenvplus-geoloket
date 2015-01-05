@@ -6,9 +6,10 @@ module be.vmm.eenvplus.feature {
 
     export interface FeatureStore {
         current:model.FeatureJSON;
-        geometry:ol.geometry.Geometry;
-        selected:Trasys.Signals.ITypeSignal<model.FeatureJSON>;
+        selectedView:ol.Feature;
         selection:ol.Collection<ol.Feature>;
+        selected:Trasys.Signals.ITypeSignal<model.FeatureJSON>;
+        selecting:Trasys.Signals.ITypeSignal<model.FeatureJSON>;
     }
 
     export module FeatureStore {
@@ -21,14 +22,18 @@ module be.vmm.eenvplus.feature {
                 },
                 set current(value:model.FeatureJSON) {
                     if (value === current) return;
+                    store.selecting.fire(value);
                     current = value;
                     store.selected.fire(value);
                 },
-                get geometry():ol.geometry.Geometry {
-                    return store.selection ? store.selection.item(0).getGeometry() : undefined;
+                get selectedView():ol.Feature {
+                    if (!store.current || !store.selection) return undefined;
+                    return _.find(store.selection.getArray(), {key: current.key});
                 },
+                selection: undefined,
                 selected: new Trasys.Signals.TypeSignal(),
-                selection: undefined
+                selecting: new Trasys.Signals.TypeSignal(),
+
             };
 
         angular
