@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.form.sewerForm {
     export var NAME:string = PREFIX + 'SewerForm';
 
     function configure():ng.IDirective {
-        SewerFormController.$inject = ['$q', 'epLabelService'];
+        SewerFormController.$inject = ['epLabelService'];
 
         return {
             restrict: 'A',
@@ -30,19 +30,7 @@ module be.vmm.eenvplus.editor.form.sewerForm {
         /* ------------------ */
 
         /** @inject */
-        private _data:feature.model.FeatureJSON;
-        public get data():feature.model.FeatureJSON {
-            return this._data;
-        }
-
-        public set data(value:feature.model.FeatureJSON) {
-            this._data = value;
-            // framework oddity:
-            // sometimes the data setter is called twice, so we need to reinitialize the proxies
-            // sometimes it's called before the constructor, so we check for the existence of the labels
-            if (this.sources) this.initProxies();
-        }
-
+        public data:feature.model.FeatureJSON;
         /** @inject */
         public validate:Validator;
         public selectedSource:label.Label;
@@ -59,16 +47,11 @@ module be.vmm.eenvplus.editor.form.sewerForm {
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(q:ng.IQService, labelService:label.LabelService) {
+        constructor(labelService:label.LabelService) {
             this.sources = labelService.getLabels(label.LabelType.SOURCE);
             this.types = labelService.getLabels(label.LabelType.SEWER_TYPE);
             this.waterTypes = labelService.getLabels(label.LabelType.WATER_TYPE);
 
-            // sometimes the data setter is called before the constructor, so we need to reinitialize the proxies
-            if (this.data) this.initProxies();
-        }
-
-        private initProxies():void {
             label.proxy(this, this.data.properties)
                 .map(this.sources, 'selectedSource', 'namespaceId')
                 .map(this.types, 'selectedType', 'rioolLinkTypeId')

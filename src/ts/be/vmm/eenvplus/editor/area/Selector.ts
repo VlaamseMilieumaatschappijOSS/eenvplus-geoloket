@@ -74,6 +74,8 @@ module be.vmm.eenvplus.editor.area {
         }
 
         function selectFeature(selectedFeature:feature.LocalFeature):void {
+            if (featureStore.current && featureStore.current.key === selectedFeature.key) return;
+
             featureManager
                 .get(feature.toLayerBodId(selectedFeature.type), selectedFeature.key)
                 .then(featureManager.select);
