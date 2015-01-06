@@ -4,6 +4,7 @@ module be.vmm.eenvplus.editor.validation {
     export interface FeatureResult {
 
         key:number;
+        layerBodId:string;
         valid:boolean;
         messages:Message[];
 

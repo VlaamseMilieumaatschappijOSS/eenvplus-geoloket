@@ -31,7 +31,7 @@ module be.vmm.eenvplus.editor.validation.validator {
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(manager:feature.FeatureManager) {
+        constructor(private manager:feature.FeatureManager) {
             manager.signal.validate.add(this.handleValidation.bind(this));
         }
 
@@ -42,6 +42,17 @@ module be.vmm.eenvplus.editor.validation.validator {
 
         private handleValidation(result:ValidationResult):void {
             this.results = result.results;
+        }
+
+        public highlight(result:FeatureResult):void {
+        }
+
+        public select(result:FeatureResult):void {
+            if (feature.isType(feature.FeatureType.NODE, result.layerBodId)) return;
+
+            this.manager
+                .get(result.layerBodId, result.key)
+                .then(this.manager.select)
         }
 
     }
