@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.form.sewerForm {
     export var NAME:string = PREFIX + 'SewerForm';
 
     function configure():ng.IDirective {
-        SewerFormController.$inject = ['epLabelService'];
+        SewerFormController.$inject = ['$q', 'epLabelService'];
 
         return {
             restrict: 'A',
@@ -34,9 +34,13 @@ module be.vmm.eenvplus.editor.form.sewerForm {
         public get data():feature.model.FeatureJSON {
             return this._data;
         }
+
         public set data(value:feature.model.FeatureJSON) {
             this._data = value;
-            this.initProxies();
+            // framework oddity:
+            // sometimes the data setter is called twice, so we need to reinitialize the proxies
+            // sometimes it's called before the constructor, so we check for the existence of the labels
+            if (this.sources) this.initProxies();
         }
 
         /** @inject */
@@ -55,10 +59,13 @@ module be.vmm.eenvplus.editor.form.sewerForm {
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(labelService:label.LabelService) {
+        constructor(q:ng.IQService, labelService:label.LabelService) {
             this.sources = labelService.getLabels(label.LabelType.SOURCE);
             this.types = labelService.getLabels(label.LabelType.SEWER_TYPE);
             this.waterTypes = labelService.getLabels(label.LabelType.WATER_TYPE);
+
+            // sometimes the data setter is called before the constructor, so we need to reinitialize the proxies
+            if (this.data) this.initProxies();
         }
 
         private initProxies():void {

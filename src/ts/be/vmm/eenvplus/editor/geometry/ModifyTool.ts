@@ -90,8 +90,8 @@ module be.vmm.eenvplus.editor.geometry {
 
         function getClosestSegment(pixel:ol.Pixel, coordinate:ol.Coordinate):ol.Coordinate[] {
             var tolerance:number = modify.pixelTolerance_,
-                lowerLeft = map.getCoordinateFromPixel([pixel[0] - tolerance, pixel[1] + tolerance]),
-                upperRight = map.getCoordinateFromPixel([pixel[0] + tolerance, pixel[1] - tolerance]),
+                lowerLeft = map.getCoordinateFromPixel(<any> [pixel[0] - tolerance, pixel[1] + tolerance]),
+                upperRight = map.getCoordinateFromPixel(<any> [pixel[0] + tolerance, pixel[1] - tolerance]),
                 box = ol.extent.boundingExtent([lowerLeft, upperRight]),
                 nodes = modify.rBush_.getInExtent(box),
                 dist = ol.coordinate.squaredDistanceToSegment;
