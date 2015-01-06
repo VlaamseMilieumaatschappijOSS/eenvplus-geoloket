@@ -28,14 +28,20 @@ module be.vmm.eenvplus.feature {
             window.indexedDB || window['mozIndexedDB'] || window['webkitIndexedDB'] || window.msIndexedDB;
 
         var VERSION:number = 3,
-            apiUrl:string = 'http://127.0.0.1:8080/eenvplus-sdi-services',
             IDBTransaction = window['IDBTransaction'] || window['webkitIDBTransaction'] || window['msIDBTransaction'],
             IDBKeyRange = window['IDBKeyRange'] || window['webkitIDBKeyRange'] || window['msIDBKeyRange'];
 
-        factory.$inject = ['$http', '$q', 'typeModelMap'];
+        factory.$inject = ['$http', '$q', 'gaGlobalOptions', 'typeModelMap'];
 
-        function factory(http:ng.IHttpService, q:ng.IQService, typeModelMap:string[]):FeatureService {
-            var types = typeModelMap,
+        function factory(http:ng.IHttpService,
+                         q:ng.IQService,
+                         config:ga.GlobalOptions,
+                         types:string[]):FeatureService {
+
+            var url = config.apiUrl + '/rest/services/api/MapServer/',
+                pushUrl = url + 'push',
+                pullUrl = url + 'pull?types=' + types.join(','),
+                testUrl = url + 'test',
                 db;
 
             return {
@@ -257,10 +263,9 @@ module be.vmm.eenvplus.feature {
 
             function pull(bbox?:ol.Extent):ng.IPromise<void> {
                 var d = q.defer<void>(),
-                    url = apiUrl + "/rest/services/api/MapServer/pull?types=" + types.join(",");
+                    url = pullUrl;
 
-                if (bbox)
-                    url += "&extent=" + bbox.join(",");
+                if (bbox) url += "&extent=" + bbox.join(",");
 
                 http.get(url).success((features) => {
                     merge(features).then(d.resolve, d.reject);
@@ -276,7 +281,7 @@ module be.vmm.eenvplus.feature {
 
                 modifications().then((results) => {
                     http
-                        .post(apiUrl + "/rest/services/api/MapServer/push", results)
+                        .post(pushUrl, results)
                         .success((report:any) => {
                             if (report.completed) {
                                 var results = report.results;
@@ -396,7 +401,7 @@ module be.vmm.eenvplus.feature {
                 var d = q.defer<any>();
 
                 modifications().then(function (results) {
-                    http.post(apiUrl + "/rest/services/api/MapServer/test", results).success(function (report) {
+                    http.post(testUrl, results).success(function (report) {
                         d.resolve(report);
                     }).error(function () {
                         d.reject("Could not test features.");
