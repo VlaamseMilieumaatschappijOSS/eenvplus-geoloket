@@ -152,6 +152,7 @@ module be.vmm.eenvplus.feature {
 
             function update(json?:model.FeatureJSON):void {
                 json = json || store.current;
+                clean(json);
 
                 getConnectedNodesByKeys(json)
                     .then(_.partialRight(_.reject, get('properties.namespaceId')))
@@ -168,6 +169,14 @@ module be.vmm.eenvplus.feature {
                 function ensureNodeSource(node:model.FeatureJSON):void {
                     node.properties.namespaceId = json.properties.namespaceId;
                 }
+            }
+
+            function clean(json:model.FeatureJSON):model.FeatureJSON {
+                _.each(json.properties, (value:any, key:string):void => {
+                    if (value === null || value === undefined || (value instanceof Array && !value.length))
+                        delete json.properties[key];
+                });
+                return json;
             }
 
             function validate():void {
