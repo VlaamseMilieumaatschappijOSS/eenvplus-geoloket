@@ -22,6 +22,7 @@ module be.vmm.eenvplus.feature {
         create: FeatureJSONHandler;
         deselect: () => void;
         discard: FeatureJSONHandler;
+        emphasize: FeatureJSONHandler;
         get: (layerBodId:string, key:number) => ng.IPromise<model.FeatureJSON>;
         link: (featureJson:model.FeatureJSON, nodeJsons:model.FeatureJSON[]) => void;
         load: (extent:ol.Extent) => void;
@@ -55,6 +56,7 @@ module be.vmm.eenvplus.feature {
                 create: create,
                 deselect: deselect,
                 discard: discard,
+                emphasize: emphasize,
                 get: getFeature,
                 link: link,
                 load: load,
@@ -259,6 +261,10 @@ module be.vmm.eenvplus.feature {
 
             function select(json:model.FeatureJSON):void {
                 store.current = json;
+            }
+
+            function emphasize(json:model.FeatureJSON):void {
+                store.emphasized = json;
             }
 
             function ensureProperties(json:model.FeatureJSON):model.FeatureJSON {

@@ -45,6 +45,13 @@ module be.vmm.eenvplus.editor.validation.validator {
         }
 
         public highlight(result:FeatureResult):void {
+            this.manager
+                .get(result.layerBodId, result.key)
+                .then(this.manager.emphasize);
+        }
+
+        public removeHighlight():void {
+            this.manager.emphasize(null);
         }
 
         public select(result:FeatureResult):void {
@@ -52,7 +59,7 @@ module be.vmm.eenvplus.editor.validation.validator {
 
             this.manager
                 .get(result.layerBodId, result.key)
-                .then(this.manager.select)
+                .then(this.manager.select);
         }
 
     }

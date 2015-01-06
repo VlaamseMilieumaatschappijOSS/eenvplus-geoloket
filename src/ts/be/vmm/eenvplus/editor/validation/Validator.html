@@ -1,7 +1,8 @@
 <ul>
     <li ng-repeat="result in ctrl.results"
         ng-click="ctrl.select(result)"
-        ng-mouseenter="ctrl.highlight(result)">
+        ng-mouseenter="ctrl.highlight(result)"
+        ng-mouseleave="ctrl.removeHighlight()">
 
         <div ng-class="{'alert-success': result.valid, 'alert-warning': !result.valid}"
              class="alert checkbox">

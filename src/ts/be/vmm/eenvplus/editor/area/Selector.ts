@@ -21,11 +21,12 @@ module be.vmm.eenvplus.editor.area {
         /* --- properties --- */
         /* ------------------ */
 
-        var select = createInteraction(ol.events.condition.click),
-            highlight = createInteraction(ol.events.condition.mouseMove),
-            selection = featureStore.selection = select.getFeatures(),
+        var selectInteraction = createInteraction(ol.events.condition.click),
+            highlightInteraction = createInteraction(ol.events.condition.mouseMove),
+            selection = featureStore.selection = selectInteraction.getFeatures(),
+            highlighted = highlightInteraction.getFeatures(),
             stylesByType:feature.getStyle[] = [],
-            all = [select, highlight];
+            all = [selectInteraction, highlightInteraction];
 
 
         /* -------------------- */
@@ -36,6 +37,7 @@ module be.vmm.eenvplus.editor.area {
 
         stateStore.modeChanged.add(invalidateState);
         featureStore.selected.add(invalidateState);
+        featureStore.emphasize.add(highlight);
         painterStore.selected.add(invalidateState);
 
         function createInteraction(condition):ol.interaction.Select {
@@ -81,12 +83,15 @@ module be.vmm.eenvplus.editor.area {
                 .then(featureManager.select);
         }
 
+        function highlight(json:feature.model.FeatureJSON):void {
+            json ? highlighted.push(featureLayerStore.getInfo(json).olFeature) : <any> highlighted.clear();
+        }
+
         function invalidateState():void {
             // the value of an enum can be 0, hence the explicit undefined check
             var active =
                 stateStore.currentMode === state.State.EDIT &&
-                painterStore.current === undefined &&
-                !featureStore.current;
+                painterStore.current === undefined && !featureStore.current;
 
             _.invoke(all, 'setActive', active);
 
