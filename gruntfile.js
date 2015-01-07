@@ -27,7 +27,7 @@ var dir = {
     src = {
         html: file.htmlIn,
         js: [dir.js + '**/*.js', dir.comp + '**/*.js'],
-        less: [dir.ts + '**/*.less', dir.comp + '**/*.less'],
+        less: [dir.less + '**/*.less', dir.ts + '**/*.less', dir.comp + '**/*.less'],
         ts: [dir.ts + '**/*.ts'],
         typeDefs: [dir.lib + '**/*.d.ts']
     },
