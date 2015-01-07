@@ -1,7 +1,7 @@
 ///ts:ref=Module
-/// <reference path="./Module.ts"/> ///ts:ref:generated
+/// <reference path="../Module.ts"/> ///ts:ref:generated
 
-module be.vmm.eenvplus {
+module be.vmm.eenvplus.viewer {
     'use strict';
 
     export module MapFactory {
