@@ -4,17 +4,29 @@
 module be.vmm.eenvplus.user.UserFactory {
     'use strict';
 
-    export var NAME:string = PREFIX + 'UserService';
+    export var NAME:string = PREFIX + 'UserFactory';
 
-    factory.$inject = ['epKeycloak'];
+    var loginUrl = '/realms/:realm/tokens/grants/access';
 
-    function factory(keycloak:kc.Keycloak):User {
-        var user:User = {
-            authenticated: keycloak.authenticated,
-            hasRole: keycloak.hasRealmRole,
-            login: keycloak.login,
-            logout: keycloak.logout
-        };
+    factory.$inject = ['$resource', 'epKeycloak'];
+
+    function factory(resource:ng.resource.IResourceService, keycloak:kc.Keycloak):User {
+        console.log(keycloak);
+        var service = resource(keycloak.authServerUrl + loginUrl, {
+                realm: keycloak.realm
+            }, {
+                login: {
+                    method: 'POST',
+                    isArray: false,
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+                }
+            }),
+            user:User = {
+                authenticated: keycloak.authenticated,
+                hasRole: keycloak.hasRealmRole,
+                login: login,
+                logout: keycloak.logout
+            };
 
         if (user.authenticated) {
             user.username = keycloak.tokenParsed.preferred_username;
@@ -22,6 +34,16 @@ module be.vmm.eenvplus.user.UserFactory {
         }
 
         return user;
+
+        function login(username:string, password:string):void {
+            service['login']({}, jQuery.param({
+                username: username,
+                password: password,
+                client_id: keycloak.clientId
+            }), () => {
+                console.log(arguments);
+            });
+        }
     }
 
     angular

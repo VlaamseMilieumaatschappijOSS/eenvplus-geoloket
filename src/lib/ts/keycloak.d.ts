@@ -44,8 +44,11 @@ declare module kc {
     interface Keycloak {
         /** true if the user is authenticated */
         authenticated:boolean;
+        authServerUrl:string;
+        clientId:string;
         /** the id token if claims is enabled for the application, null otherwise */
         idToken:string;
+        realm:string;
         /** the realm roles associated with the token */
         realmAccess:any[];
         /** the base64 encoded token that can be used to retrieve a new token */

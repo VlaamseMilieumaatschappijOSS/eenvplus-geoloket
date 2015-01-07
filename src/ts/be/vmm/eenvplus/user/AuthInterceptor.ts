@@ -39,7 +39,8 @@ module be.vmm.eenvplus.user {
 
             function addTokenToHeaders(config:ng.IRequestConfig):ng.IRequestConfig {
                 config.headers = config.headers || {};
-                config.headers.Authorization = 'Bearer ' + keycloak.token;
+                if (config.headers['Content-Type'] !== 'application/x-www-form-urlencoded; charset=UTF-8')
+                    config.headers.Authorization = 'Bearer ' + keycloak.token;
                 return config;
             }
         }

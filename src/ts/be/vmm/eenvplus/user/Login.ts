@@ -7,7 +7,7 @@ module be.vmm.eenvplus.user.Login {
     export var NAME:string = PREFIX + 'Login';
 
     function configure():ng.IDirective {
-        LoginController.$inject = [];
+        LoginController.$inject = ['epUserFactory'];
 
         return {
             restrict: 'A',
@@ -29,6 +29,14 @@ module be.vmm.eenvplus.user.Login {
         public storeCredentials:boolean;
 
 
+        /* -------------------- */
+        /* --- construction --- */
+        /* -------------------- */
+
+        constructor(private user:User) {
+        }
+
+
         /* ---------------------- */
         /* --- event handlers --- */
         /* ---------------------- */
@@ -41,6 +49,15 @@ module be.vmm.eenvplus.user.Login {
         public handleDropDownClick(event:Event):void {
             var target = <HTMLElement> event.target;
             if (target.tagName !== 'BUTTON') event.stopImmediatePropagation();
+        }
+
+
+        /* ----------------- */
+        /* --- behaviour --- */
+        /* ----------------- */
+
+        public submit():void {
+            this.user.login(this.username, this.password);
         }
 
     }

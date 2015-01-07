@@ -21,7 +21,7 @@ module be.vmm.eenvplus.Bootstrap {
             .constant('epKeycloak', keycloak);
 
         keycloak
-            .init({onLoad: 'login-required'})
+            .init({onLoad: 'check-sso'})
             .success(_.partial(angular.bootstrap, document, [APP_NAME]))
             .error(_.partial(alert, 'Failed to authenticate'));
     }

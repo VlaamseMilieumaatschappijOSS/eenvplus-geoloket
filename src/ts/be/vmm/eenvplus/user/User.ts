@@ -7,7 +7,7 @@ module be.vmm.eenvplus.user {
         name?:string;
 
         hasRole(role:string):boolean;
-        login():void;
+        login(username:string, password:string):void;
         logout():void;
     }
 
