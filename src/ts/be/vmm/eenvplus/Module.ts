@@ -5,6 +5,7 @@
 /// <reference path="feature/Module.ts"/>
 /// <reference path="label/Module.ts"/>
 /// <reference path="state/Module.ts"/>
+/// <reference path="user/Module.ts"/>
 /// <reference path="viewer/Module.ts"/>
 
 module be.vmm.eenvplus {
@@ -69,6 +70,7 @@ module be.vmm.eenvplus {
         feature.MODULE,
         label.MODULE,
         state.MODULE,
+        user.MODULE,
         viewer.MODULE,
         'ngResource'
     ]);

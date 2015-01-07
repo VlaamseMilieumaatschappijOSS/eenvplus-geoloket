@@ -895,6 +895,9 @@ declare module ng {
      * See http://docs.angularjs.org/api/ng/service/$q
      */
     interface IQService {
+        (resolver: (resolve: IQResolveReject<any>) => any): IPromise<any>;
+        (resolver: (resolve: IQResolveReject<any>, reject: IQResolveReject<any>) => any): IPromise<any>;
+        <T>(resolver: (resolve: IQResolveReject<T>, reject: IQResolveReject<any>) => any): IPromise<T>;
         new (resolver: (resolve: IQResolveReject<any>) => any): IPromise<any>;
         new (resolver: (resolve: IQResolveReject<any>, reject: IQResolveReject<any>) => any): IPromise<any>;
         new <T>(resolver: (resolve: IQResolveReject<T>, reject: IQResolveReject<any>) => any): IPromise<T>;
