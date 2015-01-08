@@ -2,16 +2,19 @@
     <img ng-src="{{ctrl.avatar}}">
 </a>
 
-<div class="dropdown-menu" role="menu"
-     ng-click="ctrl.handleDropDownClick($event)">
+<ul class="dropdown-menu" role="menu"
+    ng-click="ctrl.handleDropDownClick($event)">
 
     <div class="dropdown-caret right">
         <span class="caret-outer"></span>
         <span class="caret-inner"></span>
     </div>
 
-    <ul>
-        <li ng-click="ctrl.logout()">Log out</li>
-    </ul>
+    <li role="presentation">
+        <a role="menuitem" tabindex="-1" href="#"
+           ng-click="ctrl.logout()">
+            Log out
+        </a>
+    </li>
 
-</div>
+</ul>
