@@ -88,6 +88,7 @@ declare module kc {
          * @returns an empty Promise
          */
         logout(options?:AuthOptions):Promise<void>;
+        setToken(token:string, refreshToken?:string):void;
         /**
          * If the token expires within `minValidity` seconds the token is refreshed.
          * If the session status iframe is enabled, the session status is also checked.
@@ -117,6 +118,26 @@ declare module kc {
     interface Token {
         name:string;
         preferred_username:string;
+    }
+
+    module rest {
+
+        interface LoginRequest {
+            username:string;
+            password:string;
+            client_id?:string;
+        }
+
+        interface LoginResponse {
+            access_token:string;
+            expires_in:number;
+            id_token:string;
+            'not-before-policy':number;
+            refresh_token:string;
+            'session-state':string;
+            token_type:string;
+        }
+
     }
 
 }

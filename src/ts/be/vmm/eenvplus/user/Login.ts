@@ -7,7 +7,7 @@ module be.vmm.eenvplus.user.Login {
     export var NAME:string = PREFIX + 'Login';
 
     function configure():ng.IDirective {
-        LoginController.$inject = ['epUserFactory'];
+        LoginController.$inject = ['epUserService'];
 
         return {
             restrict: 'A',
@@ -33,7 +33,7 @@ module be.vmm.eenvplus.user.Login {
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(private user:User) {
+        constructor(private service:UserService) {
         }
 
 
@@ -57,7 +57,7 @@ module be.vmm.eenvplus.user.Login {
         /* ----------------- */
 
         public submit():void {
-            this.user.login(this.username, this.password);
+            this.service.login(this.username, this.password);
         }
 
     }

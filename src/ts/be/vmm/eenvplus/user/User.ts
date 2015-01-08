@@ -1,14 +1,24 @@
+///ts:ref=Module
+/// <reference path="../Module.ts"/> ///ts:ref:generated
+
 module be.vmm.eenvplus.user {
     'use strict';
 
     export interface User {
-        authenticated: boolean;
+        authenticated:boolean;
+        authHeader?:string;
         username?:string;
         name?:string;
 
         hasRole(role:string):boolean;
-        login(username:string, password:string):void;
-        logout():void;
+    }
+
+    export module Model {
+        export var NAME:string = PREFIX + 'User';
+
+        angular
+            .module(MODULE)
+            .constant(NAME, {authenticated: false});
     }
 
 }

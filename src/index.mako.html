@@ -616,7 +616,6 @@ itemscope itemtype="http://schema.org/WebApplication"
     <!--![if IE]>
     <script src="${versionslashed}lib/d3-3.3.1.min.js"></script>
     <script src="${versionslashed}lib/jQuery.XDomainRequest.js"></script>
-    <script src="/auth/js/keycloak.js"></script>
     <![endif]-->
 {% else %}
     <!-- in source, we need to load it here because IE9 ignores it in
@@ -647,7 +646,7 @@ itemscope itemtype="http://schema.org/WebApplication"
     <script src="lib/filesaver.js"></script>
     <script src="lib/lodash.js"></script>
     <script src="lib/trasys.signals.js"></script>
-    <script src="http://localhost:8080/auth/js/keycloak.js"></script>
+    <script src="lib/keycloak/dist/keycloak.js"></script>
 
     <!-- Use Closure to load the application scripts -->
     <script>
@@ -688,8 +687,6 @@ itemscope itemtype="http://schema.org/WebApplication"
         var module = angular.module('ga');
         var cacheAdd = '${version}' != '' ? '/' + '${version}' : '';
         var pathname = location.pathname.replace(/(index.html)|(mobile.html)/g, '');
-
-        be.vmm.eenvplus.Bootstrap.start();
 
         module.constant('gaGlobalOptions', {
           mapUrl : location.origin + '${apache_base_path}',
@@ -736,6 +733,8 @@ itemscope itemtype="http://schema.org/WebApplication"
         });
 
         $('.ga-custom-tooltip').tooltip();
+
+        be.vmm.eenvplus.Bootstrap.start();
 
       })();
 

@@ -17,30 +17,20 @@ module be.vmm.eenvplus.user {
         }
 
 
-        factory.$inject = ['$q', 'epKeycloak'];
+        factory.$inject = ['epUser'];
 
-        function factory(q:ng.IQService, keycloak:kc.Keycloak):AuthInterceptor {
+        function factory(user:User):AuthInterceptor {
             return {
                 request: request
             };
 
             function request(config:ng.IRequestConfig):any {
-                var addTokenToConfig = _.partial(addTokenToHeaders, config);
-                return keycloak.authenticated ? q(resolver) : config;
-
-                function resolver(resolve:ng.IQResolveReject<ng.IRequestConfig>,
-                                  reject:ng.IQResolveReject<string>):void {
-                    keycloak
-                        .updateToken()
-                        .success(_.compose(resolve, addTokenToConfig))
-                        .error(_.partial(reject, 'Failed to refresh token'));
-                }
+                return user.authenticated ? addTokenToHeaders(config) : config;
             }
 
             function addTokenToHeaders(config:ng.IRequestConfig):ng.IRequestConfig {
                 config.headers = config.headers || {};
-                if (config.headers['Content-Type'] !== 'application/x-www-form-urlencoded; charset=UTF-8')
-                    config.headers.Authorization = 'Bearer ' + keycloak.token;
+                config.headers.Authorization = user.authHeader;
                 return config;
             }
         }
