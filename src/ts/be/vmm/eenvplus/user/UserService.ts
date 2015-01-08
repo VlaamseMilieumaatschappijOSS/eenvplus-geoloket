@@ -34,8 +34,6 @@ module be.vmm.eenvplus.user {
                 login: postConfig
             });
 
-            user.hasRole = keycloak.hasRealmRole;
-
             return {
                 user: updateUser(user),
                 login: login,
@@ -59,8 +57,12 @@ module be.vmm.eenvplus.user {
                 if (user.authenticated = keycloak.authenticated) {
                     user.username = keycloak.tokenParsed.preferred_username;
                     user.name = keycloak.tokenParsed.name;
+                    user.hasRole = keycloak.hasRealmRole;
                 }
-                else user.username = user.name = null;
+                else {
+                    user.username = user.name = null;
+                    user.hasRole = _.constant(false);
+                }
 
                 return user;
             }

@@ -121,6 +121,11 @@ declare module _ {
         mapValues(fn:any, scope?:any):Chain;
     }
 
+    /** Utilities */
+    interface Static {
+        constant(value:any):() => any;
+    }
+
     /** Iterators */
     interface ComparingIterator {
         (valueA:any, valueB:any):boolean;
