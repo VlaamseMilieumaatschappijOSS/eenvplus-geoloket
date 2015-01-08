@@ -160,11 +160,12 @@ itemscope itemtype="http://schema.org/WebApplication"
             ga-background-layer-selector-map="map"></div>
         </div>
         <div id="toptools">
-          <div ep-login class="dropdown login"></div>
+          <div ep-login-callout class="dropdown login"></div>
           <div ga-fullscreen ga-fullscreen-map="map"></div>&nbsp;&nbsp;
           <a href="#feedback" data-toggle="modal" translate>problem_announcement</a>&nbsp;&nbsp;
           <a target="_blank" ng-href="{{topicId + '_help_link_href' | translate}}" translate>help_label</a>&nbsp;&nbsp;
           <a ng-href="{{deviceSwitcherHref}}" translate>mobile_redirect</a>&nbsp;&nbsp;
+          <div ep-user-callout class="dropdown user"></div>
           <div ng-controller="GaTranslationController">
             <div ga-translation-selector
               ga-translation-selector-options="options"></div>

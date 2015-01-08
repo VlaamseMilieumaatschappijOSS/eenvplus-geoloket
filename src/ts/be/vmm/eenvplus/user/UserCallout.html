@@ -1,0 +1,17 @@
+<a ng-if="ctrl.loggedIn" href class="dropdown-toggle" data-toggle="dropdown">
+    <img ng-src="{{ctrl.avatar}}">
+</a>
+
+<div class="dropdown-menu" role="menu"
+     ng-click="ctrl.handleDropDownClick($event)">
+
+    <div class="dropdown-caret right">
+        <span class="caret-outer"></span>
+        <span class="caret-inner"></span>
+    </div>
+
+    <ul>
+        <li ng-click="ctrl.logout()">Log uit</li>
+    </ul>
+
+</div>

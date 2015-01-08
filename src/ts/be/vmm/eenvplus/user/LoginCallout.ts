@@ -4,7 +4,7 @@
 module be.vmm.eenvplus.user.Login {
     'use strict';
 
-    export var NAME:string = PREFIX + 'Login';
+    export var NAME:string = PREFIX + 'LoginCallout';
 
     function configure():ng.IDirective {
         LoginController.$inject = ['epUserService'];
@@ -14,7 +14,7 @@ module be.vmm.eenvplus.user.Login {
             scope: {},
             controllerAs: 'ctrl',
             controller: LoginController,
-            templateUrl: 'ts/be/vmm/eenvplus/user/Login.html'
+            templateUrl: 'ts/be/vmm/eenvplus/user/LoginCallout.html'
         };
     }
 
@@ -27,6 +27,10 @@ module be.vmm.eenvplus.user.Login {
         public username:string;
         public password:string;
         public storeCredentials:boolean;
+
+        public get loggedIn():boolean {
+            return this.service.user.authenticated;
+        }
 
 
         /* -------------------- */
