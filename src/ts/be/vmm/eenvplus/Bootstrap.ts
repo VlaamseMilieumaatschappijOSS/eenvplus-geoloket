@@ -13,7 +13,7 @@ module be.vmm.eenvplus.Bootstrap {
      *
      * Note: we can't boot immediately because we depend on some of the original geo-admin stuff being loaded.
      */
-    export function start() {
+    export function start():void {
         var keycloak = Keycloak(config.keycloak);
 
         angular
@@ -35,7 +35,7 @@ module be.vmm.eenvplus.Bootstrap {
 
     configureI18n.$inject = ['$translateProvider'];
 
-    function configureI18n(i18n:any):void {
+    function configureI18n(i18n:ng.translate.ITranslateProvider):void {
         i18n.useStaticFilesLoader({
             prefix: '${versionslashed}locales/',
             suffix: '.json'
@@ -45,7 +45,7 @@ module be.vmm.eenvplus.Bootstrap {
 
     configureLayers.$inject = ['gaLayersProvider', 'gaGlobalOptions'];
 
-    function configureLayers(layers:any, options:config.GlobalOptions):void {
+    function configureLayers(layers:ga.components.map.Layers, options:config.GlobalOptions):void {
         _.assign(layers, {
             wmtsGetTileUrlTemplate: '${wmts_url}',
             layersConfigUrlTemplate: options.cachedApiUrl + '/rest/services/all/MapServer/layersConfig?lang={Lang}',
@@ -56,24 +56,26 @@ module be.vmm.eenvplus.Bootstrap {
 
     configureFeaturePreview.$inject = ['gaPreviewFeaturesProvider', 'gaGlobalOptions'];
 
-    function configureFeaturePreview(previewFeatures:any, options:config.GlobalOptions):void {
+    function configureFeaturePreview(previewFeatures:ga.components.map.PreviewFeatures,
+                                     options:config.GlobalOptions):void {
         previewFeatures.url = options.cachedApiUrl + '/rest/services/all/MapServer/';
     }
 
 
     configureProfileService.$inject = ['gaProfileServiceProvider', 'gaGlobalOptions'];
 
-    function configureProfileService(profiles:any, options:config.GlobalOptions):void {
+    function configureProfileService(profiles:ga.components.profile.ProfileService,
+                                     options:config.GlobalOptions):void {
         profiles.d3libUrl = options.resourceUrl + 'lib/d3-3.3.1.min.js';
     }
 
 
     configureWhiteList.$inject = ['$sceDelegateProvider', 'gaGlobalOptions'];
 
-    function configureWhiteList($sceDelegateProvider, options:config.GlobalOptions):void {
-        var whiteList = $sceDelegateProvider.resourceUrlWhitelist();
+    function configureWhiteList(delegate:ng.ISCEDelegateProvider, options:config.GlobalOptions):void {
+        var whiteList = delegate.resourceUrlWhitelist();
         whiteList = whiteList.concat(options.whitelist);
-        $sceDelegateProvider.resourceUrlWhitelist(whiteList);
+        delegate.resourceUrlWhitelist(whiteList);
     }
 
 }
