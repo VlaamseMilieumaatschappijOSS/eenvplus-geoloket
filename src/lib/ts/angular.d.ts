@@ -1385,8 +1385,8 @@ declare module ng {
     // see http://docs.angularjs.org/api/ng.$sceDelegateProvider
     ///////////////////////////////////////////////////////////////////////////
     interface ISCEDelegateProvider extends IServiceProvider {
-        resourceUrlBlacklist(blacklist: any[]): void;
-        resourceUrlWhitelist(whitelist: any[]): void;
+        resourceUrlBlacklist(blacklist?: any[]): void;
+        resourceUrlWhitelist(whitelist?: any[]): void;
     }
 
     /**

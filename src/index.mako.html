@@ -684,60 +684,8 @@ itemscope itemtype="http://schema.org/WebApplication"
 {% endif %}
 
     <script>
-      (function() {
-        var module = angular.module('ga');
-        var cacheAdd = '${version}' != '' ? '/' + '${version}' : '';
-        var pathname = location.pathname.replace(/(index.html)|(mobile.html)/g, '');
-
-        module.constant('gaGlobalOptions', {
-          mapUrl : location.origin + '${apache_base_path}',
-          apiUrl : location.protocol + '${api_url}',
-          cachedApiUrl: location.protocol + '${api_url}' + cacheAdd,
-          resourceUrl: location.origin + pathname + '${versionslashed}',
-          ogcproxyUrl : location.protocol + '${api_url}' + '/ogcproxy?url=',
-          whitelist: [
-            'http://www.kmlvalidator.org/validate.htm'
-          ]
-        });
-
-        module.config(function($translateProvider) {
-          $translateProvider.useStaticFilesLoader({
-            prefix: '${versionslashed}locales/',
-            suffix: '.json'
-          });
-        });
-
-        module.config(function(gaLayersProvider, gaGlobalOptions) {
-          gaLayersProvider.wmtsGetTileUrlTemplate = '${wmts_url}';
-
-          gaLayersProvider.layersConfigUrlTemplate =
-              gaGlobalOptions.cachedApiUrl + '/rest/services/all/MapServer/layersConfig?lang={Lang}';
-
-          gaLayersProvider.legendUrlTemplate =
-              gaGlobalOptions.cachedApiUrl + '/rest/services/{Topic}/CatalogServer/{Layer}/legend?lang={Lang}';
-        });
-
-        module.config(function(gaPreviewFeaturesProvider, gaGlobalOptions) {
-          gaPreviewFeaturesProvider.url =
-              gaGlobalOptions.cachedApiUrl + '/rest/services/all/MapServer/';
-        });
-
-        module.config(function(gaProfileServiceProvider, gaGlobalOptions) {
-          gaProfileServiceProvider.d3libUrl =
-              gaGlobalOptions.resourceUrl + 'lib/d3-3.3.1.min.js';
-        });
-
-        module.config(function($sceDelegateProvider, gaGlobalOptions) {
-          var whitelist = $sceDelegateProvider.resourceUrlWhitelist();
-          whitelist = whitelist.concat(gaGlobalOptions.whitelist);
-          $sceDelegateProvider.resourceUrlWhitelist(whitelist);
-        });
-
-        $('.ga-custom-tooltip').tooltip();
-
-        be.vmm.eenvplus.Bootstrap.start();
-
-      })();
+      be.vmm.eenvplus.Bootstrap.start();
+      $('.ga-custom-tooltip').tooltip();
 
 {#
 Workaround for iOS 6.x bug: content shifted after orientation change

@@ -1,4 +1,5 @@
-var nunjucks = require('nunjucks'),
+var _ = require('lodash-node'),
+    nunjucks = require('nunjucks'),
     path = require('path');
 
 var dir = {
@@ -34,7 +35,34 @@ var dir = {
     testSrc = {
         js: [dir.test.js + 'src/**/*.js', dir.test.js + 'test/**/*.js'],
         ts: [dir.test.ts + '**/*.ts']
+    },
+    vars = {
+        wmts: {
+            format: '{Format}',
+            layer: '{Layer}',
+            request: 'GetTile',
+            service: 'WMTS',
+            style: 'default',
+            tileCol: '{TileCol}',
+            tileMatrix: '{TileMatrix}',
+            tileMatrixSet: 'BPL72VL',
+            tileRow: '{TileRow}',
+            version: '1.0.0'
+        },
+        dev: {
+            versionslashed: '',
+            apache_base_path: 'localhost/',
+            api_url: '//localhost:8080/eenvplus-sdi-services',
+            wmts_url: '//geo.api.agiv.be/geodiensten/raadpleegdiensten/geocache/wmts',
+            mode: 'dev'
+        }
     };
+
+vars.dev.wmts_url += '?' + _.map(vars.wmts, urlParam).join('&');
+
+function urlParam(value, key) {
+    return key.toUpperCase() + '=' + value;
+}
 
 
 module.exports = function (grunt) {
@@ -133,29 +161,16 @@ module.exports = function (grunt) {
             },
             dev: {
                 options: {
-                    data: {
-                        "versionslashed": "",
-                        "apache_base_path": "localhost/",
-                        "api_url": "//localhost:8080/eenvplus-sdi-services",
-                        "wmts_url": "//geo.api.agiv.be/geodiensten/raadpleegdiensten/geocache/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER={Layer}&STYLE=default&FORMAT={Format}&TILEMATRIXSET=BPL72VL&TILEMATRIX={TileMatrix}&TILEROW={TileRow}&TILECOL={TileCol}",
-                        "device": "desktop",
-                        "mode": "dev"
-                    }
+                    data: _.assign(_.clone(vars.dev), {device: 'desktop'})
                 },
                 files: {
-                    '<%= file.htmlOut %>': file.htmlIn
+                    '<%= file.htmlOut %>': file.htmlIn,
+                    '<%= file.tsOut %>': file.tsOut
                 }
             },
             devMobile: {
                 options: {
-                    data: {
-                        "versionslashed": "",
-                        "apache_base_path": "localhost/",
-                        "api_url": "//localhost:8080/eenvplus-sdi-services",
-                        "wmts_url": "//geo.api.agiv.be/geodiensten/raadpleegdiensten/geocache/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER={Layer}&STYLE=default&FORMAT={Format}&TILEMATRIXSET=BPL72VL&TILEMATRIX={TileMatrix}&TILEROW={TileRow}&TILECOL={TileCol}",
-                        "device": "mobile",
-                        "mode": "dev"
-                    }
+                    data: _.assign(_.clone(vars.dev), {device: 'mobile'})
                 },
                 files: {
                     '<%= file.htmlOutMobile %>': file.htmlIn

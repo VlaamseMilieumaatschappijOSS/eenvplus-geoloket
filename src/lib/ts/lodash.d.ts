@@ -113,6 +113,7 @@ declare module _ {
 
     /** Objects */
     interface Static {
+        assign(object:Object, source:Object, callback?:MergingIterator, scope?:any):any;
         mapValues(object:Object, fn:any, scope?:any):any;
         merge(object:Object, source:Object, callback?:MergingIterator, scope?:any):any;
     }
