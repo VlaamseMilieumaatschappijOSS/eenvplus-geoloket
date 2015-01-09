@@ -53,6 +53,7 @@ var dir = {
             versionslashed: '',
             apache_base_path: 'localhost/',
             api_url: '//localhost:8080/eenvplus-sdi-services',
+            auth_url: '//localhost:8080/auth',
             wmts_url: '//geo.api.agiv.be/geodiensten/raadpleegdiensten/geocache/wmts',
             mode: 'dev'
         }
@@ -223,7 +224,7 @@ module.exports = function (grunt) {
             },
             ts: {
                 files: src.ts,
-                tasks: ['ts:dev']
+                tasks: ['ts:dev', 'nunjucks:dev']
             },
             tsTest: {
                 files: [src.ts, testSrc.ts],
