@@ -7,7 +7,9 @@ module be.vmm.eenvplus.state {
         FEATURE_SELECTED,
         INVALID,
         OVERVIEW,
-        DETAIL
+        DETAIL,
+        GEOMETRY_PAINTING,
+        GEOMETRY_MODIFYING
     }
 
 }

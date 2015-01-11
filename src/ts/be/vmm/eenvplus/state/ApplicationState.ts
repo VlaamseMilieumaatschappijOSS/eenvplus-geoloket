@@ -12,7 +12,9 @@ module be.vmm.eenvplus.state.applicationState {
         'feature-selected',
         'invalid',
         'overview',
-        'detail'
+        'detail',
+        'geometry-painting',
+        'geometry-modifying'
     ];
 
     /**

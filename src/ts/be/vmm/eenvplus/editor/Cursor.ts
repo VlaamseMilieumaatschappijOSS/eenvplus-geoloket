@@ -7,9 +7,7 @@ module be.vmm.eenvplus.editor {
     'use strict';
 
 
-    Cursor.$inject = [
-        'epMap', 'epStateStore', 'epAreaStore', 'epPainterStore', 'epGeometryEditorStore', 'epGeometryActionStore'
-    ];
+    Cursor.$inject = ['epMap', 'epStateStore', 'epAreaStore', 'epGeometryActionStore'];
 
     var actionCursor = [
         'add',
@@ -26,8 +24,6 @@ module be.vmm.eenvplus.editor {
     function Cursor(map:ol.Map,
                     stateStore:state.StateStore,
                     areaStore:area.AreaStore,
-                    painterStore:paint.PainterStore,
-                    editorStore:geometry.EditorStore,
                     actionStore:geometry.ActionStore):void {
 
         /* ------------------ */
@@ -43,8 +39,8 @@ module be.vmm.eenvplus.editor {
         /* -------------------- */
 
         stateStore.modeChanged.add(<any>invalidateState);
+        stateStore.geometryModeChanged.add(<any>invalidateState);
         areaStore.selected.add(handleAreaSelection);
-        painterStore.selected.add(<any>invalidateState);
         actionStore.selected.add(setAction);
 
 
@@ -85,8 +81,8 @@ module be.vmm.eenvplus.editor {
          */
         function invalidateState(mouseCoordinate?:ol.Coordinate):void {
             var isDrawing = stateStore.currentMode === state.State.EDIT &&
-                    (!areaStore.current || painterStore.current !== undefined && inArea(mouseCoordinate)),
-                isModifying = editorStore.current !== undefined && inArea(mouseCoordinate),
+                    (!areaStore.current || stateStore.currentGeometryMode === state.State.GEOMETRY_PAINTING && inArea(mouseCoordinate)),
+                isModifying = stateStore.currentGeometryMode === state.State.GEOMETRY_MODIFYING && inArea(mouseCoordinate),
                 cursor = 'default';
 
             if (isModifying) cursor = actionCursor[action];

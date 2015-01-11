@@ -4,10 +4,14 @@
 module be.vmm.eenvplus.state {
     'use strict';
 
-    StateManager.$inject = ['epStateStore', 'epMap', 'epFeatureStore', 'epFeatureManager'];
+    StateManager.$inject = [
+        'epMap', 'epStateStore', 'epPainterStore', 'epGeometryEditorStore', 'epFeatureStore', 'epFeatureManager'
+    ];
 
-    function StateManager(store:StateStore,
-                          map:ol.Map,
+    function StateManager(map:ol.Map,
+                          store:StateStore,
+                          painterStore:editor.paint.PainterStore,
+                          editorStore:editor.geometry.EditorStore,
                           featureStore:feature.FeatureStore,
                           featureManager:feature.FeatureManager):void {
 
@@ -26,6 +30,8 @@ module be.vmm.eenvplus.state {
 
         view.on(changeEvent(ol.ViewProperty.RESOLUTION), invalidateLevel);
         layers.on(changeEvent(ol.CollectionProperty.LENGTH), setLevelThreshold);
+        painterStore.selected.add(_.partial(invalidateGeometryMode, State.GEOMETRY_PAINTING));
+        editorStore.selected.add(_.partial(invalidateGeometryMode, State.GEOMETRY_MODIFYING));
         featureStore.selected.add(invalidateFeatureSelection);
         featureManager.signal.validate.add(invalidateValidity);
 
@@ -44,6 +50,10 @@ module be.vmm.eenvplus.state {
 
         function invalidateLevel():void {
             store.currentLevel = view.getResolution() < threshold ? State.DETAIL : State.OVERVIEW;
+        }
+
+        function invalidateGeometryMode(mode:State, type:any):void {
+            store.currentGeometryMode = type === undefined ? -1 : mode;
         }
 
         function invalidateFeatureSelection(feature:feature.model.FeatureJSON):void {

@@ -8,10 +8,12 @@ module be.vmm.eenvplus.state {
         current:State[];
         currentMode:State;
         currentLevel:State;
+        currentGeometryMode:State;
         featureSelected:State;
         invalid:State;
         modeChanged:Trasys.Signals.ITypeSignal<State>;
         levelChanged:Trasys.Signals.ITypeSignal<State>;
+        geometryModeChanged:Trasys.Signals.ITypeSignal<State>;
     }
 
     export module StateStore {
@@ -19,9 +21,16 @@ module be.vmm.eenvplus.state {
 
         var currentMode = State.VIEW,
             currentLevel = State.OVERVIEW,
+            currentGeometryMode,
             store = {
                 get current():State[] {
-                    return [currentMode, currentLevel, store.featureSelected, store.invalid];
+                    return [
+                        currentMode,
+                        currentLevel,
+                        currentGeometryMode,
+                        store.featureSelected,
+                        store.invalid
+                    ];
                 },
                 get currentMode():State {
                     return currentMode;
@@ -40,10 +49,19 @@ module be.vmm.eenvplus.state {
                     currentLevel = value;
                     store.levelChanged.fire(value);
                 },
+                get currentGeometryMode():State {
+                    return currentGeometryMode;
+                },
+                set currentGeometryMode(value:State) {
+                    if (value === currentGeometryMode) return;
+                    currentGeometryMode = value;
+                    store.geometryModeChanged.fire(value);
+                },
                 featureSelected: State,
                 invalid: State,
                 modeChanged: new Trasys.Signals.TypeSignal(),
-                levelChanged: new Trasys.Signals.TypeSignal()
+                levelChanged: new Trasys.Signals.TypeSignal(),
+                geometryModeChanged: new Trasys.Signals.TypeSignal()
             };
 
         angular

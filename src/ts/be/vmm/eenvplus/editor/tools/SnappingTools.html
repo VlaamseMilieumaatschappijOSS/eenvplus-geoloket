@@ -1,38 +1,26 @@
-<a href="#snappingTools"
-   data-toggle="collapse"
-   data-parent="#pulldown-content"
-   class="panel-heading accordion-toggle collapsed">
-
-    <i class="visible-collapsed icon-caret-right spacer"></i>
-    <i class="hidden-collapsed icon-caret-down"></i>
-    <i class="icon-ga-mapfunction"></i>
-    <span translate>Feature snapping</span>
-</a>
-
-<div id="snappingTools" class="panel-body panel-body-wide panel-collapse collapse">
-    <ul>
-        <li>
-            <i class=""></i>
-            <a>No snapping</a>
-        </li>
-        <li>
-            <i class=""></i>
-            <a>Move endpoint</a>
-        </li>
-        <li>
-            <i class=""></i>
-            <a>Add segment</a>
-        </li>
-        <li>
-            <i class=""></i>
-            <a>Ask me every time</a>
-        </li>
-        <li>
-            <label>Resolution</label>
-            <input ng-hide="ctrl.useRange" type="text" maxlength="2" ng-model="ctrl.snapResolution"/>
-            <input ng-show="ctrl.useRange" type="range" min="1" max="50" step="1" ng-model="ctrl.snapResolution"/>
-            <span ng-show="ctrl.useRange">{{ctrl.snapResolution}}</span>
-            <span>px</span>
-        </li>
-    </ul>
-</div>
+<span translate>Feature snapping</span>
+<ul>
+    <li>
+        <i class=""></i>
+        <a>No snapping</a>
+    </li>
+    <li>
+        <i class=""></i>
+        <a>Move endpoint</a>
+    </li>
+    <li>
+        <i class=""></i>
+        <a>Add segment</a>
+    </li>
+    <li>
+        <i class=""></i>
+        <a>Ask me every time</a>
+    </li>
+    <li>
+        <label>Resolution</label>
+        <input ng-hide="ctrl.useRange" type="text" maxlength="2" ng-model="ctrl.snapResolution"/>
+        <input ng-show="ctrl.useRange" type="range" min="1" max="50" step="1" ng-model="ctrl.snapResolution"/>
+        <span ng-show="ctrl.useRange">{{ctrl.snapResolution}}</span>
+        <span>px</span>
+    </li>
+</ul>
