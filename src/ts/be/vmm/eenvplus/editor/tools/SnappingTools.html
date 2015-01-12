@@ -11,16 +11,35 @@
     </div>
 
     <div class="btn-group" role="group">
-        <button type="button" title="No snapping" class="btn btn-default">
+        <button type="button"
+                title="No snapping"
+                ng-click="ctrl.selectNoSnapping()"
+                class="btn btn-default"
+                ng-class="{selected: ctrl.noneSelected()}">
             <i class="icon icon-no-snapping"></i>
         </button>
-        <button type="button" title="Move endpoint" class="btn btn-default">
+
+        <button type="button"
+                title="Move endpoint"
+                ng-click="ctrl.selectMergeMode()"
+                class="btn btn-default"
+                ng-class="{selected: ctrl.mergeSelected()}">
             <i class="icon icon-merge-snapping"></i>
         </button>
-        <button type="button" title="Add segment" class="btn btn-default">
+
+        <button type="button"
+                title="Add segment"
+                ng-click="ctrl.selectAddMode()"
+                class="btn btn-default"
+                ng-class="{selected: ctrl.addSelected()}">
             <i class="icon icon-add-snapping"></i>
         </button>
-        <button type="button" title="Ask me every time" class="btn btn-default">
+
+        <button type="button"
+                title="Ask me every time"
+                ng-click="ctrl.selectInteractiveMode()"
+                class="btn btn-default"
+                ng-class="{selected: ctrl.interactiveSelected()}">
             <i class="icon icon-interactive-snapping"></i>
         </button>
     </div>

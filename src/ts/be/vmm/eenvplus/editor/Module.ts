@@ -10,6 +10,7 @@
 /// <reference path="form/Module.ts"/>
 /// <reference path="geometry/Module.ts"/>
 /// <reference path="paint/Module.ts"/>
+/// <reference path="snapping/Module.ts"/>
 /// <reference path="tools/Module.ts"/>
 /// <reference path="validation/Module.ts"/>
 
@@ -25,6 +26,7 @@ module be.vmm.eenvplus.editor {
         form.MODULE,
         geometry.MODULE,
         paint.MODULE,
+        snapping.MODULE,
         tools.MODULE,
         validation.MODULE
     ]);
