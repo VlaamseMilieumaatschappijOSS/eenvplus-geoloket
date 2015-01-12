@@ -1,0 +1,15 @@
+<a href
+   ng-if="ctrl.hasPermission"
+   ng-click="ctrl.open = !ctrl.open"
+   class="panel-heading accordion-toggle collapsed">
+
+    <i class="icon-ga-mapfunction"></i>
+    <span translate>Import GML</span>
+</a>
+
+<div ga-popup="ctrl.open"
+     ga-popup-options="{title:'Import GML file', help:'64'}"
+     ga-draggable=".ga-popup-title">
+
+
+</div>
