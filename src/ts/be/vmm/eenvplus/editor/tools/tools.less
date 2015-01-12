@@ -96,9 +96,70 @@
 
 .snapping {
   position: absolute;
-  z-index: 999999;
+  z-index: 2000;
+  width: 386px;
   right: 20px;
   bottom: 60px;
-  padding: 15px;
-  background-color: white;
+  .box-shadow(0 0 6px rgba(0, 0, 0, .8));
+
+  .input-group-addon {
+    cursor: move;
+    padding: 6px;
+  }
+
+  input {
+    display: inline-block;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100px;
+  }
+
+  .btn-group {
+    display: table-cell;
+
+    > .btn {
+      padding: 6px;
+
+      &:first-child {
+        margin-left: -1px;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+
+  }
+
+  .resolution-group {
+    width: 160px;
+    height: 46px;
+  }
+
+  .icon {
+    display: block;
+    width: 32px;
+    height: 32px;
+    background: @icon-edit-tools;
+  }
+
+  .icon.icon-snapping {
+    background-position: -96px;
+  }
+
+  .icon.icon-no-snapping {
+    background-position: -128px;
+  }
+
+  .icon.icon-merge-snapping {
+    background-position: -160px;
+  }
+
+  .icon.icon-add-snapping {
+    background-position: -192px;
+  }
+
+  .icon.icon-interactive-snapping {
+    background-position: -224px;
+  }
+
 }

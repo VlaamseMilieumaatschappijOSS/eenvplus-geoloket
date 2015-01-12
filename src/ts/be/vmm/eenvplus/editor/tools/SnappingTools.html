@@ -1,26 +1,27 @@
-<span translate>Feature snapping</span>
-<ul>
-    <li>
-        <i class=""></i>
-        <a>No snapping</a>
-    </li>
-    <li>
-        <i class=""></i>
-        <a>Move endpoint</a>
-    </li>
-    <li>
-        <i class=""></i>
-        <a>Add segment</a>
-    </li>
-    <li>
-        <i class=""></i>
-        <a>Ask me every time</a>
-    </li>
-    <li>
-        <label>Resolution</label>
+<div class="input-group">
+    <span title="Feature snapping" class="input-group-addon">
+        <i class="icon icon-snapping"></i>
+    </span>
+
+    <div class="form-control resolution-group">
         <input ng-hide="ctrl.useRange" type="text" maxlength="2" ng-model="ctrl.snapResolution"/>
         <input ng-show="ctrl.useRange" type="range" min="1" max="50" step="1" ng-model="ctrl.snapResolution"/>
         <span ng-show="ctrl.useRange">{{ctrl.snapResolution}}</span>
         <span>px</span>
-    </li>
-</ul>
+    </div>
+
+    <div class="btn-group" role="group">
+        <button type="button" title="No snapping" class="btn btn-default">
+            <i class="icon icon-no-snapping"></i>
+        </button>
+        <button type="button" title="Move endpoint" class="btn btn-default">
+            <i class="icon icon-merge-snapping"></i>
+        </button>
+        <button type="button" title="Add segment" class="btn btn-default">
+            <i class="icon icon-add-snapping"></i>
+        </button>
+        <button type="button" title="Ask me every time" class="btn btn-default">
+            <i class="icon icon-interactive-snapping"></i>
+        </button>
+    </div>
+</div>
