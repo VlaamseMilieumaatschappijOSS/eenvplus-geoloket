@@ -11,7 +11,7 @@ module be.vmm.eenvplus.editor {
     }
 
     export module StateController {
-        ['Painter', 'GeometryEditor'].forEach(createFactory);
+        ['Painter', 'GeometryEditor', 'Snapping'].forEach(createFactory);
 
         export function factory<T>(store:any):StateController<T> {
             return function StateController<T>(type:T, activate:() => void, deactivate:() => void):void {
