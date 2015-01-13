@@ -30,16 +30,16 @@
         </span>
     </div>
 
-    <div ng-if="ctrl.file">
-        <span ng-show="ctrl.file.progress >= 0">
-            <div style="width:{{ctrl.file.progress}}%">{{ctrl.file.progress}}%</div>
-        </span>
+    <div ng-if="ctrl.file" class="progress">
+        <div role="progressbar"
+             style="width: {{ctrl.progress}}%"
+             class="progress-bar progress-bar-info progress-bar-striped active">
 
-        <button class="btn btn-danger"
-                ng-click="ctrl.abort()"
-                ng-show="ctrl.inProgress()">
-            Abort
-        </button>
+            <span>
+                Upload: {{ctrl.progress}}%
+                <span ng-show="ctrl.progress === 100"> - Validating...</span>
+            </span>
+        </div>
     </div>
 
 </div>

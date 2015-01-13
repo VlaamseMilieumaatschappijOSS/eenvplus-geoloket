@@ -7,7 +7,7 @@ module be.vmm.eenvplus.viewer.GMLImport {
     export var NAME:string = PREFIX + 'GmlImport';
 
     function configure():ng.IDirective {
-        GMLImportController.$inject = ['$upload', 'epUser', 'gaGlobalOptions'];
+        GMLImportController.$inject = ['$upload', 'epUser', 'epFeatureManager', 'gaGlobalOptions'];
 
         return {
             restrict: 'A',
@@ -26,6 +26,7 @@ module be.vmm.eenvplus.viewer.GMLImport {
 
         public files:ng.fileUpload.UploadFile[];
         public open:boolean;
+        public progress:number = 0;
         public uploadUrl = '/rest/services/:mapId/DataServer/';
 
         public get file():ng.fileUpload.UploadFile {
@@ -37,7 +38,7 @@ module be.vmm.eenvplus.viewer.GMLImport {
         }
 
         public inProgress():boolean {
-            return this.file && this.file.upload && !this.file.upload.aborted && this.file.progress < 100;
+            return this.file && this.file.upload && !this.file.upload.aborted && this.progress < 100;
         }
 
         public get hasPermission():boolean {
@@ -51,8 +52,18 @@ module be.vmm.eenvplus.viewer.GMLImport {
 
         constructor(private fileUpload:ng.fileUpload.IUploadService,
                     private user:user.User,
+                    private featureManager:feature.FeatureManager,
                     config:ga.GlobalOptions) {
             this.uploadUrl = config.apiUrl + this.uploadUrl.replace(':mapId', '0');
+        }
+
+
+        /* ----------------- */
+        /* --- behaviour --- */
+        /* ----------------- */
+
+        private handleProgress(event:ProgressEvent):void {
+            this.progress = 100.0 * event.loaded / event.total;
         }
 
 
@@ -63,6 +74,7 @@ module be.vmm.eenvplus.viewer.GMLImport {
         public toggle():void {
             this.open = !this.open;
             this.files = null;
+            this.progress = 0;
         }
 
         public upload():void {
@@ -72,12 +84,7 @@ module be.vmm.eenvplus.viewer.GMLImport {
                     url: this.uploadUrl,
                     file: this.file
                 })
-                .progress((evt:ProgressEvent):void => {
-                    console.log('progress: ' + (100.0 * evt.loaded / evt.total) + '% file :' + this.file.name);
-                })
-                .success((data):void => {
-                    console.log('file ' + this.file.name + 'is uploaded successfully. Response: ' + data);
-                })
+                .progress(this.handleProgress.bind(this))
                 .error(console.error.bind(console));
         }
 
