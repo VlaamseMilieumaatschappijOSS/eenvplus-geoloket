@@ -85,6 +85,7 @@ module be.vmm.eenvplus.viewer.GMLImport {
                     file: this.file
                 })
                 .progress(this.handleProgress.bind(this))
+                .success(this.featureManager.signal.validate.fire)
                 .error(console.error.bind(console));
         }
 

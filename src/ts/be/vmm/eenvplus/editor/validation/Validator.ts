@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.validation.validator {
     export var NAME:string = PREFIX + 'Validator';
 
     function configure():ng.IDirective {
-        ValidatorController.$inject = ['epFeatureManager'];
+        ValidatorController.$inject = ['epFeatureManager', 'epStateStore'];
 
         return {
             restrict: 'A',
@@ -26,12 +26,18 @@ module be.vmm.eenvplus.editor.validation.validator {
 
         public results:FeatureResult[];
 
+        private get isEdit():boolean {
+            return this.stateStore.currentMode === state.State.EDIT;
+        }
+
 
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(private manager:feature.FeatureManager) {
+        constructor(private manager:feature.FeatureManager,
+                    private stateStore:state.StateStore) {
+
             manager.signal.validate.add(this.handleValidation.bind(this));
         }
 
@@ -45,17 +51,18 @@ module be.vmm.eenvplus.editor.validation.validator {
         }
 
         public highlight(result:FeatureResult):void {
-            this.manager
-                .get(result.layerBodId, result.key)
-                .then(this.manager.emphasize);
+            if (this.isEdit)
+                this.manager
+                    .get(result.layerBodId, result.key)
+                    .then(this.manager.emphasize);
         }
 
         public removeHighlight():void {
-            this.manager.emphasize(null);
+            if (this.isEdit) this.manager.emphasize(null);
         }
 
         public select(result:FeatureResult):void {
-            if (feature.isType(feature.FeatureType.NODE, result.layerBodId)) return;
+            if (!this.isEdit || feature.isType(feature.FeatureType.NODE, result.layerBodId)) return;
 
             this.manager
                 .get(result.layerBodId, result.key)
