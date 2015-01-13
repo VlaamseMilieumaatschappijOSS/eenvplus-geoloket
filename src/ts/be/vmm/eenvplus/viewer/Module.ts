@@ -12,6 +12,6 @@ module be.vmm.eenvplus.viewer {
 
     goog.provide(MODULE);
 
-    angular.module(MODULE, []);
+    angular.module(MODULE, ['angularFileUpload']);
 
 }

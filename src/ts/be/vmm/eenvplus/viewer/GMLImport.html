@@ -1,15 +1,45 @@
 <a href
    ng-if="ctrl.hasPermission"
-   ng-click="ctrl.open = !ctrl.open"
+   ng-click="ctrl.toggle()"
    class="panel-heading accordion-toggle collapsed">
 
-    <i class="icon-ga-mapfunction"></i>
+    <i class="icon-arrow-up"></i>
     <span translate>Import GML</span>
 </a>
 
 <div ga-popup="ctrl.open"
      ga-popup-options="{title:'Import GML file', help:'64'}"
-     ga-draggable=".ga-popup-title">
+     ga-draggable=".ga-popup-title"
+     class="gml-import-popup">
 
+    <div class="input-group">
+        <input type="text" readonly
+               class="form-control"
+               placeholder="{{'Select a file to upload' | translate}}"
+               value="{{ctrl.label}}"/>
+
+        <span class="input-group-btn">
+            <span ng-file-select
+                  ng-model="ctrl.files"
+                  ng-file-change="ctrl.upload()"
+                  ng-multiple="false"
+                  ng-accept="'.xml'"
+                  class="btn btn-primary">
+                Upload
+            </span>
+        </span>
+    </div>
+
+    <div ng-if="ctrl.file">
+        <span ng-show="ctrl.file.progress >= 0">
+            <div style="width:{{ctrl.file.progress}}%">{{ctrl.file.progress}}%</div>
+        </span>
+
+        <button class="btn btn-danger"
+                ng-click="ctrl.abort()"
+                ng-show="ctrl.inProgress()">
+            Abort
+        </button>
+    </div>
 
 </div>
