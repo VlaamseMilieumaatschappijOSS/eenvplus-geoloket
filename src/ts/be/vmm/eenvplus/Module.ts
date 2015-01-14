@@ -58,6 +58,13 @@ module be.vmm.eenvplus {
         };
     }
 
+    export function passThrough(fn:Function):AnyFunction {
+        return function passThrough(first:any):void {
+            fn.call(this, first);
+            return first;
+        };
+    }
+
     export function changeEvent(propertyName:string):string {
         return 'change:' + propertyName;
     }

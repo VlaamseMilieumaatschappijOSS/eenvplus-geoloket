@@ -8,7 +8,7 @@ module be.vmm.eenvplus.viewer.GMLImport {
 
     function configure():ng.IDirective {
         GMLImportController.$inject = [
-            '$timeout', '$upload', 'epUser', 'epFeatureManager', 'epTileCache', 'gaGlobalOptions'
+            '$timeout', '$upload', 'epUser', 'epFeatureManager', 'gaGlobalOptions'
         ];
 
         return {
@@ -58,7 +58,6 @@ module be.vmm.eenvplus.viewer.GMLImport {
                     private fileUpload:ng.fileUpload.IUploadService,
                     private user:user.User,
                     private featureManager:feature.FeatureManager,
-                    private invalidateCache:invalidateTileCache,
                     config:ga.GlobalOptions) {
 
             _.bindAll(this);
@@ -94,6 +93,7 @@ module be.vmm.eenvplus.viewer.GMLImport {
                     file: this.file
                 })
                 .progress(this.handleProgress)
+                .success(this.featureManager.signal.push.fire)
                 .success(this.featureManager.signal.validate.fire)
                 .success(this.updateStatus)
                 .error(console.error.bind(console));
@@ -103,7 +103,7 @@ module be.vmm.eenvplus.viewer.GMLImport {
             // since upload progress isn't working, we need to show the upload bar for a little while
             this.delay(() => {
                 this.complete = true;
-                if (this.valid = result.valid) this.invalidateCache();
+                this.valid = result.valid
             }, 1000);
         }
 
