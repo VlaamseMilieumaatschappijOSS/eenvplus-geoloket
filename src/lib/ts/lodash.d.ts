@@ -106,6 +106,7 @@ declare module _ {
         bindAll(object:Object, ...fns:string[]):Object;
         compose(...fns:Function[]):AnyFunction;
         curry(fn:Function):AnyFunction;
+        delay(fn:Function, time:number, ...args:any[]):AnyFunction;
         partial(fn:Function, ...args:any[]):AnyFunction;
         partialRight(fn:Function, ...args:any[]):AnyFunction;
         wrap(value:any, wrapper:Function):AnyFunction;

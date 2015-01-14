@@ -30,7 +30,7 @@
         </span>
     </div>
 
-    <div ng-if="ctrl.file" class="progress">
+    <div ng-if="ctrl.file && !ctrl.complete" class="progress">
         <div role="progressbar"
              style="width: {{ctrl.progress}}%"
              class="progress-bar progress-bar-info progress-bar-striped active">
@@ -40,6 +40,14 @@
                 <span ng-show="ctrl.progress === 100"> - Validating...</span>
             </span>
         </div>
+    </div>
+
+    <div ng-if="ctrl.complete && ctrl.valid" class="alert alert-success" role="alert">
+        {{ctrl.file.name}} successfully uploaded and validated.
+    </div>
+
+    <div ng-if="ctrl.complete && !ctrl.valid" class="alert alert-danger" role="alert">
+        Validation of {{ctrl.file.name}} failed. Please check the list of validation results on the side of the screen.
     </div>
 
 </div>
