@@ -22,11 +22,12 @@ module be.vmm.eenvplus.viewer {
         }
 
         function updateUrls(source:ol.source.TileWMS):void {
-            source.setUrls(source.getUrls().map(addTimestamp));
+            source.setUrls(source.getUrls().map(setTimestamp));
         }
 
-        function addTimestamp(url:string):string {
-            return url + '&cache=' + _.now();
+        function setTimestamp(url:string):string {
+            var param = '&cache=' + _.now();
+            return url.indexOf('&cache=') === -1 ? url + param : url.replace(/&cache=\d+/i, param);
         }
 
     }
