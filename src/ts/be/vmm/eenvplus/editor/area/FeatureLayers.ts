@@ -7,11 +7,10 @@ module be.vmm.eenvplus.editor.area.featureLayers {
     'use strict';
 
     FeatureLayersController.$inject = [
-        'epMap', 'epStateStore', 'epAreaStore', 'epFeatureManager', 'epFeatureLayerStore', 'epFeatureLayerFactory'
+        'epMap', 'epAreaStore', 'epFeatureManager', 'epFeatureLayerStore', 'epFeatureLayerFactory'
     ];
 
     export function FeatureLayersController(map:ol.Map,
-                                            stateStore:state.StateStore,
                                             store:AreaStore,
                                             manager:feature.FeatureManager,
                                             featureLayerStore:feature.FeatureLayerStore,
@@ -29,23 +28,18 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         /* --- construction --- */
         /* -------------------- */
 
-        store.selected.add(init);
+        store.selected.add(handleFeatureSelection);
         manager.signal.load.add(createLayers);
         manager.signal.update.add(updateFeature);
         manager.signal.remove.add(removeFromLayer);
-
-        function init(extent:ol.Extent):void {
-            manager.load(extent);
-            stateStore.modeChanged.add(handleModeChange);
-        }
 
 
         /* ---------------------- */
         /* --- event handlers --- */
         /* ---------------------- */
 
-        function handleModeChange(editMode:state.State):void {
-            if (editMode === state.State.VIEW) clear();
+        function handleFeatureSelection(extent:ol.Extent):void {
+            extent ? manager.load(extent) : clear();
         }
 
 
@@ -75,7 +69,7 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         }
 
         function clear():void {
-            stateStore.modeChanged.remove(handleModeChange);
+            manager.clear();
             featureLayerStore.layers.forEach(removeLayer);
             featureLayerStore.layers = [];
         }

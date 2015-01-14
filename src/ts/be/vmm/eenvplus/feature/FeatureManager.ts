@@ -19,6 +19,7 @@ module be.vmm.eenvplus.feature {
     }
 
     export interface FeatureManager {
+        clear: FeatureJSONHandler;
         create: FeatureJSONHandler;
         deselect: () => void;
         discard: FeatureJSONHandler;
@@ -53,6 +54,7 @@ module be.vmm.eenvplus.feature {
             signals.remove.add(deselect);
 
             return {
+                clear: service.clear,
                 create: create,
                 deselect: deselect,
                 discard: discard,

@@ -284,40 +284,42 @@ module be.vmm.eenvplus.feature {
                         .post(pushUrl, results)
                         .success((report:any) => {
                             if (report.completed) {
-                                var results = report.results;
+                                getDB().then((db:IDBDatabase) => {
+                                    var results = report.results,
+                                        transaction = db.transaction(types, "readwrite"),
+                                        i = 0;
 
-                                var transaction = db.transaction(types, "readwrite");
-                                var i = 0;
-                                var next = function () {
-                                    if (i < results.length) {
-                                        var result = results[i++];
-                                        var type = getType(result.layerBodId);
+                                    var next = () => {
+                                        if (i < results.length) {
+                                            var result:any = results[i++];
+                                            var type = getType(result.layerBodId);
 
-                                        var objectStore = transaction.objectStore(type);
+                                            var objectStore = transaction.objectStore(type);
 
-                                        var key = result.key;
-                                        var request;
-                                        if (result.action == "create" || result.action == "update") {
-                                            var feature = result.feature;
-                                            feature.key = key;
-                                            addBbox(feature);
-                                            request = objectStore.put(feature);
-                                        } else if (result.action == "delete") {
-                                            request = objectStore.delete(key);
-                                        }
-                                        if (request) {
-                                            request.onsuccess = next;
-                                            request.onerror = function (event) {
-                                                d.reject("Could not merge modified features in local storage.");
-                                            };
+                                            var key = result.key;
+                                            var request;
+                                            if (result.action == "create" || result.action == "update") {
+                                                var feature = result.feature;
+                                                feature.key = key;
+                                                addBbox(feature);
+                                                request = objectStore.put(feature);
+                                            } else if (result.action == "delete") {
+                                                request = objectStore.delete(key);
+                                            }
+                                            if (request) {
+                                                request.onsuccess = next;
+                                                request.onerror = () => {
+                                                    d.reject("Could not merge modified features in local storage.");
+                                                };
+                                            } else {
+                                                next();
+                                            }
                                         } else {
-                                            next();
+                                            d.resolve(report);
                                         }
-                                    } else {
-                                        d.resolve(report);
-                                    }
-                                };
-                                next();
+                                    };
+                                    next();
+                                });
                             } else {
                                 d.resolve(report);
                             }
