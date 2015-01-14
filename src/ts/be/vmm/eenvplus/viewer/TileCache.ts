@@ -7,12 +7,34 @@ module be.vmm.eenvplus.viewer {
     TileCache.$inject = ['epMap', 'epFeatureManager'];
 
     function TileCache(map:ol.Map, manager:feature.FeatureManager):void {
+
+        /* -------------------- */
+        /* --- construction --- */
+        /* -------------------- */
+
+        var debouncedRefresh = _.debounce(refresh, 300);
+
+        map.getLayers().on(ol.CollectionEventType.ADD, handleLayerChange);
         manager.signal.push.add(handleModifications);
+
+
+        /* ---------------------- */
+        /* --- event handlers --- */
+        /* ---------------------- */
+
+        function handleLayerChange(event:ol.CollectionEvent<ol.layer.Base>):void {
+            if (event.element['displayInLayerManager']) debouncedRefresh();
+        }
 
         function handleModifications(report:feature.model.ModificationReport):void {
             if (report.completed) refresh();
         }
 
+
+        /* ----------------- */
+        /* --- behaviour --- */
+        /* ----------------- */
+        
         function refresh():void {
             _(map.getLayers().getArray())
                 .filter('displayInLayerManager')

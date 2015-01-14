@@ -110,12 +110,16 @@ declare module _ {
         delay(fn:Function, time:number, ...args:any[]):AnyFunction;
         partial(fn:Function, ...args:any[]):AnyFunction;
         partialRight(fn:Function, ...args:any[]):AnyFunction;
+        throttle(fn:Function, time:number, options?:ThrottleOptions):AnyFunction;
         wrap(value:any, wrapper:Function):AnyFunction;
     }
 
-    interface DebounceOptions {
-        leading?:boolean;
+    interface DebounceOptions extends ThrottleOptions {
         maxWait?:number;
+    }
+
+    interface ThrottleOptions {
+        leading?:boolean;
         trailing?:boolean;
     }
 
