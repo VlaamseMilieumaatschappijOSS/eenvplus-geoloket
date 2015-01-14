@@ -430,7 +430,7 @@ declare module ol {
             Image:Image;
             Layer:Layer;
             LayerProperty:LayerProperty;
-            Tile:Tile;
+            Tile:Tile<source.Tile>;
             Vector:layer.Vector;
         }
 
@@ -441,10 +441,14 @@ declare module ol {
         }
 
         interface Image extends Layer {
+            prototype:Image;
+
             new (options?:LayerOptions):Image;
         }
 
         interface Layer extends Base {
+            prototype:Layer;
+
             new (options:LayerOptions):Layer;
 
             getSource():source.Source;
@@ -464,11 +468,17 @@ declare module ol {
             MIN_RESOLUTION:string;
         }
 
-        interface Tile extends Layer {
-            new (options?:LayerOptions):Tile;
+        interface Tile<T extends source.Tile> extends Layer {
+            prototype:Tile<T>;
+
+            new (options?:LayerOptions):Tile<T>;
+
+            getSource():T;
         }
 
         interface Vector extends Layer {
+            prototype:Vector;
+
             new (options?:LayerOptions):Vector;
 
             getSource():source.Vector;
@@ -541,6 +551,12 @@ declare module ol {
             new (options?:VectorConfig):FormatVector;
         }
 
+        interface Image extends Source, ImageConfig {
+        }
+
+        interface ImageConfig {
+        }
+
         interface ServerVector extends FormatVector {
             new (options?:VectorConfig):ServerVector;
 
@@ -549,6 +565,19 @@ declare module ol {
 
         interface Source extends Observable {
             clear():void;
+        }
+
+        interface Tile extends Source {
+        }
+
+        interface TileWMS extends Tile, TileWMSConfig {
+            getUrls():string[];
+            setUrl(url:string);
+            setUrls(urls:string[]);
+        }
+
+        interface TileWMSConfig {
+            url:string;
         }
 
         interface Vector extends Source, VectorConfig {
