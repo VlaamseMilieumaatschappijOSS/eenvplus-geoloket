@@ -279,53 +279,61 @@ module be.vmm.eenvplus.feature {
             function push():ng.IPromise<any> {
                 var d = q.defer<any>();
 
-                modifications().then((results) => {
-                    http
-                        .post(pushUrl, results)
-                        .success((report:any) => {
-                            if (report.completed) {
-                                getDB().then((db:IDBDatabase) => {
-                                    var results = report.results,
-                                        transaction = db.transaction(types, "readwrite"),
-                                        i = 0;
+                modifications().then((results:model.FeatureJSON[]) => {
+                    if (results.length)
+                        http.post(pushUrl, results)
+                            .success((report:model.ModificationReport) => {
+                                if (report.completed) {
+                                    getDB().then((db:IDBDatabase) => {
+                                        var results = report.results,
+                                            transaction = db.transaction(types, "readwrite"),
+                                            i = 0;
 
-                                    var next = () => {
-                                        if (i < results.length) {
-                                            var result:any = results[i++];
-                                            var type = getType(result.layerBodId);
+                                        var next = () => {
+                                            if (i < results.length) {
+                                                var result = results[i++],
+                                                    type = getType(result.layerBodId),
+                                                    objectStore = transaction.objectStore(type),
+                                                    key = result.key,
+                                                    request;
 
-                                            var objectStore = transaction.objectStore(type);
-
-                                            var key = result.key;
-                                            var request;
-                                            if (result.action == "create" || result.action == "update") {
-                                                var feature = result.feature;
-                                                feature.key = key;
-                                                addBbox(feature);
-                                                request = objectStore.put(feature);
-                                            } else if (result.action == "delete") {
-                                                request = objectStore.delete(key);
-                                            }
-                                            if (request) {
-                                                request.onsuccess = next;
-                                                request.onerror = () => {
-                                                    d.reject("Could not merge modified features in local storage.");
-                                                };
+                                                if (result.action == "create" || result.action == "update") {
+                                                    var feature = result.feature;
+                                                    feature.key = key;
+                                                    addBbox(feature);
+                                                    request = objectStore.put(feature);
+                                                } else if (result.action == "delete") {
+                                                    request = objectStore.delete(key);
+                                                }
+                                                if (request) {
+                                                    request.onsuccess = next;
+                                                    request.onerror = () => {
+                                                        d.reject("Could not merge modified features in local storage.");
+                                                    };
+                                                } else {
+                                                    next();
+                                                }
                                             } else {
-                                                next();
+                                                d.resolve(report);
                                             }
-                                        } else {
-                                            d.resolve(report);
-                                        }
-                                    };
-                                    next();
-                                });
-                            } else {
-                                d.resolve(report);
-                            }
-                        }).error(function () {
-                            d.reject("Could not push features.");
-                        });
+                                        };
+                                        next();
+                                    });
+                                } else {
+                                    d.resolve(report);
+                                }
+                            })
+                            .error(function () {
+                                d.reject("Could not push features.");
+                            });
+                    else d.resolve({
+                        completed: false,
+                        validation: {
+                            valid: true,
+                            results: []
+                        },
+                        results: []
+                    });
                 }, d.reject);
 
                 return d.promise;
@@ -436,7 +444,7 @@ module be.vmm.eenvplus.feature {
             }
 
             /** @private */
-            function modifications() {
+            function modifications():ng.IPromise<model.FeatureJSON[]> {
                 var d = q.defer();
 
                 getDB().then((db:IDBDatabase):void => {

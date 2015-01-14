@@ -23,22 +23,11 @@ module be.vmm.eenvplus.editor.area.actions {
 
     class ActionsController {
 
-        /* ------------------ */
-        /* --- properties --- */
-        /* ------------------ */
-
-        private state:state.StateStore;
-        private manager:feature.FeatureManager;
-
-
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(state:state.StateStore, manager:feature.FeatureManager) {
-            this.state = state;
-            this.manager = manager;
-
+        constructor(private state:state.StateStore, manager:feature.FeatureManager) {
             this.validate = manager.validate;
             this.save = _.compose(this.discard.bind(this), manager.push);
         }
@@ -48,8 +37,8 @@ module be.vmm.eenvplus.editor.area.actions {
         /* --- behaviour --- */
         /* ----------------- */
 
-        public validate:Function;
-        public save:Function;
+        public validate:() => void;
+        public save:() => void;
 
         public discard():void {
             this.state.currentMode = state.State.VIEW;
