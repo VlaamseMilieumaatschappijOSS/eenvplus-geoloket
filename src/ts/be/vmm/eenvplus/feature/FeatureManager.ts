@@ -275,7 +275,8 @@ module be.vmm.eenvplus.feature {
             function ensureProperties(json:model.FeatureJSON):model.FeatureJSON {
                 var type = toType(json.layerBodId);
                 json.properties = json.properties || <model.FeatureProperties> {};
-                if (type !== FeatureType.NODE) json.properties['statussen'] = []; // FIXME untyped
+                if (type !== FeatureType.NODE) // FIXME untyped
+                    json.properties['statussen'] = json.properties['statussen'] || [];
                 return json;
             }
 
