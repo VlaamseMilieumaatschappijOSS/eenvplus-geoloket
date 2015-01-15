@@ -2,7 +2,9 @@
     Required
 </div>
 
-<div class="form-group" ng-class="{'has-error': ctrl.validate.invalid('statusType_' + ctrl.uid)}">
+<div class="form-group type-input-group"
+     ng-class="{'has-error': ctrl.validate.invalid('statusType_' + ctrl.uid)}">
+
     <label for="statusTypeInput_{{ctrl.uid}}" class="sr-only">
         Type
     </label>
@@ -13,20 +15,52 @@
     </select>
 </div>
 
-<div class="form-group">
-    <label for="statusStartInput_{{ctrl.uid}}" class="sr-only">
-        Start
-    </label>
-    <input id="statusStartInput_{{ctrl.uid}}" name="statusStart_{{ctrl.uid}}" type="date"
-           placeholder="Start" class="form-control"
-           ng-model="ctrl.data.geldigVanaf"/>
-</div>
+<div class="form-group date-input-group">
+    <div class="input-group">
+        <label for="statusStartInput_{{ctrl.uid}}" class="sr-only">
+            Start
+        </label>
+        <input id="statusStartInput_{{ctrl.uid}}"
+               name="statusStart_{{ctrl.uid}}"
+               type="text" class="form-control date-input"
+               title="Start date"
+               placeholder="dd/mm/yyyy"
+               datepicker-popup="dd/MM/yyyy"
+               ng-model="ctrl.start"
+               is-open="ctrl.startOpened"
+               max-date="{{ctrl.end}}"
+               close-text="Close"/>
 
-<div class="form-group">
-    <label for="statusEndInput_{{ctrl.uid}}" class="sr-only">
-        End
-    </label>
-    <input id="statusEndInput_{{ctrl.uid}}" name="statusEnd_{{ctrl.uid}}" type="date"
-           placeholder="End" class="form-control"
-           ng-model="ctrl.data.geldigTot"/>
+        <span class="input-group-btn">
+            <button type="button" class="btn btn-default"
+                    ng-click="ctrl.handleDateClick($event, 'start')">
+                <i class="glyphicon glyphicon-calendar"></i>
+            </button>
+        </span>
+    </div>
+
+    <span class="until">until</span>
+
+    <div class="input-group">
+        <label for="statusEndInput_{{ctrl.uid}}" class="sr-only">
+            End
+        </label>
+        <input id="statusEndInput_{{ctrl.uid}}"
+               name="statusEnd_{{ctrl.uid}}"
+               type="text" class="form-control date-input"
+               title="End date"
+               placeholder="dd/mm/yyyy"
+               datepicker-popup="dd/MM/yyyy"
+               ng-model="ctrl.end"
+               is-open="ctrl.endOpened"
+               min-date="{{ctrl.start}}"
+               close-text="Close"/>
+
+        <span class="input-group-btn">
+            <button type="button" class="btn btn-default"
+                    ng-click="ctrl.handleDateClick($event, 'end')">
+                <i class="glyphicon glyphicon-calendar"></i>
+            </button>
+        </span>
+    </div>
 </div>

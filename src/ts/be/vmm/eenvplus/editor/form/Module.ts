@@ -15,6 +15,9 @@ module be.vmm.eenvplus.editor.form {
 
     goog.provide(MODULE);
 
-    angular.module(MODULE, []);
+    angular.module(MODULE, [
+        'ui.bootstrap.tpls',
+        'ui.bootstrap.datepicker'
+    ]);
 
 }

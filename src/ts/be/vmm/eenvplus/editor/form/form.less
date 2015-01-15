@@ -15,7 +15,7 @@
   background: white;
   border-right: 1px solid #bdbdbd;
   .box-shadow(6px 6px 12px rgba(0, 0, 0, 0.175));
-  z-index: 1001; // above the pulldown
+  z-index: 999; // below angular-ui-bootstrap-dropdowns (z-index: 1000)
 
   .panel-group {
     margin: 0;
@@ -43,11 +43,33 @@
   }
 
   .form-inline .form-group {
-    width: 30%;
-    margin-right: 5px;
+    &.type-input-group {
+      vertical-align: top;
+      width: 35%;
+      margin-right: 5px;
+    }
 
-    &:last-of-type {
+    &.date-input-group {
+      width: 60%;
       margin-right: 0;
+
+      .dropdown-menu {
+        top: -315px !important;
+        left: -102px !important;
+
+        .btn {
+          margin-bottom: 5px;
+        }
+      }
+
+      .until {
+        padding-left: 13px;
+        color: #555555;
+      }
+    }
+
+    .date-input {
+      height: 100%;
     }
 
     .form-control {
