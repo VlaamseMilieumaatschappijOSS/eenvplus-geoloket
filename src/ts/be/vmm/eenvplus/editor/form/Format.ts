@@ -25,7 +25,7 @@ module be.vmm.eenvplus.editor.form {
                 type = feature.toType(json.layerBodId);
 
             if (json.id)
-                return typeLabels[type] + ' ' + json.properties.alternatieveId;
+                return typeLabels[type] + ' ' + (json.properties.alternatieveId || 'VMM:' + json.id);
             return 'New ' + typeLabels[type];
         }
 
