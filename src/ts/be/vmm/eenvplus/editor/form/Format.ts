@@ -7,7 +7,6 @@ module be.vmm.eenvplus.editor.form {
     export interface Format {
         toFeatureLabel(json:feature.model.FeatureJSON):string;
         toUserName(id:number):string;
-        toDate(timestamp:number):string;
     }
 
     export module Format {
@@ -15,8 +14,7 @@ module be.vmm.eenvplus.editor.form {
 
         var api = {
             toFeatureLabel: toFeatureLabel,
-            toUserName: toUserName,
-            toDate: toDate
+            toUserName: toUserName
         };
 
         export function toFeatureLabel(json:feature.model.FeatureJSON):string {
@@ -30,11 +28,7 @@ module be.vmm.eenvplus.editor.form {
         }
 
         export function toUserName(id:number):string {
-            return 'Max';
-        }
-
-        export function toDate(timestamp:number):string {
-            return '15/02/2014';
+            return id ? (id).toString() : 'VMM';
         }
 
         angular

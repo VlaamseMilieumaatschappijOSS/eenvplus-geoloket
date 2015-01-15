@@ -51,6 +51,7 @@
 
 <div ep-form-actions class="actions"></div>
 
-<div class="metadata">
-    Last update by {{ctrl.data.userId | epUserName}} on {{ctrl.data.beginLifeSpanVersion | epDate}}
+<div ng-if="ctrl.data.id" class="metadata">
+    Last update by <strong>{{ctrl.data.properties.userId | epUserName}}</strong>
+    on <strong>{{ctrl.data.properties.beginLifespanVersion | date:'dd/MM/yyyy'}}</strong>
 </div>

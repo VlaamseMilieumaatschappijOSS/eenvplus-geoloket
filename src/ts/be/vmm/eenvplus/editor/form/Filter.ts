@@ -6,7 +6,7 @@
 module be.vmm.eenvplus.editor.form.Filter {
     'use strict';
 
-    ['FeatureLabel', 'UserName', 'Date'].forEach(createFilter);
+    ['FeatureLabel', 'UserName'].forEach(createFilter);
 
     function createFilter(name:string):void {
         var fn = (format:Format):Function => {
