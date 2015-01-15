@@ -137,6 +137,10 @@ declare module ol {
         type:string;
     }
 
+    interface MapBrowserPointerEvent extends MapBrowserEvent {
+        coordinate:Coordinate;
+    }
+
     interface MapEvent extends goog.events.Event {
         map:ol.Map;
     }
@@ -585,6 +589,7 @@ declare module ol {
 
             addFeature(feature:Feature):void;
             addFeatures(features:Feature[]):void;
+            getClosestFeatureToCoordinate(coordinate:Coordinate):Feature;
             getFeatureById(id:number):Feature;
             getFeatures():Feature[];
             removeFeature(feature:Feature):void;

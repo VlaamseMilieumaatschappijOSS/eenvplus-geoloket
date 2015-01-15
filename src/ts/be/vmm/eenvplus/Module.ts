@@ -53,8 +53,8 @@ module be.vmm.eenvplus {
     }
 
     export function apply(fn:Function):AnyFunction {
-        return function apply() {
-            fn.apply(null, arguments[0]);
+        return function apply(args:any[]) {
+            return fn.apply(null, args);
         };
     }
 
