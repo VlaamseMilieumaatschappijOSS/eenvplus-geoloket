@@ -36,6 +36,8 @@ module be.vmm.eenvplus.editor.geometry {
         /* ------------------ */
 
         var hasKeyModifier:boolean = false,
+            geoJson = new ol.format.GeoJSON(),
+            toJson = geoJson.writeFeature.bind(geoJson),
             modify:ModifyPrivate = <ModifyPrivate> new ol.interaction.Modify({
                 features: featureStore.selection,
                 deleteCondition: goog.functions.and(ol.events.condition.altKeyOnly, ol.events.condition.singleClick)
@@ -69,6 +71,7 @@ module be.vmm.eenvplus.editor.geometry {
             hasKeyModifier = ol.events.condition.altKeyOnly(event);
             modify.lastPixel_ = event.pixel;
             handlePointerAtPixel(event.pixel);
+            updateModel();
         }
 
         function handlePointerAtPixel(pixel:ol.Pixel):void {
@@ -100,6 +103,10 @@ module be.vmm.eenvplus.editor.geometry {
             return _.reduce(_.map(nodes, 'segment'), (prev:ol.Coordinate[], curr:ol.Coordinate[]):ol.Coordinate[] => {
                 return dist(coordinate, prev) < dist(coordinate, curr) ? prev : curr;
             });
+        }
+
+        function updateModel():void {
+            featureStore.current.geometry = toJson(featureStore.selectedView).geometry;
         }
 
         function snap(mousePixel:ol.Pixel, mouseCoordinate:ol.Coordinate, segment:ol.Coordinate[]):void {
@@ -136,7 +143,8 @@ module be.vmm.eenvplus.editor.geometry {
         function determineAction(vertex:ol.Coordinate):Action {
             if (!modify.snappedToVertex_) return Action.ADD;
 
-            var featureCoordinates = featureStore.current.geometry.coordinates,
+            var featureCoordinates =
+                    (<ol.geometry.LineString> featureStore.selectedView.getGeometry()).getCoordinates(),
                 isEndVertex =
                     ol.coordinate.equals(vertex, _.first(featureCoordinates)) ||
                     ol.coordinate.equals(vertex, _.last(featureCoordinates));

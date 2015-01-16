@@ -297,11 +297,26 @@ declare module ol {
             //geometryName:string;
         }
 
-        interface GeoJSONFeature {
-            geometry:{
-                coordinates:any; //Coordinate|Coordinate[];
-                type:string;
-            };
+        interface GeoJSONCRS {
+            properties: {
+                name:string;
+            }
+            type:string;
+        }
+
+        interface GeoJSONFeature extends GeoJSONObject {
+            id?:any; // number|string
+            geometry:GeoJSONGeometry;
+            properties?:any;
+        }
+
+        interface GeoJSONGeometry {
+            coordinates:any; //Coordinate|Coordinate[];
+            type:string;
+        }
+
+        interface GeoJSONObject {
+            crs:GeoJSONCRS;
             type:string;
         }
 
