@@ -29,7 +29,7 @@ module be.vmm.eenvplus.state {
         /* -------------------- */
 
         view.on(changeEvent(ol.ViewProperty.RESOLUTION), invalidateLevel);
-        layers.on(changeEvent(ol.CollectionProperty.LENGTH), setLevelThreshold);
+        layers.on(changeEvent(ol.CollectionProperty.LENGTH), _.debounce(setLevelThreshold, 200));
         painterStore.selected.add(_.partial(invalidateGeometryMode, State.GEOMETRY_PAINTING));
         editorStore.selected.add(_.partial(invalidateGeometryMode, State.GEOMETRY_MODIFYING));
         featureStore.selected.add(invalidateFeatureSelection);
@@ -46,6 +46,7 @@ module be.vmm.eenvplus.state {
                 .invoke(ol.layer.Base.prototype.get, ol.layer.LayerProperty.MAX_RESOLUTION)
                 .value();
             threshold = Math.max.apply(null, resolutions);
+            invalidateLevel();
         }
 
         function invalidateLevel():void {
