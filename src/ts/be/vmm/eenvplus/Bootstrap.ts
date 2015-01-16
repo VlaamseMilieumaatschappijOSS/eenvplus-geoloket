@@ -24,7 +24,8 @@ module be.vmm.eenvplus.Bootstrap {
             .config(configureLayers)
             .config(configureFeaturePreview)
             .config(configureProfileService)
-            .config(configureWhiteList);
+            .config(configureWhiteList)
+            .factory('$exceptionHandler', catchAll);
 
         keycloak
             .init({onLoad: 'check-sso'})
@@ -76,6 +77,13 @@ module be.vmm.eenvplus.Bootstrap {
         var whiteList = delegate.resourceUrlWhitelist();
         whiteList = whiteList.concat(options.whitelist);
         delegate.resourceUrlWhitelist(whiteList);
+    }
+
+    function catchAll() {
+        return function (exception) {
+            alert(exception.message);
+            throw exception;
+        };
     }
 
 }
