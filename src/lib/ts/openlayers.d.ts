@@ -385,6 +385,8 @@ declare module ol {
 
         interface Draw extends Pointer {
             new (config:any):Draw;
+
+            finishDrawing():void;
         }
 
         interface DrawMode {

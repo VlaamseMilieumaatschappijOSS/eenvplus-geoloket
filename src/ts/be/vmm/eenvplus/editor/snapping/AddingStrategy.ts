@@ -37,7 +37,6 @@ module be.vmm.eenvplus.editor.snapping {
                 if (snapped) {
                     var line = <ol.geometry.LineString> painter.sketchFeature_.getGeometry(),
                         coordinates = line.getCoordinates();
-                    console.log(coordinates);
 
                     // insert at before-last position
                     if (snapping) coordinates[coordinates.length - 2] = event.coordinate;
@@ -48,7 +47,7 @@ module be.vmm.eenvplus.editor.snapping {
                 }
                 else {
                     //coordinates.
-                    snapping  = false;
+                    snapping = false;
                 }
             }
 
@@ -57,8 +56,8 @@ module be.vmm.eenvplus.editor.snapping {
         }
 
         function addToDrawing(event:ol.MapBrowserPointerEvent):void {
-            console.log(snapping);
             (<DrawPrivate> ol.interaction.Draw.prototype).addToDrawing_.call(painter, event);
+            if (snapping) painter.finishDrawing_();
         }
 
 
@@ -90,6 +89,8 @@ module be.vmm.eenvplus.editor.snapping {
         function deactivate() {
             if (painter.handlePointerMove_ === handleMouseMove)
                 painter.handlePointerMove_ = null;
+            if (painter.addToDrawing_ === addToDrawing)
+                painter.addToDrawing_ = null;
             painter = null;
         }
 
