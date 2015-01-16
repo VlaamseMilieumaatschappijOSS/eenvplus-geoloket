@@ -26,11 +26,11 @@ module be.vmm.eenvplus.editor.snapping {
         state(SnappingType.ADD, activate, deactivate);
 
 
-        /* ---------------------- */
-        /* --- event handlers --- */
-        /* ---------------------- */
+        /* ----------------- */
+        /* --- overrides --- */
+        /* ----------------- */
 
-        function handleMouseMove(event:ol.MapBrowserPointerEvent):void {
+        function handlePointerMove(event:ol.MapBrowserPointerEvent):void {
             var snappedCoordinate = calculateCoordinate(event.coordinate);
             invalidateGeometrySnapping(event.coordinate, snappedCoordinate);
 
@@ -56,7 +56,7 @@ module be.vmm.eenvplus.editor.snapping {
         function activate() {
             painter = _.find(map.getInteractions().getArray(), isActivePainter);
             painter.snapTolerance_ = 24;
-            painter.handlePointerMove_ = handleMouseMove;
+            painter.handlePointerMove_ = handlePointerMove;
             painter.addToDrawing_ = addToDrawing;
             painter.abortDrawing_ = abortDrawing;
             nodes = feature.getLayer(map, feature.FeatureType.NODE).getSource();
@@ -146,7 +146,7 @@ module be.vmm.eenvplus.editor.snapping {
          * Unset all intercepted methods so that we don't leave any accidental references in memory.
          */
         function deactivate() {
-            if (painter.handlePointerMove_ === handleMouseMove)
+            if (painter.handlePointerMove_ === handlePointerMove)
                 painter.handlePointerMove_ = null;
             if (painter.addToDrawing_ === addToDrawing)
                 painter.addToDrawing_ = null;

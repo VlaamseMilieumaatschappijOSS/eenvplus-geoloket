@@ -8,12 +8,13 @@ module be.vmm.eenvplus.editor.snapping {
         snapTolerance_:number;
 
         abortDrawing_():ol.Feature;
-        addToDrawing_(event:ol.MapBrowserEvent):void;
-        createOrUpdateSketchPoint_(event:ol.MapBrowserEvent):void;
-        /** OL 3.0.0 / became public in 3.1.1 */
+        addToDrawing_(event:ol.MapBrowserPointerEvent):void;
+        createOrUpdateSketchPoint_(event:ol.MapBrowserPointerEvent):void;
+        /** OL 3.1.0 / became public in 3.1.1 */
         finishDrawing_():void;
-        handlePointerMove_(event:ol.MapBrowserEvent):void;
-        modifyDrawing_(event:ol.MapBrowserEvent):void;
+        handlePointerMove_(event:ol.MapBrowserPointerEvent):void;
+        modifyDrawing_(event:ol.MapBrowserPointerEvent):void;
+        startDrawing_(event:ol.MapBrowserPointerEvent):void;
         updateSketchFeatures_():void;
     }
 
