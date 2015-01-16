@@ -15,6 +15,7 @@ module be.vmm.eenvplus.editor.snapping {
         var painter:DrawPrivate,
             nodes:ol.source.Vector,
             snapping:boolean,
+            protoPainter:DrawPrivate = <DrawPrivate> ol.interaction.Draw.prototype,
             toPixel = map.getPixelFromCoordinate.bind(map);
 
 
@@ -30,34 +31,21 @@ module be.vmm.eenvplus.editor.snapping {
         /* ---------------------- */
 
         function handleMouseMove(event:ol.MapBrowserPointerEvent):void {
-            var snappedCoordinate = calculateCoordinate(event.coordinate),
-                snapped = !ol.coordinate.equals(event.coordinate, snappedCoordinate);
-
-            if (painter.sketchFeature_) {
-                if (snapped) {
-                    var line = <ol.geometry.LineString> painter.sketchFeature_.getGeometry(),
-                        coordinates = line.getCoordinates();
-
-                    // insert at before-last position
-                    if (snapping) coordinates[coordinates.length - 2] = event.coordinate;
-                    else coordinates.splice(coordinates.length - 1, 0, event.coordinate);
-
-                    line.setCoordinates(coordinates);
-                    snapping = true;
-                }
-                else {
-                    //coordinates.
-                    snapping = false;
-                }
-            }
+            var snappedCoordinate = calculateCoordinate(event.coordinate);
+            invalidateGeometrySnapping(event.coordinate, snappedCoordinate);
 
             event.coordinate = snappedCoordinate;
-            (<DrawPrivate> ol.interaction.Draw.prototype).handlePointerMove_.call(painter, event);
+            protoPainter.handlePointerMove_.call(painter, event);
         }
 
         function addToDrawing(event:ol.MapBrowserPointerEvent):void {
-            (<DrawPrivate> ol.interaction.Draw.prototype).addToDrawing_.call(painter, event);
+            protoPainter.addToDrawing_.call(painter, event);
             if (snapping) painter.finishDrawing_();
+        }
+
+        function abortDrawing():ol.Feature {
+            snapping = false;
+            return protoPainter.abortDrawing_.call(painter);
         }
 
 
@@ -70,6 +58,7 @@ module be.vmm.eenvplus.editor.snapping {
             painter.snapTolerance_ = 24;
             painter.handlePointerMove_ = handleMouseMove;
             painter.addToDrawing_ = addToDrawing;
+            painter.abortDrawing_ = abortDrawing;
             nodes = feature.getLayer(map, feature.FeatureType.NODE).getSource();
         }
 
@@ -77,20 +66,92 @@ module be.vmm.eenvplus.editor.snapping {
             return interaction instanceof ol.interaction.Draw && interaction.getActive();
         }
 
-        function calculateCoordinate(coordinate:ol.Coordinate):ol.Coordinate {
-            var closestNode = nodes.getClosestFeatureToCoordinate(coordinate),
+        /**
+         * Calculate the Coordinate for the endpoint to draw:
+         * - we snap only to Nodes, so
+         * - find the Node that is closest to the mouse
+         * - if it is within `snapTolerance` range, return its Coordinate
+         * - otherwise just use the original mouse Coordinate
+         *
+         * @param mouseCoordinate
+         * @returns {ol.Coordinate}
+         */
+        function calculateCoordinate(mouseCoordinate:ol.Coordinate):ol.Coordinate {
+            var closestNode = nodes.getClosestFeatureToCoordinate(mouseCoordinate),
                 closestNodeCoordinate = (<ol.geometry.SimpleGeometry> closestNode.getGeometry()).getFirstCoordinate(),
-                pixels = [coordinate, closestNodeCoordinate].map(toPixel),
+                pixels = [mouseCoordinate, closestNodeCoordinate].map(toPixel),
                 distance = Math.sqrt(apply(ol.coordinate.squaredDistance)(pixels));
 
-            return distance > painter.snapTolerance_ ? coordinate : closestNodeCoordinate;
+            return distance > painter.snapTolerance_ ? mouseCoordinate : closestNodeCoordinate;
         }
 
+        /**
+         * Go into snapping mode if mouseCoordinate and snappedCoordinate are different.
+         * Otherwise leave snapping mode only if necessary (i.e. if we were actually snapping before).
+         *
+         * @param mouseCoordinate
+         * @param snappedCoordinate
+         */
+        function invalidateGeometrySnapping(mouseCoordinate:ol.Coordinate, snappedCoordinate:ol.Coordinate):void {
+            if (!painter.sketchFeature_) return;
+
+            if (ol.coordinate.equals(mouseCoordinate, snappedCoordinate)) {
+                if (snapping) unsnap();
+            }
+            else snap(mouseCoordinate);
+        }
+
+        /**
+         * If we just started snapping: insert the mouse Coordinate at the before-last position.
+         * Otherwise: update the Coordinate at the before-last position with the current mouse Coordinate.
+         * Set the `snapping` flag;
+         *
+         * @param mouseCoordinate
+         */
+        function snap(mouseCoordinate:ol.Coordinate):void {
+            updateGeometryCoordinates((coordinates:ol.Coordinate[]):void => {
+                if (snapping) coordinates[coordinates.length - 2] = mouseCoordinate;
+                else coordinates.splice(coordinates.length - 1, 0, mouseCoordinate);
+            });
+
+            snapping = true;
+        }
+
+        /**
+         * Remove the Coordinate at the before-last position and unset the `snapping` flag.
+         */
+        function unsnap():void {
+            updateGeometryCoordinates((coordinates:ol.Coordinate[]):void => {
+                coordinates.splice(coordinates.length - 1, 1);
+            });
+
+            snapping = false;
+        }
+
+        /**
+         * Get the current Coordinate list from the LineString,
+         * modify it and re-apply it so that OL is aware of the change.
+         *
+         * @param update The callback that will apply modifications to the Coordinates.
+         */
+        function updateGeometryCoordinates(update:(coordinates:ol.Coordinate[]) => void):void {
+            var line = <ol.geometry.LineString> painter.sketchFeature_.getGeometry(),
+                coordinates = line.getCoordinates();
+
+            update(coordinates);
+            line.setCoordinates(coordinates);
+        }
+
+        /**
+         * Unset all intercepted methods so that we don't leave any accidental references in memory.
+         */
         function deactivate() {
             if (painter.handlePointerMove_ === handleMouseMove)
                 painter.handlePointerMove_ = null;
             if (painter.addToDrawing_ === addToDrawing)
                 painter.addToDrawing_ = null;
+            if (painter.abortDrawing_ === abortDrawing)
+                painter.abortDrawing_ = null;
             painter = null;
         }
 
