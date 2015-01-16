@@ -35,7 +35,7 @@ module be.vmm.eenvplus.editor.tools.drawTools {
         }
 
         public get hasArea():boolean {
-            return this.areaStore.current;
+            return !!this.areaStore.current;
         }
 
         public get hasPermission():boolean {

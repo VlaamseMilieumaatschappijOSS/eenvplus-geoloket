@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.form.sewerForm {
     export var NAME:string = PREFIX + 'SewerForm';
 
     function configure():ng.IDirective {
-        SewerFormController.$inject = ['epLabelService'];
+        SewerFormController.$inject = ['epUser', 'epLabelService'];
 
         return {
             restrict: 'A',
@@ -42,12 +42,16 @@ module be.vmm.eenvplus.editor.form.sewerForm {
         public isInteger:RegExp = /^\d*$/;
         public max2Decimals:RegExp = /^\d+(,|\.\d{1,2})?$/;
 
+        public get isSupervisor():boolean {
+            return this.user.hasRole(user.Role.SUPERVISOR);
+        }
+
 
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(labelService:label.LabelService) {
+        constructor(private user:user.User, labelService:label.LabelService) {
             this.sources = labelService.getLabels(label.LabelType.SOURCE);
             this.types = labelService.getLabels(label.LabelType.SEWER_TYPE);
             this.waterTypes = labelService.getLabels(label.LabelType.WATER_TYPE);

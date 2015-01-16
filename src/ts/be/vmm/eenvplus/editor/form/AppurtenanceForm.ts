@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.form.appurtenanceForm {
     export var NAME:string = PREFIX + 'AppurtenanceForm';
 
     function configure():ng.IDirective {
-        AppurtenanceFormController.$inject = ['epLabelService'];
+        AppurtenanceFormController.$inject = ['epUser', 'epLabelService'];
 
         return {
             restrict: 'A',
@@ -38,12 +38,16 @@ module be.vmm.eenvplus.editor.form.appurtenanceForm {
         public selectedType:label.Label;
         public types:Array<label.Label>;
 
+        public get isSupervisor():boolean {
+            return this.user.hasRole(user.Role.SUPERVISOR);
+        }
+
 
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(labelService:label.LabelService) {
+        constructor(private user:user.User, labelService:label.LabelService) {
             this.sources = labelService.getLabels(label.LabelType.SOURCE);
             this.types = labelService.getLabels(label.LabelType.APPURTENANCE_TYPE);
 

@@ -30,6 +30,18 @@
            ng-model="ctrl.data.properties.label"/>
 </div>
 
+<div ng-if="ctrl.isSupervisor || ctrl.data.properties.omschrijving" class="form-group">
+    <label for="sewerDescriptionInput">
+        Opmerking
+    </label>
+    <textarea id="sewerDescriptionInput" name="description"
+              ng-if="ctrl.isSupervisor"
+              class="form-control"
+              ng-model="ctrl.data.properties.omschrijving">
+    </textarea>
+    <div ng-if="!ctrl.isSupervisor" class="well">{{ctrl.data.properties.omschrijving}}</div>
+</div>
+
 <label ng-class="{'has-error': ctrl.validate.invalid('diameter')}">
     <span>Diameter</span>
     <sup ng-hide="ctrl.validate.required('diameter')">*</sup>
