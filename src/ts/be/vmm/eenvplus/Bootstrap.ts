@@ -79,8 +79,11 @@ module be.vmm.eenvplus.Bootstrap {
         delegate.resourceUrlWhitelist(whiteList);
     }
 
-    function catchAll() {
+    catchAll.$inject = ['$log'];
+
+    function catchAll(log:ng.ILogService):ng.IExceptionHandlerService {
         return function (exception) {
+            log.error.apply(log, arguments);
             alert(exception.message);
             throw exception;
         };

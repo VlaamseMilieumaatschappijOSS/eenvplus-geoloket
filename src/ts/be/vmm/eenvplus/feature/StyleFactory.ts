@@ -88,8 +88,10 @@ module be.vmm.eenvplus.feature {
             });
 
             export function createStyle(mode:FeatureMode, feature:LocalFeature):ol.style.Style[] {
-                var properties = feature.getProperties<model.RioolAppurtenance>();
-                return [halo[mode], style[getStatus(feature)][properties.rioolAppurtenanceTypeId]];
+                var properties = feature.getProperties<model.RioolAppurtenance>(),
+                    type = properties.rioolAppurtenanceTypeId || types.length - 1;
+                // use "node" if type is still undefined
+                return [halo[mode], style[getStatus(feature)][type]];
             }
         }
 

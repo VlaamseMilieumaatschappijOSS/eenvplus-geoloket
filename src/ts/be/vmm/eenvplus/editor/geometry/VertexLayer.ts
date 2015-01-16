@@ -25,8 +25,6 @@ module be.vmm.eenvplus.editor.geometry {
             geometry: vertices
         }));
         editorStore.selected.add(handleEditorSelection);
-        featureStore.selecting.add(handleFeatureBeforeSelection);
-        featureStore.selected.add(updateGeometry);
 
 
         /* ---------------------- */
@@ -58,6 +56,9 @@ module be.vmm.eenvplus.editor.geometry {
 
             active = true;
             layer.setMap(map);
+
+            featureStore.selecting.add(handleFeatureBeforeSelection);
+            featureStore.selected.add(updateGeometry);
             getGeometry().on(goog.events.EventType.CHANGE, updateGeometry);
         }
 
@@ -75,6 +76,9 @@ module be.vmm.eenvplus.editor.geometry {
 
             active = false;
             layer.setMap(null);
+
+            featureStore.selecting.remove(handleFeatureBeforeSelection);
+            featureStore.selected.remove(updateGeometry);
             getGeometry().un(goog.events.EventType.CHANGE, updateGeometry);
         }
 
