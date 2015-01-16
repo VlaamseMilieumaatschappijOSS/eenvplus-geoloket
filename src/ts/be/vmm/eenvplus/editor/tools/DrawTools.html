@@ -12,7 +12,7 @@
 </a>
 
 <div id="drawTools" class="panel-body panel-body-wide panel-collapse collapse">
-    <ul>
+    <ul ng-if="ctrl.hasArea">
         <li ng-click="ctrl.selectedItem = ctrl.featureType.SEWER">
             <i class="icon-ga-line"></i>
             <a ng-class="{ selected: ctrl.selectedItem === ctrl.featureType.SEWER }">
@@ -26,4 +26,8 @@
             </a>
         </li>
     </ul>
+
+    <div ng-if="!ctrl.hasArea" class="alert alert-info">
+        <strong>Select an area to edit on the map</strong> (click and drag)
+    </div>
 </div>

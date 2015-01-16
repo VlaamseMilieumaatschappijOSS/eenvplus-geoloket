@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.tools.drawTools {
     export var NAME:string = PREFIX + 'DrawTools';
 
     function configure():ng.IDirective {
-        DrawToolsController.$inject = ['epUser', 'epStateStore', 'epPainterStore'];
+        DrawToolsController.$inject = ['epUser', 'epStateStore', 'epAreaStore', 'epPainterStore'];
 
         return {
             restrict: 'A',
@@ -34,6 +34,10 @@ module be.vmm.eenvplus.editor.tools.drawTools {
             this.painterStore.current = value;
         }
 
+        public get hasArea():boolean {
+            return this.areaStore.current;
+        }
+
         public get hasPermission():boolean {
             return this.user.authenticated;
         }
@@ -45,6 +49,7 @@ module be.vmm.eenvplus.editor.tools.drawTools {
 
         constructor(private user:user.User,
                     private state:state.StateStore,
+                    private areaStore:area.AreaStore,
                     private painterStore:paint.PainterStore) {
 
             this.featureType = feature.FeatureType;
