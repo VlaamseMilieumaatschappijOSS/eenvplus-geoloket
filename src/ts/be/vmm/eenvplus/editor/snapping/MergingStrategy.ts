@@ -4,17 +4,13 @@
 module be.vmm.eenvplus.editor.snapping {
     'use strict';
 
-    interface DrawPrivate extends ol.interaction.Draw {
-        snapTolerance_:number;
-
-        createOrUpdateSketchPoint_(event:ol.MapBrowserEvent):void;
-        handlePointerMove_(event:ol.MapBrowserEvent):void;
-    }
-
-
     MergingStrategy.$inject = ['epMap', 'epSnappingState'];
 
     function MergingStrategy(map:ol.Map, state:StateController<SnappingType>):void {
+
+        /* ------------------ */
+        /* --- properties --- */
+        /* ------------------ */
 
         var painter:DrawPrivate,
             nodes:ol.source.Vector,
@@ -57,7 +53,7 @@ module be.vmm.eenvplus.editor.snapping {
                 closestNodeCoordinate = (<ol.geometry.SimpleGeometry> closestNode.getGeometry()).getFirstCoordinate(),
                 pixels = [coordinate, closestNodeCoordinate].map(toPixel),
                 distance = Math.sqrt(apply(ol.coordinate.squaredDistance)(pixels));
-            
+
             return distance > painter.snapTolerance_ ? coordinate : closestNodeCoordinate;
         }
 

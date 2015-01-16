@@ -328,7 +328,9 @@ declare module ol {
         interface LineString extends SimpleGeometry {
             new (coordinates:Coordinate[], layout?:GeometryLayout):LineString;
 
+            appendCoordinate(coordinate:Coordinate):void;
             getCoordinates():Coordinate[];
+            setCoordinates(coordinates:Coordinate[]):void;
         }
 
         interface MultiPoint extends SimpleGeometry {
