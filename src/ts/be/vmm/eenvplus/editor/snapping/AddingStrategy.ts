@@ -30,6 +30,12 @@ module be.vmm.eenvplus.editor.snapping {
         /* --- overrides --- */
         /* ----------------- */
 
+        /**
+         * Intercept the mouse Coordinate and adjust the pointer and line geometry according to snapping rules.
+         * 
+         * @override
+         * @see ol.interaction.Draw#handlePointerMove_
+         */
         function handlePointerMove(event:ol.MapBrowserPointerEvent):void {
             var snappedCoordinate = calculateCoordinate(event.coordinate);
             invalidateGeometrySnapping(event.coordinate, snappedCoordinate);
@@ -38,11 +44,24 @@ module be.vmm.eenvplus.editor.snapping {
             protoPainter.handlePointerMove_.call(painter, event);
         }
 
+        /**
+         * Finish drawing when the user single-snap-clicks.
+         *
+         * @override
+         * @see ol.interaction.Draw#addToDrawing_
+         */
         function addToDrawing(event:ol.MapBrowserPointerEvent):void {
             protoPainter.addToDrawing_.call(painter, event);
             if (snapping) painter.finishDrawing_();
         }
 
+        /**
+         * Always unset `snapping` flag when the user stops painting.
+         * (note: this method is called from `finishDrawing_` too)
+         *
+         * @override
+         * @see ol.interaction.Draw#abortDrawing_
+         */
         function abortDrawing():ol.Feature {
             snapping = false;
             return protoPainter.abortDrawing_.call(painter);
