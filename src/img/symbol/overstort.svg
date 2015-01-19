@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="-13 -13 26 26"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   width="100%"
+   height="100%"
+   sodipodi:docname="overstort.svg"
+   inkscape:export-filename="/home/RIAstar/dev/vmm/geo-admin/src/img/symbol/overstort.png"
+   inkscape:export-xdpi="62.307693"
+   inkscape:export-ydpi="62.307693">
+  <metadata
+     id="metadata15">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="480"
+     id="namedview13"
+     showgrid="false"
+     inkscape:zoom="9.0769231"
+     inkscape:cx="13"
+     inkscape:cy="13"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <defs
+     id="defs4">
+    <marker
+       id="arrowFilled"
+       orient="auto"
+       overflow="visible"
+       markerUnits="strokeWidth"
+       viewBox="-1 -4 10 8"
+       markerWidth="8"
+       markerHeight="8"
+       color="white">
+      <path
+         d="M 7 0 L 0 0 M 0 -3 L 7 0 L 0 3"
+         fill="currentColor"
+         stroke="currentColor"
+         stroke-width="0"
+         id="path7" />
+    </marker>
+  </defs>
+  <rect
+     x="-12"
+     y="-12"
+     width="24"
+     height="24"
+     rx="4"
+     fill="#8C510A"
+     stroke="black"
+     stroke-width="2"
+     id="rect9" />
+  <path
+     d="M-7,7 L-7,-5 C-6,-8 -3,-4 3 1"
+     fill="none"
+     stroke="white"
+     stroke-width="1"
+     marker-end="url(#arrowFilled)"
+     id="path11" />
+</svg>

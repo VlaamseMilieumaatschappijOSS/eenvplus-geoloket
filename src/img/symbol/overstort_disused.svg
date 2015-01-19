@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-13 -13 26 26">
+	<defs>
+				<marker id="arrowFilled" orient="auto" overflow="visible" markerUnits="strokeWidth" viewBox="-1 -4 10 8" markerWidth="8" markerHeight="8" color="white">
+    <path d="M 7 0 L 0 0 M 0 -3 L 7 0 L 0 3" fill="currentColor" stroke="currentColor" stroke-width="0"/>
+</marker>
+</defs>
+		<rect x="-12" y="-12" width="24" height="24" rx="4" fill="#8C510A" stroke="black" stroke-width="2" stroke-dasharray="2 4 16 4"/>
+		<path d="M-7,7 L-7,-5 C-6,-8 -3,-4 3 1" fill="none" stroke="white" stroke-width="1" marker-end="url(#arrowFilled)"/>
+</svg>

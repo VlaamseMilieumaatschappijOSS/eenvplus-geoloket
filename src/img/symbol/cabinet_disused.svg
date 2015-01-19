@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-13 -13 26 26">
+<defs>
+	<font-face font-family="Helvetica" font-size="9.999999" units-per-em="1000" underline-position="-75.683594" underline-thickness="49.316406" slope="0" x-height="532.22656" cap-height="719.72656" ascent="770.01953" descent="-229.98047" font-weight="bold"><font-face-src><font-face-name name="Helvetica-Bold"/></font-face-src></font-face>
+</defs>
+<polygon fill="#8C510A" stroke="#000000" stroke-width="2" stroke-dasharray="2 4 16 4" points="-5,-12 5,-12 12,-5 12,5 5,12 -5,12 -12,5 -12,-5 "/>
+<text transform="translate(-7 6.5)"><tspan font-family="Helvetica" font-size="14pt" font-weight="bold" fill="#FFF">C</tspan></text>
+</svg>

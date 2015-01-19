@@ -68,9 +68,7 @@ module be.vmm.eenvplus.feature {
                 return _.map(types, (type:string):ol.style.Style => {
                     return new ol.style.Style({
                         image: new ol.style.Icon({
-                            src: 'http://o-www.vmm.be/bestanden/geoloketdata/svg/sewer_' +
-                            type + (status != 'functional' ? '_' + status : '') + '.svg',
-                            scale: 0.1
+                            src: 'img/symbol/' + type + (status !== 'functional' ? '_' + status : '') + '.png'
                         })
                     });
                 });
