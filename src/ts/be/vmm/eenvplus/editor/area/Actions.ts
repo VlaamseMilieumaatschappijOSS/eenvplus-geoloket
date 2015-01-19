@@ -9,7 +9,7 @@ module be.vmm.eenvplus.editor.area.actions {
     export var NAME:string = PREFIX + 'EditActions';
 
     function configure():ng.IDirective {
-        ActionsController.$inject = ['epStateStore', 'epFeatureManager'];
+        ActionsController.$inject = ['epStateStore', 'epAreaStore', 'epFeatureManager'];
 
         return {
             restrict: 'A',
@@ -23,11 +23,22 @@ module be.vmm.eenvplus.editor.area.actions {
 
     class ActionsController {
 
+        /* ------------------ */
+        /* --- properties --- */
+        /* ------------------ */
+
+        public get hasArea():boolean {
+            return !!this.store.current;
+        }
+
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(private state:state.StateStore, manager:feature.FeatureManager) {
+        constructor(private state:state.StateStore,
+                    private store:AreaStore,
+                    manager:feature.FeatureManager) {
+
             this.validate = manager.validate;
             this.save = _.compose(this.discard.bind(this), manager.push);
         }

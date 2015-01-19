@@ -1,3 +1,16 @@
-<button class="btn btn-danger" ng-click="ctrl.discard()">Discard</button>
-<button class="btn btn-warning" ng-click="ctrl.validate()">Validate</button>
-<button class="btn btn-success" ng-click="ctrl.save()">Save</button>
+<button class="btn btn-danger"
+        ng-click="ctrl.discard()">
+    Discard
+</button>
+
+<button class="btn btn-warning"
+        ng-if="ctrl.hasArea"
+        ng-click="ctrl.validate()">
+    Validate
+</button>
+
+<button class="btn btn-success"
+        ng-if="ctrl.hasArea"
+        ng-click="ctrl.save()">
+    Save
+</button>
