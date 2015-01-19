@@ -4,9 +4,9 @@
 module be.vmm.eenvplus.editor.snapping {
     'use strict';
 
-    MergingStrategy.$inject = ['epMap', 'epSnappingState'];
+    MergingStrategy.$inject = ['epMap', 'epSnappingState', 'epSnappingStore'];
 
-    function MergingStrategy(map:ol.Map, state:StateController<SnappingType>):void {
+    function MergingStrategy(map:ol.Map, state:StateController<SnappingType>, store:SnappingStore):void {
 
         /* ------------------ */
         /* --- properties --- */
@@ -18,12 +18,17 @@ module be.vmm.eenvplus.editor.snapping {
             protoPainter:DrawPrivate = <DrawPrivate> ol.interaction.Draw.prototype,
             toPixel = map.getPixelFromCoordinate.bind(map);
 
+        function setResolution(resolution:number):void {
+            if (painter) painter.snapTolerance_ = resolution;
+        }
+
 
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
         state(SnappingType.MERGE, activate, deactivate);
+        store.resolutionChanged.add(setResolution);
 
 
         /* ---------------------- */
@@ -60,6 +65,7 @@ module be.vmm.eenvplus.editor.snapping {
                 return;
             }
 
+            painter.snapTolerance_ = store.resolution;
             painter.handlePointerMove_ = handleMouseMove;
             painter.addToDrawing_ = addToDrawing;
             painter.abortDrawing_ = abortDrawing;
@@ -92,11 +98,11 @@ module be.vmm.eenvplus.editor.snapping {
             if (!painter) return;
 
             if (painter.handlePointerMove_ === handleMouseMove)
-                painter.handlePointerMove_ = null;
+                painter.handlePointerMove_ = protoPainter.handlePointerMove_.bind(painter);
             if (painter.addToDrawing_ === addToDrawing)
-                painter.addToDrawing_ = null;
+                painter.addToDrawing_ = protoPainter.addToDrawing_.bind(painter);
             if (painter.abortDrawing_ === abortDrawing)
-                painter.abortDrawing_ = null;
+                painter.abortDrawing_ = protoPainter.abortDrawing_.bind(painter);
             painter = null;
         }
 

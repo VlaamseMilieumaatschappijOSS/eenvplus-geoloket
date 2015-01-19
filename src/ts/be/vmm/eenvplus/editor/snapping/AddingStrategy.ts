@@ -4,9 +4,9 @@
 module be.vmm.eenvplus.editor.snapping {
     'use strict';
 
-    AddingStrategy.$inject = ['epMap', 'epSnappingState'];
+    AddingStrategy.$inject = ['epMap', 'epSnappingState', 'epSnappingStore'];
 
-    function AddingStrategy(map:ol.Map, state:StateController<SnappingType>):void {
+    function AddingStrategy(map:ol.Map, state:StateController<SnappingType>, store:SnappingStore):void {
 
         /* ------------------ */
         /* --- properties --- */
@@ -18,12 +18,17 @@ module be.vmm.eenvplus.editor.snapping {
             protoPainter:DrawPrivate = <DrawPrivate> ol.interaction.Draw.prototype,
             toPixel = map.getPixelFromCoordinate.bind(map);
 
+        function setResolution(resolution:number):void {
+            if (painter) painter.snapTolerance_ = resolution;
+        }
+
 
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
         state(SnappingType.ADD, activate, deactivate);
+        store.resolutionChanged.add(setResolution);
 
 
         /* ----------------- */
@@ -32,7 +37,7 @@ module be.vmm.eenvplus.editor.snapping {
 
         /**
          * Intercept the mouse Coordinate and adjust the pointer and line geometry according to snapping rules.
-         * 
+         *
          * @override
          * @see ol.interaction.Draw#handlePointerMove_
          */
@@ -79,7 +84,7 @@ module be.vmm.eenvplus.editor.snapping {
                 return;
             }
 
-            painter.snapTolerance_ = 24;
+            painter.snapTolerance_ = store.resolution;
             painter.handlePointerMove_ = handlePointerMove;
             painter.addToDrawing_ = addToDrawing;
             painter.abortDrawing_ = abortDrawing;
@@ -173,11 +178,11 @@ module be.vmm.eenvplus.editor.snapping {
             if (!painter) return;
 
             if (painter.handlePointerMove_ === handlePointerMove)
-                painter.handlePointerMove_ = null;
+                painter.handlePointerMove_ = protoPainter.handlePointerMove_.bind(painter);
             if (painter.addToDrawing_ === addToDrawing)
-                painter.addToDrawing_ = null;
+                painter.addToDrawing_ = protoPainter.addToDrawing_.bind(painter);
             if (painter.abortDrawing_ === abortDrawing)
-                painter.abortDrawing_ = null;
+                painter.abortDrawing_ = protoPainter.abortDrawing_.bind(painter);
             painter = null;
         }
 

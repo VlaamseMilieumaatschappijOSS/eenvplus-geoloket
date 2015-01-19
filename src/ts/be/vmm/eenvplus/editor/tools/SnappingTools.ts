@@ -25,14 +25,20 @@ module be.vmm.eenvplus.editor.tools.snappingTools {
         /* ------------------ */
 
         public useRange:boolean;
-        public snapResolution:number = 5;
+
+        public get snapResolution():number {
+            return this.store.resolution;
+        }
+        public set snapResolution(value:number) {
+            this.store.resolution = value;
+        }
 
 
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(store:snapping.SnappingStore, browser:ga.components.BrowserSnifferService) {
+        constructor(private store:snapping.SnappingStore, browser:ga.components.BrowserSnifferService) {
             this.useRange = !browser.mobile && (!browser.msie || browser.msie > 9);
 
             this.selectNoSnapping = _.partial(select, snapping.SnappingType.NONE);
