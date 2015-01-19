@@ -31,5 +31,49 @@
 
         </section>
 
+        <div class="panel-heading" role="tab">
+            <h4 class="panel-title">
+                <a data-toggle="collapse"
+                   data-parent="#formBrowser"
+                   href="#network"
+                   aria-expanded="true"
+                   aria-controls="collapseOne">
+                    Feature network
+                </a>
+            </h4>
+        </div>
+
+        <section id="network" role="tabpanel"
+                 class="panel-collapse collapse">
+
+            <div>
+                <strong>Start node:</strong>
+                <a href>{{feature.properties.startKoppelPuntId}}</a>
+            </div>
+            <div>
+                <strong>End node:</strong>
+                <a href>{{feature.properties.endKoppelPuntId}}</a>
+            </div>
+            <div>
+                <strong>Node:</strong>
+                <a href>{{feature.properties.koppelPuntId}}</a>
+            </div>
+            <div>
+                <strong>Connected sewers:</strong>
+                <ul>
+                    <li>
+                        <a href>sewer id</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <strong>Connected appurtenances:</strong>
+                <ul>
+                    <li>
+                        <a href>appu id</a>
+                    </li>
+                </ul>
+            </div>
+        </section>
     </section>
 </div>
