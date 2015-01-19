@@ -29,7 +29,9 @@ module be.vmm.eenvplus.editor.tools.EditTools {
             this.mergeSelected = _.partial(isSelected, geometry.EditorType.MERGE);
 
             function select(editor:geometry.EditorType):void {
-                store.current = isSelected(editor) ? undefined : editor;
+                if (editor === geometry.EditorType.MODIFY)
+                    store.current = isSelected(editor) ? undefined : editor;
+                else alert('Feature to be implemented!');
             }
 
             function isSelected(editor:geometry.EditorType):boolean {
