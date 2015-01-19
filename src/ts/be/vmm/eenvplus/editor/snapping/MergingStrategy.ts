@@ -14,6 +14,8 @@ module be.vmm.eenvplus.editor.snapping {
 
         var painter:DrawPrivate,
             nodes:ol.source.Vector,
+            snapping:boolean,
+            protoPainter:DrawPrivate = <DrawPrivate> ol.interaction.Draw.prototype,
             toPixel = map.getPixelFromCoordinate.bind(map);
 
 
@@ -29,8 +31,21 @@ module be.vmm.eenvplus.editor.snapping {
         /* ---------------------- */
 
         function handleMouseMove(event:ol.MapBrowserPointerEvent):void {
-            event.coordinate = calculateCoordinate(event.coordinate);
-            (<DrawPrivate> ol.interaction.Draw.prototype).handlePointerMove_.call(painter, event);
+            var snappedCoordinate = calculateCoordinate(event.coordinate);
+            invalidateGeometrySnapping(event.coordinate, snappedCoordinate);
+
+            event.coordinate = snappedCoordinate;
+            protoPainter.handlePointerMove_.call(painter, event);
+        }
+
+        function addToDrawing(event:ol.MapBrowserPointerEvent):void {
+            protoPainter.addToDrawing_.call(painter, event);
+            if (snapping) painter.finishDrawing_();
+        }
+
+        function abortDrawing():ol.Feature {
+            snapping = false;
+            return protoPainter.abortDrawing_.call(painter);
         }
 
 
@@ -40,7 +55,14 @@ module be.vmm.eenvplus.editor.snapping {
 
         function activate() {
             painter = _.find(map.getInteractions().getArray(), isActivePainter);
+            if (!painter) {
+                console.log('To be implemented');
+                return;
+            }
+
             painter.handlePointerMove_ = handleMouseMove;
+            painter.addToDrawing_ = addToDrawing;
+            painter.abortDrawing_ = abortDrawing;
             nodes = feature.getLayer(map, feature.FeatureType.NODE).getSource();
         }
 
@@ -57,9 +79,24 @@ module be.vmm.eenvplus.editor.snapping {
             return distance > painter.snapTolerance_ ? coordinate : closestNodeCoordinate;
         }
 
+        function invalidateGeometrySnapping(mouseCoordinate:ol.Coordinate, snappedCoordinate:ol.Coordinate):void {
+            if (!painter.sketchFeature_) return;
+
+            if (ol.coordinate.equals(mouseCoordinate, snappedCoordinate)) {
+                if (snapping) snapping = false;
+            }
+            else snapping = true;
+        }
+
         function deactivate() {
+            if (!painter) return;
+
             if (painter.handlePointerMove_ === handleMouseMove)
                 painter.handlePointerMove_ = null;
+            if (painter.addToDrawing_ === addToDrawing)
+                painter.addToDrawing_ = null;
+            if (painter.abortDrawing_ === abortDrawing)
+                painter.abortDrawing_ = null;
             painter = null;
         }
 

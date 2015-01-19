@@ -74,6 +74,11 @@ module be.vmm.eenvplus.editor.snapping {
 
         function activate() {
             painter = _.find(map.getInteractions().getArray(), isActivePainter);
+            if (!painter) {
+                console.log('To be implemented');
+                return;
+            }
+
             painter.snapTolerance_ = 24;
             painter.handlePointerMove_ = handlePointerMove;
             painter.addToDrawing_ = addToDrawing;
@@ -165,6 +170,8 @@ module be.vmm.eenvplus.editor.snapping {
          * Unset all intercepted methods so that we don't leave any accidental references in memory.
          */
         function deactivate() {
+            if (!painter) return;
+
             if (painter.handlePointerMove_ === handlePointerMove)
                 painter.handlePointerMove_ = null;
             if (painter.addToDrawing_ === addToDrawing)
