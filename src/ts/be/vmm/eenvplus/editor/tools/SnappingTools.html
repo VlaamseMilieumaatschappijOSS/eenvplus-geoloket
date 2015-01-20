@@ -4,8 +4,10 @@
     </span>
 
     <div class="form-control resolution-group">
-        <input ng-hide="ctrl.useRange" type="text" maxlength="2" ng-model="ctrl.snapResolution"/>
-        <input ng-show="ctrl.useRange" type="range" min="1" max="150" step="1" ng-model="ctrl.snapResolution"/>
+        <input ng-hide="ctrl.useRange" ng-disabled="ctrl.noneSelected()"
+               type="text" maxlength="2" ng-model="ctrl.snapResolution"/>
+        <input ng-show="ctrl.useRange" ng-disabled="ctrl.noneSelected()"
+               type="range" min="1" max="150" step="1" ng-model="ctrl.snapResolution"/>
         <span ng-show="ctrl.useRange">{{ctrl.snapResolution}}</span>
         <span>px</span>
     </div>
