@@ -333,6 +333,11 @@ declare module ol {
             Polygon:Polygon;
         }
 
+        interface CoordinateOwner {
+            getCoordinates():any; // Coordinate, Coordinate[], Coordinate[][]
+            setCoordinates(coordinates:any, layout?:ol.geometry.GeometryLayout):void;
+        }
+
         interface Geometry extends Observable {
             getExtent():Extent;
         }
@@ -340,19 +345,19 @@ declare module ol {
         interface GeometryLayout extends String {
         }
 
-        interface LineString extends SimpleGeometry {
+        interface LineString extends SimpleGeometry, CoordinateOwner {
             new (coordinates:Coordinate[], layout?:GeometryLayout):LineString;
 
             appendCoordinate(coordinate:Coordinate):void;
             getCoordinates():Coordinate[];
-            setCoordinates(coordinates:Coordinate[]):void;
+            setCoordinates(coordinates:Coordinate[], layout?:ol.geometry.GeometryLayout):void;
         }
 
-        interface MultiPoint extends SimpleGeometry {
+        interface MultiPoint extends SimpleGeometry, CoordinateOwner {
             new (coordinates:Coordinate[], layout?:GeometryLayout):MultiPoint;
 
             getCoordinates():Coordinate[];
-            setCoordinates(coordinates:Coordinate[]):void;
+            setCoordinates(coordinates:Coordinate[], layout?:ol.geometry.GeometryLayout):void;
         }
 
         interface SimpleGeometry extends Geometry {
@@ -360,16 +365,18 @@ declare module ol {
             getLastCoordinate():Coordinate;
         }
 
-        interface Point extends SimpleGeometry {
+        interface Point extends SimpleGeometry, CoordinateOwner {
             new (coordinates:Coordinate, layout?:GeometryLayout):Point;
 
             getCoordinates():Coordinate;
+            setCoordinates(coordinate:Coordinate, layout?:ol.geometry.GeometryLayout):void;
         }
 
-        interface Polygon extends SimpleGeometry {
+        interface Polygon extends SimpleGeometry, CoordinateOwner {
             new (config:any):Polygon;
 
             getCoordinates():Coordinate[][];
+            setCoordinates(coordinate:Coordinate[][], layout?:ol.geometry.GeometryLayout):void;
         }
 
     }

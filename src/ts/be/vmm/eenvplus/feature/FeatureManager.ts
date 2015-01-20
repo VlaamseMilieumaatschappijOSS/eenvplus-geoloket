@@ -39,6 +39,9 @@ module be.vmm.eenvplus.feature {
     export module FeatureManager {
         export var NAME:string = PREFIX + 'FeatureManager';
 
+        var geoJson = new ol.format.GeoJSON(),
+            toJson = geoJson.writeFeature.bind(geoJson);
+
         factory.$inject = ['$q', 'epFeatureService', 'epFeatureStore'];
 
         function factory(q:ng.IQService, service:FeatureService, store:FeatureStore):FeatureManager {
@@ -158,6 +161,7 @@ module be.vmm.eenvplus.feature {
 
             function update(json?:model.FeatureJSON):void {
                 json = json || store.current;
+                json.geometry = toJson(store.selectedView).geometry;
                 clean(json);
 
                 getConnectedNodesByKeys(json)
@@ -203,7 +207,11 @@ module be.vmm.eenvplus.feature {
             function discard(json?:model.FeatureJSON):void {
                 json = json || store.current;
 
-                if (json.id) deselect();
+                if (json.id) {
+                    (<ol.geometry.CoordinateOwner> store.selectedView.getGeometry())
+                        .setCoordinates(json.geometry.coordinates);
+                    deselect();
+                }
                 else remove(json);
             }
 

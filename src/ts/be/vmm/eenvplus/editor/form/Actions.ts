@@ -28,15 +28,13 @@ module be.vmm.eenvplus.editor.form.Actions {
 
         /** @inject */
         private validate:Validator;
-        private manager:feature.FeatureManager;
 
 
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(manager:feature.FeatureManager) {
-            this.manager = manager;
+        constructor(private manager:feature.FeatureManager) {
             this.discard = manager.discard;
             this.remove = manager.remove;
         }
