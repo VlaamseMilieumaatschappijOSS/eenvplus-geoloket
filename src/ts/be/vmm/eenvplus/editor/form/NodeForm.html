@@ -1,0 +1,30 @@
+<div class="form-group" ng-class="{'has-error': ctrl.validate.invalid('source')}">
+    <label for="appurtenanceSourceInput">
+        Source
+    </label>
+    <sup ng-hide="ctrl.validate.required('source')">*</sup>
+    <span ng-show="ctrl.validate.required('source')" class="help-inline">Required</span>
+
+    <select id="appurtenanceSourceInput" name="source"
+            placeholder="Select a source" class="form-control"
+            ng-model="ctrl.selectedSource" required
+            ng-options="source as source.label for source in ctrl.sources">
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="sewerSourceIdInput">
+        Source ID
+    </label>
+    <input id="sewerSourceIdInput" name="sourceId"
+           type="text" class="form-control"
+           ng-model="ctrl.data.properties.alternatieveId"/>
+</div>
+
+
+<div ep-form-actions class="actions"></div>
+
+<div ng-if="ctrl.data.id" class="metadata">
+    Last update by <strong>{{ctrl.data.properties.userId | epUserName}}</strong>
+    on <strong>{{ctrl.data.properties.beginLifespanVersion | date:'dd/MM/yyyy'}}</strong>
+</div>

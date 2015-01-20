@@ -16,7 +16,9 @@
         <section id="featureForm_{{feature.key}}" role="tabpanel"
                  class="panel-collapse collapse" ng-class="{in: $first}">
 
-            <div ep-edit-tools class="edit-tools"></div>
+            <div ep-edit-tools
+                 ng-if="!(feature.layerBodId | epIsFeatureType: ctrl.featureType.NODE)"
+                 class="edit-tools"></div>
 
             <form ep-sewer-form name="form" novalidate
                   ng-if="feature.layerBodId | epIsFeatureType: ctrl.featureType.SEWER"
@@ -25,6 +27,11 @@
             </form>
             <form ep-appurtenance-form name="form" novalidate
                   ng-if="feature.layerBodId | epIsFeatureType: ctrl.featureType.APPURTENANCE"
+                  data="feature"
+                  class="panel-body">
+            </form>
+            <form ep-node-form name="form" novalidate
+                  ng-if="feature.layerBodId | epIsFeatureType: ctrl.featureType.NODE"
                   data="feature"
                   class="panel-body">
             </form>

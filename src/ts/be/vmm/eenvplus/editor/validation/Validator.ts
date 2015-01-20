@@ -57,13 +57,16 @@ module be.vmm.eenvplus.editor.validation.validator {
                     .then(this.manager.emphasize);
         }
 
+
+        /* ----------------- */
+        /* --- behaviour --- */
+        /* ----------------- */
+
         public removeHighlight():void {
             if (this.isEdit) this.manager.emphasize(null);
         }
 
         public select(result:FeatureResult):void {
-            if (!this.isEdit || feature.isType(feature.FeatureType.NODE, result.layerBodId)) return;
-
             this.manager
                 .get(result.layerBodId, result.key)
                 .then(this.manager.select);
