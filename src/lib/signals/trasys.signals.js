@@ -18,6 +18,8 @@ var Trasys;
             };
 
             Slot.prototype.destroy = function () {
+                this.listener = null;
+                this.scope = null;
             };
             return Slot;
         })();
@@ -45,10 +47,19 @@ var Trasys;
             };
 
             TypeSignal.prototype.remove = function (listener, scope) {
+                var slot = this.slots.filter(function (slot) {
+                    return slot.equals(listener, scope);
+                })[0];
+                slot.destroy();
+                this.slots.splice(this.slots.indexOf(slot), 1);
                 return this;
             };
 
             TypeSignal.prototype.removeAll = function () {
+                this.slots.forEach(function (slot) {
+                    slot.destroy();
+                });
+                this.slots.length = 0;
                 return this;
             };
 

@@ -4,17 +4,18 @@
 module be.vmm.eenvplus.editor.geometry {
     'use strict';
 
-    VertexLayerController.$inject = ['epMap', 'epGeometryEditorStore', 'epFeatureStore'];
+    VertexLayerController.$inject = ['epMap', 'epGeometryEditorState', 'epFeatureStore'];
 
-    export function VertexLayerController(map:ol.Map, editorStore:EditorStore, featureStore:feature.FeatureStore):void {
+    export function VertexLayerController(map:ol.Map,
+                                          state:StateController<EditorType>,
+                                          featureStore:feature.FeatureStore):void {
 
         /* ------------------ */
         /* --- properties --- */
         /* ------------------ */
 
         var layer = new ol.FeatureOverlay(),
-            vertices = new ol.geom.MultiPoint([]),
-            active = false;
+            vertices = new ol.geom.MultiPoint([]);
 
 
         /* -------------------- */
@@ -24,42 +25,24 @@ module be.vmm.eenvplus.editor.geometry {
         layer.getFeatures().push(new ol.Feature({
             geometry: vertices
         }));
-        editorStore.selected.add(handleEditorSelection);
-
-
-        /* ---------------------- */
-        /* --- event handlers --- */
-        /* ---------------------- */
-
-        function handleEditorSelection(editor:EditorType):void {
-            editor === undefined ? deactivate() : activate();
-        }
-
-        /**
-         * Deactivate the VertexLayer when a the Feature is deselected.
-         * This needs to be done *before* the actual selection or we won't be able to deregister the geometry change
-         * listener, causing a memory leak.
-         *
-         * @param feature
-         */
-        function handleFeatureBeforeSelection(feature:feature.model.FeatureJSON):void {
-            if (feature === undefined) deactivate();
-        }
+        state(EditorType.MODIFY, activate, deactivate, canActivate);
 
 
         /* ----------------- */
         /* --- behaviour --- */
         /* ----------------- */
 
-        function activate() {
-            if (active) return;
+        function canActivate():boolean {
+            return feature.isType(feature.FeatureType.SEWER, featureStore.current.layerBodId);
+        }
 
-            active = true;
+        function activate():void {
             layer.setMap(map);
 
-            featureStore.selecting.add(handleFeatureBeforeSelection);
             featureStore.selected.add(updateGeometry);
             getGeometry().on(goog.events.EventType.CHANGE, updateGeometry);
+
+            updateGeometry();
         }
 
         function getGeometry():ol.geometry.Geometry {
@@ -71,13 +54,9 @@ module be.vmm.eenvplus.editor.geometry {
             if (geometry) vertices.setCoordinates(geometry.getCoordinates());
         }
 
-        function deactivate() {
-            if (!active) return;
-
-            active = false;
+        function deactivate():void {
             layer.setMap(null);
 
-            featureStore.selecting.remove(handleFeatureBeforeSelection);
             featureStore.selected.remove(updateGeometry);
             getGeometry().un(goog.events.EventType.CHANGE, updateGeometry);
         }

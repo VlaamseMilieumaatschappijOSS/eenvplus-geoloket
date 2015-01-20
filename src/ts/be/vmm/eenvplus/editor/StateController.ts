@@ -7,14 +7,18 @@ module be.vmm.eenvplus.editor {
     'use strict';
 
     export interface StateController<T> {
-        (type:T, activate:() => void, deactivate:() => void):void;
+        (type:T, activate:() => void, deactivate:() => void, condition?:() => boolean):void;
     }
 
     export module StateController {
         ['Painter', 'GeometryEditor', 'Snapping'].forEach(createFactory);
 
         export function factory<T>(store:any):StateController<T> {
-            return function StateController<T>(type:T, activate:() => void, deactivate:() => void):void {
+            return function StateController<T>(type:T,
+                                               activate:() => void,
+                                               deactivate:() => void,
+                                               condition?:() => boolean):void {
+
                 var isActive:boolean = false;
 
                 store.selected.add(handleSelection);
@@ -24,7 +28,7 @@ module be.vmm.eenvplus.editor {
                 }
 
                 function handleActivation():void {
-                    if (isActive) return;
+                    if (isActive || (condition && !condition())) return;
 
                     isActive = true;
                     activate();
