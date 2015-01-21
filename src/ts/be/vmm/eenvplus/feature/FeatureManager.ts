@@ -30,6 +30,7 @@ module be.vmm.eenvplus.feature {
         discard: FeatureJSONHandler;
         emphasize: FeatureJSONHandler;
         get: (layerBodId:string, key:number) => ng.IPromise<model.FeatureJSON>;
+        getNode: (id:number) => ng.IPromise<model.FeatureJSON>;
         getConnectedFeatures: FeatureJSONHandlerWithPromise;
         getConnectedNodes: FeatureJSONHandlerWithPromise;
         link: (featureJson:model.FeatureJSON, nodeJsons:model.FeatureJSON[]) => void;
@@ -45,12 +46,9 @@ module be.vmm.eenvplus.feature {
     export module FeatureManager {
         export var NAME:string = PREFIX + 'FeatureManager';
 
-        var geoJson = new ol.format.GeoJSON(),
-            toJson = geoJson.writeFeature.bind(geoJson);
+        factory.$inject = ['$q', 'epFeatureService', 'epFeatureStore', 'epFeatureSync'];
 
-        factory.$inject = ['$q', 'epFeatureService', 'epFeatureStore'];
-
-        function factory(q:ng.IQService, service:FeatureService, store:FeatureStore):FeatureManager {
+        function factory(q:ng.IQService, service:FeatureService, store:FeatureStore, sync:FeatureSync):FeatureManager {
             var getNode = _.partial(getFeature, toLayerBodId(FeatureType.NODE)),
                 getNodeById = _.partial(getFeatureById, toLayerBodId(FeatureType.NODE)),
                 deselect = _.partial(select, undefined),
@@ -72,6 +70,7 @@ module be.vmm.eenvplus.feature {
                 discard: discard,
                 emphasize: emphasize,
                 get: getFeature,
+                getNode: getNodeById,
                 getConnectedFeatures: getConnectedFeatures,
                 getConnectedNodes: getConnectedNodes,
                 link: link,
@@ -176,7 +175,7 @@ module be.vmm.eenvplus.feature {
 
             function update(json?:model.FeatureJSON):void {
                 json = json || store.current;
-                json.geometry = toJson(store.selectedView).geometry;
+                sync.toModel(json);
                 clean(json);
 
                 getConnectedNodesByKeys(json)
@@ -223,8 +222,7 @@ module be.vmm.eenvplus.feature {
                 json = json || store.current;
 
                 if (json.id) {
-                    (<ol.geometry.CoordinateOwner> store.selectedView.getGeometry())
-                        .setCoordinates(json.geometry.coordinates);
+                    sync.toView(json);
                     deselect();
                 }
                 else remove(json);

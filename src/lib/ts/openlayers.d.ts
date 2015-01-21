@@ -100,6 +100,7 @@ declare module ol {
         new (config:any):Feature;
 
         getGeometry():geometry.Geometry;
+        setGeometry(geometry:geometry.Geometry):void;
     }
 
     interface FeatureOverlay {
@@ -289,6 +290,7 @@ declare module ol {
             readFeatureFromObject(json:GeoJSONFeature, options?:any):Feature;
             readGeometry(source:any, options?:any):geometry.Geometry;
             writeFeature(feature:Feature, options?:any):GeoJSONFeature;
+            writeGeometry(geometry:geometry.Geometry, options?:any):GeoJSONGeometry;
         }
 
         interface GEOJSONConfig {

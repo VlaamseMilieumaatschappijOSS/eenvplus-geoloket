@@ -12,10 +12,12 @@ module be.vmm.eenvplus.editor.geometry {
         vertexSegments_:SegmentMap;
 
         createOrUpdateVertexFeature_(vertex:ol.Coordinate):void;
-        handleDownEvent_(event:ol.MapBrowserEvent):void;
+        handleDownEvent_(event:ol.MapBrowserPointerEvent):void; // OL 3.1.1
         handlePointerAtPixel_(pixel:ol.Pixel):void;
-        handlePointerMove_(event:ol.MapBrowserEvent):void;
-        handleUpEvent_(event:ol.MapBrowserEvent):void;
+        handlePointerDown(event:ol.MapBrowserPointerEvent):boolean; // OL 3.1.0
+        handlePointerMove_(event:ol.MapBrowserPointerEvent):void;
+        handlePointerUp(event:ol.MapBrowserPointerEvent):boolean; // OL 3.1.0
+        handleUpEvent_(event:ol.MapBrowserPointerEvent):void; // OL 3.1.1
         removeVertex_():void;
     }
 
@@ -24,22 +26,33 @@ module be.vmm.eenvplus.editor.geometry {
     }
 
 
-    ModifyTool.$inject = ['epMap', 'epGeometryEditorState', 'epGeometryActionStore', 'epFeatureStore'];
+    ModifyTool.$inject = [
+        'epMap', 'epGeometryEditorState', 'epGeometryActionStore',
+        'epFeatureStore', 'epFeatureManager', 'epFeatureSync'
+    ];
 
     export function ModifyTool(map:ol.Map,
                                state:StateController<EditorType>,
                                actionStore:ActionStore,
-                               featureStore:feature.FeatureStore):void {
+                               featureStore:feature.FeatureStore,
+                               featureManager:feature.FeatureManager,
+                               featureSync:feature.FeatureSync):void {
 
         /* ------------------ */
         /* --- properties --- */
         /* ------------------ */
 
-        var hasKeyModifier:boolean = false,
+        var node:feature.model.FeatureJSON,
+            hasKeyModifier:boolean = false,
+            protoModify:ModifyPrivate = <ModifyPrivate> ol.interaction.Modify.prototype,
             modify:ModifyPrivate = <ModifyPrivate> new ol.interaction.Modify({
                 features: featureStore.selection,
                 deleteCondition: goog.functions.and(ol.events.condition.altKeyOnly, ol.events.condition.singleClick)
             });
+
+        function setNode(value:feature.model.FeatureJSON):void {
+            node = value;
+        }
 
 
         /* -------------------- */
@@ -47,8 +60,10 @@ module be.vmm.eenvplus.editor.geometry {
         /* -------------------- */
 
         state(EditorType.MODIFY, activate, deactivate);
-        modify.handlePointerMove_ = handleMouseMove;
         modify.handlePointerAtPixel_ = handlePointerAtPixel;
+        modify.handlePointerDown = handleMouseDown;
+        modify.handlePointerMove_ = handleMouseMove;
+        modify.handlePointerUp = handleMouseUp;
 
 
         /* ---------------------- */
@@ -57,7 +72,7 @@ module be.vmm.eenvplus.editor.geometry {
 
         function handleKey(event:KeyboardEvent):void {
             hasKeyModifier = event.altKey;
-
+            
             if (modify.vertexFeature_) {
                 var vertex = <ol.geometry.Point> modify.vertexFeature_.getGeometry();
                 actionStore.current = determineAction(vertex.getCoordinates());
@@ -65,16 +80,35 @@ module be.vmm.eenvplus.editor.geometry {
             else actionStore.current = Action.NONE;
         }
 
-        function handleMouseMove(event:ol.MapBrowserEvent):void {
+        function handleMouseDown(event:ol.MapBrowserPointerEvent):boolean {
+            var propagate = protoModify.handlePointerDown.call(modify, event);
+            if (modify.vertexFeature_) {
+                var geometry = <ol.geometry.SimpleGeometry> modify.vertexFeature_.getGeometry();
+                invalidateNode(geometry.getFirstCoordinate());
+            }
+            return propagate;
+        }
+
+        function handleMouseMove(event:ol.MapBrowserPointerEvent):void {
             hasKeyModifier = ol.events.condition.altKeyOnly(event);
             modify.lastPixel_ = event.pixel;
             handlePointerAtPixel(event.pixel);
+
+            if (node) {
+                node.geometry.coordinates = event.coordinate;
+                featureSync.toView(node);
+            }
         }
 
         function handlePointerAtPixel(pixel:ol.Pixel):void {
             var pixelCoordinate = map.getCoordinateFromPixel(pixel),
                 closestSegment = getClosestSegment(pixel, pixelCoordinate);
             closestSegment ? snap(pixel, pixelCoordinate, closestSegment) : unsnap();
+        }
+
+        function handleMouseUp(event:ol.MapBrowserPointerEvent):boolean {
+            setNode(undefined);
+            return protoModify.handlePointerUp.call(modify, event);
         }
 
 
@@ -123,6 +157,23 @@ module be.vmm.eenvplus.editor.geometry {
             modify.vertexSegments_[goog.getUid(segment)] = true;
         }
 
+        function invalidateNode(vertex:ol.Coordinate):void {
+            var geometry = <ol.geometry.SimpleGeometry> featureStore.selectedView.getGeometry(),
+                properties = <feature.model.RioolLink> featureStore.current.properties,
+                nodeId;
+
+            node = null;
+
+            if (ol.coordinate.equals(geometry.getFirstCoordinate(), vertex))
+                nodeId = properties.startKoppelPuntId;
+            else if (ol.coordinate.equals(geometry.getLastCoordinate(), vertex))
+                nodeId = properties.endKoppelPuntId;
+
+            if (nodeId) featureManager
+                .getNode(nodeId)
+                .then(setNode);
+        }
+
         /**
          * Determine the action to take based on the snapped vertex:
          * - if it's on a segment, we can add a vertex
@@ -136,11 +187,10 @@ module be.vmm.eenvplus.editor.geometry {
         function determineAction(vertex:ol.Coordinate):Action {
             if (!modify.snappedToVertex_) return Action.ADD;
 
-            var featureCoordinates =
-                    (<ol.geometry.LineString> featureStore.selectedView.getGeometry()).getCoordinates(),
+            var geometry = <ol.geometry.SimpleGeometry> featureStore.selectedView.getGeometry(),
                 isEndVertex =
-                    ol.coordinate.equals(vertex, _.first(featureCoordinates)) ||
-                    ol.coordinate.equals(vertex, _.last(featureCoordinates));
+                    ol.coordinate.equals(vertex, geometry.getFirstCoordinate()) ||
+                    ol.coordinate.equals(vertex, geometry.getLastCoordinate());
 
             return isEndVertex || !hasKeyModifier ? Action.MOVE : Action.REMOVE;
         }
