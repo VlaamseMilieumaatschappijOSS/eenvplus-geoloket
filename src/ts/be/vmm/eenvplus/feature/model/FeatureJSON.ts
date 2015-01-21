@@ -5,7 +5,7 @@ module be.vmm.eenvplus.feature.model {
 
         featureId?:number;
         id?:number;
-        key:number;
+        key?:number;
         layerBodId:string;
         modified?:string;
         action?:string;

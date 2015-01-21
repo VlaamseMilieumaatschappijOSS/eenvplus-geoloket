@@ -72,7 +72,7 @@ module be.vmm.eenvplus.editor.geometry {
 
         function handleKey(event:KeyboardEvent):void {
             hasKeyModifier = event.altKey;
-            
+
             if (modify.vertexFeature_) {
                 var vertex = <ol.geometry.Point> modify.vertexFeature_.getGeometry();
                 actionStore.current = determineAction(vertex.getCoordinates());
@@ -171,6 +171,7 @@ module be.vmm.eenvplus.editor.geometry {
 
             if (nodeId) featureManager
                 .getNode(nodeId)
+                .then(featureManager.splitNode)
                 .then(setNode);
         }
 

@@ -318,8 +318,8 @@ declare module ol {
         }
 
         interface GeoJSONObject {
-            crs:GeoJSONCRS;
-            type:string;
+            crs?:GeoJSONCRS;
+            type?:string;
         }
 
         interface JSONFeature extends Feature {

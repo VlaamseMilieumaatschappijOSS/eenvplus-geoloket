@@ -10,10 +10,6 @@ module be.vmm.eenvplus.feature {
         (json?:model.FeatureJSON):void;
     }
 
-    export interface FeatureJSONHandlerWithPromise {
-        (json?:model.FeatureJSON):void;
-    }
-
     export interface Signals {
         create:signal.ITypeSignal<model.FeatureJSON>;
         load:signal.ISignal;
@@ -31,14 +27,15 @@ module be.vmm.eenvplus.feature {
         emphasize: FeatureJSONHandler;
         get: (layerBodId:string, key:number) => ng.IPromise<model.FeatureJSON>;
         getNode: (id:number) => ng.IPromise<model.FeatureJSON>;
-        getConnectedFeatures: FeatureJSONHandlerWithPromise;
-        getConnectedNodes: FeatureJSONHandlerWithPromise;
+        getConnectedFeatures: (json?:model.FeatureJSON) => ng.IPromise<model.FeatureJSON[]>;
+        getConnectedNodes:(json?:model.FeatureJSON) => ng.IPromise<model.FeatureJSON[]>;
         link: (featureJson:model.FeatureJSON, nodeJsons:model.FeatureJSON[]) => void;
         load: (extent:ol.Extent) => void;
         push: FeatureJSONHandler;
         remove: FeatureJSONHandler;
         select: FeatureJSONHandler;
         signal: Signals;
+        splitNode: (json?:model.FeatureJSON) => ng.IPromise<model.FeatureJSON>;
         update: FeatureJSONHandler;
         validate: FeatureJSONHandler;
     }
@@ -79,6 +76,7 @@ module be.vmm.eenvplus.feature {
                 remove: remove,
                 select: select,
                 signal: _.mapValues(signals, unary(_.bindAll)),
+                splitNode: splitNode,
                 update: update,
                 validate: validate
             };
@@ -119,7 +117,7 @@ module be.vmm.eenvplus.feature {
                 }
             }
 
-            function getConnectedFeaturesByNodeId(nodeId:string):ng.IPromise<model.FeatureJSON[]> {
+            function getConnectedFeaturesByNodeId(nodeId:any):ng.IPromise<model.FeatureJSON[]> {
                 return q.all([
                     service.query(toLayerBodId(FeatureType.SEWER), _.partial(isConnectedSewer, nodeId)),
                     service.query(toLayerBodId(FeatureType.APPURTENANCE), _.partial(isConnectedAppurtenance, nodeId))
@@ -218,6 +216,37 @@ module be.vmm.eenvplus.feature {
                     .catch(handleError('push'));
             }
 
+            function splitNode(node:model.FeatureJSON):ng.IPromise<model.FeatureJSON> {
+                return getConnectedFeaturesByNodeId(node.id)
+                    .then(get('length'))
+                    .then((numConnected:number):any => {
+                        if (numConnected === 1) return node;
+
+                        var newNode = {
+                            layerBodId: toLayerBodId(FeatureType.NODE),
+                            geometry: node.geometry
+                        };
+                        return create(newNode)
+                            .then(adjustNodeId)
+                            .then(sync.toView);
+                    });
+
+                function adjustNodeId(newNode:model.FeatureJSON):model.FeatureJSON {
+                    var json = store.current,
+                        id = getId(newNode);
+
+                    if (isType(FeatureType.SEWER, json.layerBodId)) {
+                        var props = <model.RioolLink> json.properties;
+                        if (props.startKoppelPuntId === <any> node.id)
+                            props.startKoppelPuntId = id;
+                        else props.endKoppelPuntId = id;
+                    }
+                    else (<model.RioolAppurtenance> json.properties).koppelPuntId = id;
+
+                    return newNode;
+                }
+            }
+
             function discard(json?:model.FeatureJSON):void {
                 json = json || store.current;
 
@@ -260,7 +289,9 @@ module be.vmm.eenvplus.feature {
 
             function getConnectedNodes(json:model.FeatureJSON):ng.IPromise<model.FeatureJSON[]> {
                 json = json || store.current;
-                return q.all(getConnectedNodeIds(json).map(getNodeById));
+                return q
+                    .all(getConnectedNodeIds(json).map(getNodeById))
+                    .then(_.compact);
             }
 
             function getConnectedNodesByKeys(json:model.FeatureJSON):ng.IPromise<model.FeatureJSON[]> {

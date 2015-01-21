@@ -5,8 +5,8 @@ module be.vmm.eenvplus.feature {
     'use strict';
 
     export interface FeatureSync {
-        toModel(json:model.FeatureJSON, olFeature?:ol.Feature):void;
-        toView(json:model.FeatureJSON, olFeature?:ol.Feature):void;
+        toModel(json:model.FeatureJSON, olFeature?:ol.Feature):model.FeatureJSON;
+        toView(json:model.FeatureJSON, olFeature?:ol.Feature):model.FeatureJSON;
     }
 
     export module FeatureSync {
@@ -22,18 +22,32 @@ module be.vmm.eenvplus.feature {
                 toView: toView
             };
 
-            function toModel(json:model.FeatureJSON, olFeature?:ol.Feature):void {
+            function toModel(json:model.FeatureJSON, olFeature?:ol.Feature):model.FeatureJSON {
                 olFeature = olFeature || getFeature(json);
                 json.geometry = geoJson.writeGeometry(olFeature.getGeometry());
+                return json;
             }
 
-            function toView(json:model.FeatureJSON, olFeature?:ol.Feature):void {
+            function toView(json:model.FeatureJSON, olFeature?:ol.Feature):model.FeatureJSON {
                 olFeature = olFeature || getFeature(json);
-                olFeature.setGeometry(geoJson.readGeometry(json.geometry));
+
+                if (olFeature) olFeature.setGeometry(geoJson.readGeometry(json.geometry));
+                else layerStore.getInfo(json).layer.getSource().addFeature(createFeature(json));
+
+                return json;
             }
 
             function getFeature(json:model.FeatureJSON):ol.Feature {
                 return layerStore.getInfo(json).olFeature;
+            }
+
+            function createFeature(json:model.FeatureJSON):ol.Feature {
+                return _.merge(new ol.Feature({
+                    geometry: new ol.geom.Point(json.geometry.coordinates)
+                }), {
+                    key: json.key,
+                    type: toType(json.layerBodId)
+                });
             }
         }
 
