@@ -10,6 +10,10 @@ module be.vmm.eenvplus.feature {
         (json?:model.FeatureJSON):void;
     }
 
+    export interface FeatureJSONHandlerWithPromise {
+        (json?:model.FeatureJSON):void;
+    }
+
     export interface Signals {
         create:signal.ITypeSignal<model.FeatureJSON>;
         load:signal.ISignal;
@@ -26,6 +30,8 @@ module be.vmm.eenvplus.feature {
         discard: FeatureJSONHandler;
         emphasize: FeatureJSONHandler;
         get: (layerBodId:string, key:number) => ng.IPromise<model.FeatureJSON>;
+        getConnectedFeatures: FeatureJSONHandlerWithPromise;
+        getConnectedNodes: FeatureJSONHandlerWithPromise;
         link: (featureJson:model.FeatureJSON, nodeJsons:model.FeatureJSON[]) => void;
         load: (extent:ol.Extent) => void;
         push: FeatureJSONHandler;
@@ -46,6 +52,7 @@ module be.vmm.eenvplus.feature {
 
         function factory(q:ng.IQService, service:FeatureService, store:FeatureStore):FeatureManager {
             var getNode = _.partial(getFeature, toLayerBodId(FeatureType.NODE)),
+                getNodeById = _.partial(getFeatureById, toLayerBodId(FeatureType.NODE)),
                 deselect = _.partial(select, undefined),
                 signals = {
                     create: new signal.TypeSignal<model.FeatureJSON>(),
@@ -65,6 +72,8 @@ module be.vmm.eenvplus.feature {
                 discard: discard,
                 emphasize: emphasize,
                 get: getFeature,
+                getConnectedFeatures: getConnectedFeatures,
+                getConnectedNodes: getConnectedNodes,
                 link: link,
                 load: load,
                 push: push,
@@ -88,6 +97,12 @@ module be.vmm.eenvplus.feature {
             function getFeature(layerBodId:string, key:number):ng.IPromise<model.FeatureJSON> {
                 return service
                     .get(layerBodId, key)
+                    .then(ensureProperties);
+            }
+
+            function getFeatureById(layerBodId:string, id:number):ng.IPromise<model.FeatureJSON> {
+                return service
+                    .getById(layerBodId, id)
                     .then(ensureProperties);
             }
 
@@ -244,6 +259,11 @@ module be.vmm.eenvplus.feature {
                     .catch(handleError('removeByIdOrKey'));
             }
 
+            function getConnectedNodes(json:model.FeatureJSON):ng.IPromise<model.FeatureJSON[]> {
+                json = json || store.current;
+                return q.all(getConnectedNodeIds(json).map(getNodeById));
+            }
+
             function getConnectedNodesByKeys(json:model.FeatureJSON):ng.IPromise<model.FeatureJSON[]> {
                 return q.all(_(json.properties)
                     .filter(isNodeKey)
@@ -281,6 +301,8 @@ module be.vmm.eenvplus.feature {
             }
 
             function ensureProperties(json:model.FeatureJSON):model.FeatureJSON {
+                if (!json) return json;
+
                 var type = toType(json.layerBodId);
                 json.properties = json.properties || <model.FeatureProperties> {};
                 if (type !== FeatureType.NODE) // FIXME untyped
