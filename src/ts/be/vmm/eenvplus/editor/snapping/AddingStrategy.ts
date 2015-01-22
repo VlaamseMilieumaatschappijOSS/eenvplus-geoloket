@@ -4,20 +4,18 @@
 module be.vmm.eenvplus.editor.snapping {
     'use strict';
 
-    AddingStrategy.$inject = ['epMap', 'epSnappingState', 'epSnappingStore'];
+    AddingStrategy.$inject = ['epMap', 'epSnappingState', 'epSnappingStore', 'epSnappingMonitor'];
 
-    function AddingStrategy(map:ol.Map, state:StateController<SnappingType>, store:SnappingStore):void {
+    function AddingStrategy(map:ol.Map, state:StateController<SnappingType>, store:SnappingStore, monitor:SnappingMonitor):void {
 
         /* ------------------ */
         /* --- properties --- */
         /* ------------------ */
 
         var painter:DrawPrivate,
-            nodes:ol.source.Vector,
             snappingStart:boolean,
             endSnapping:boolean,
-            protoPainter:DrawPrivate = <DrawPrivate> ol.interaction.Draw.prototype,
-            toPixel = map.getPixelFromCoordinate.bind(map);
+            protoPainter:DrawPrivate = <DrawPrivate> ol.interaction.Draw.prototype;
 
         function setResolution(resolution:number):void {
             if (painter) painter.snapTolerance_ = resolution;
@@ -30,7 +28,13 @@ module be.vmm.eenvplus.editor.snapping {
 
         state(SnappingType.ADD, activate, deactivate);
         store.resolutionChanged.add(setResolution);
-
+        monitor.moveAtStart.add(_.partial(console.log, 'moveAtStart'));
+        monitor.moveAtEnd.add(_.partial(console.log, 'moveAtEnd'));
+        monitor.moveOutside.add(_.partial(console.log, 'moveOutside'));
+        monitor.snapInStart.add(_.partial(console.log, 'snapInStart'));
+        monitor.snapOutStart.add(_.partial(console.log, 'snapOutStart'));
+        monitor.snapInEnd.add(_.partial(console.log, 'snapInEnd'));
+        monitor.snapOutEnd.add(_.partial(console.log, 'snapOutEnd'));
 
         /* ----------------- */
         /* --- overrides --- */
@@ -44,7 +48,7 @@ module be.vmm.eenvplus.editor.snapping {
          */
         function handlePointerMove(event:ol.MapBrowserPointerEvent):void {
             var mouseCoordinate = _.cloneDeep(event.coordinate),
-                snappedCoordinate = calculateCoordinate(event.coordinate);
+                snappedCoordinate = monitor.update(event.coordinate, painter.sketchFeature_);
             invalidateGeometrySnapping(event.coordinate, snappedCoordinate);
 
             event.coordinate = snappedCoordinate;
@@ -98,43 +102,10 @@ module be.vmm.eenvplus.editor.snapping {
             painter.handlePointerMove_ = handlePointerMove;
             painter.addToDrawing_ = addToDrawing;
             painter.abortDrawing_ = abortDrawing;
-            nodes = feature.getLayer(map, feature.FeatureType.NODE).getSource();
         }
 
         function isActivePainter(interaction:ol.interaction.Interaction):boolean {
             return interaction instanceof ol.interaction.Draw && interaction.getActive();
-        }
-
-        /**
-         * Calculate the Coordinate for the endpoint to draw:
-         * - we snap only to Nodes, so
-         * - find the Node that is closest to the mouse,
-         * - ignoring the ones that coincide with the drawings starting Coordinate;
-         * - if it is within `snapTolerance` range, return its Coordinate
-         * - otherwise just use the original mouse Coordinate
-         *
-         * @param mouseCoordinate
-         * @returns {ol.Coordinate}
-         */
-        function calculateCoordinate(mouseCoordinate:ol.Coordinate):ol.Coordinate {
-            var closestNode = nodes.getClosestFeatureToCoordinate(mouseCoordinate),
-                closestNodeCoordinate = firstCoordinate(closestNode),
-                startCoordinate = firstCoordinate(painter.sketchFeature_);
-
-            // never snap to the starting Coordinate
-            if (ol.coordinate.equals(closestNodeCoordinate, startCoordinate))
-                return mouseCoordinate;
-
-            var pixels = [mouseCoordinate, closestNodeCoordinate].map(toPixel),
-                distance = Math.sqrt(apply(ol.coordinate.squaredDistance)(pixels));
-
-            return distance > painter.snapTolerance_ ? mouseCoordinate : closestNodeCoordinate;
-
-            function firstCoordinate(olFeature:ol.Feature):ol.Coordinate {
-                return olFeature ?
-                    (<ol.geometry.SimpleGeometry> olFeature.getGeometry()).getFirstCoordinate() :
-                    [NaN, NaN];
-            }
         }
 
         /**
@@ -145,12 +116,12 @@ module be.vmm.eenvplus.editor.snapping {
          * @param snappedCoordinate
          */
         function invalidateGeometrySnapping(mouseCoordinate:ol.Coordinate, snappedCoordinate:ol.Coordinate):void {
-            console.log('invalidate');
             if (!painter.sketchFeature_) return;
 
             if (ol.coordinate.equals(mouseCoordinate, snappedCoordinate)) {
                 // if (snappingStart) painter.abortDrawing_();
-                /* else */ if (endSnapping) unsnap();
+                /* else */
+                if (endSnapping) unsnap();
             }
             else snap(mouseCoordinate);
         }
@@ -163,12 +134,9 @@ module be.vmm.eenvplus.editor.snapping {
          * @param mouseCoordinate
          */
         function snap(mouseCoordinate:ol.Coordinate):void {
-            console.log('snap');
             updateGeometryCoordinates((coordinates:ol.Coordinate[]):void => {
-                _.each(coordinates, console.log);
                 if (endSnapping) coordinates[coordinates.length - 2] = mouseCoordinate;
                 else coordinates.splice(coordinates.length - 1, 0, mouseCoordinate);
-                _.each(coordinates, console.log);
             });
 
             endSnapping = true;
@@ -178,11 +146,8 @@ module be.vmm.eenvplus.editor.snapping {
          * Remove the Coordinate at the before-last position and unset the `snapping` flag.
          */
         function unsnap():void {
-            console.log('unsnap');
             updateGeometryCoordinates((coordinates:ol.Coordinate[]):void => {
-                _.each(coordinates, console.log);
                 coordinates.splice(coordinates.length - 1, 1);
-                _.each(coordinates, console.log);
             });
 
             endSnapping = false;
