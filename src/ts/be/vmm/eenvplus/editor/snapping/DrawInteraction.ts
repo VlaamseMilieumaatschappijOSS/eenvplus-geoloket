@@ -10,6 +10,7 @@ module be.vmm.eenvplus.editor.snapping {
         abortDrawing_():ol.Feature;
         addToDrawing_(event:ol.MapBrowserPointerEvent):void;
         createOrUpdateSketchPoint_(event:ol.MapBrowserPointerEvent):void;
+        finishCoordinate_:ol.Coordinate;
         /** OL 3.1.0 / became public in 3.1.1 */
         finishDrawing_():void;
         handlePointerMove_(event:ol.MapBrowserPointerEvent):void;

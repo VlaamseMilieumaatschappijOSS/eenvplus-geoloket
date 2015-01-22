@@ -14,7 +14,8 @@ module be.vmm.eenvplus.editor.snapping {
 
         var painter:DrawPrivate,
             nodes:ol.source.Vector,
-            snapping:boolean,
+            snappingStart:boolean,
+            endSnapping:boolean,
             protoPainter:DrawPrivate = <DrawPrivate> ol.interaction.Draw.prototype,
             toPixel = map.getPixelFromCoordinate.bind(map);
 
@@ -42,11 +43,20 @@ module be.vmm.eenvplus.editor.snapping {
          * @see ol.interaction.Draw#handlePointerMove_
          */
         function handlePointerMove(event:ol.MapBrowserPointerEvent):void {
-            var snappedCoordinate = calculateCoordinate(event.coordinate);
+            var mouseCoordinate = _.cloneDeep(event.coordinate),
+                snappedCoordinate = calculateCoordinate(event.coordinate);
             invalidateGeometrySnapping(event.coordinate, snappedCoordinate);
 
             event.coordinate = snappedCoordinate;
             protoPainter.handlePointerMove_.call(painter, event);
+
+            if (goog.isNull(this.finishCoordinate_) && !ol.coordinate.equals(mouseCoordinate, snappedCoordinate)) {
+                painter.startDrawing_(event);
+                updateGeometryCoordinates((coordinates:ol.Coordinate[]):void => {
+                    coordinates[coordinates.length - 1] = mouseCoordinate;
+                });
+                snappingStart = true;
+            }
         }
 
         /**
@@ -57,18 +67,18 @@ module be.vmm.eenvplus.editor.snapping {
          */
         function addToDrawing(event:ol.MapBrowserPointerEvent):void {
             protoPainter.addToDrawing_.call(painter, event);
-            if (snapping) painter.finishDrawing_();
+            if (endSnapping) painter.finishDrawing_();
         }
 
         /**
-         * Always unset `snapping` flag when the user stops painting.
+         * Always unset `snapping` flags when the user stops painting.
          * (note: this method is called from `finishDrawing_` too)
          *
          * @override
          * @see ol.interaction.Draw#abortDrawing_
          */
         function abortDrawing():ol.Feature {
-            snapping = false;
+            snappingStart = endSnapping = false;
             return protoPainter.abortDrawing_.call(painter);
         }
 
@@ -98,7 +108,8 @@ module be.vmm.eenvplus.editor.snapping {
         /**
          * Calculate the Coordinate for the endpoint to draw:
          * - we snap only to Nodes, so
-         * - find the Node that is closest to the mouse
+         * - find the Node that is closest to the mouse,
+         * - ignoring the ones that coincide with the drawings starting Coordinate;
          * - if it is within `snapTolerance` range, return its Coordinate
          * - otherwise just use the original mouse Coordinate
          *
@@ -107,11 +118,23 @@ module be.vmm.eenvplus.editor.snapping {
          */
         function calculateCoordinate(mouseCoordinate:ol.Coordinate):ol.Coordinate {
             var closestNode = nodes.getClosestFeatureToCoordinate(mouseCoordinate),
-                closestNodeCoordinate = (<ol.geometry.SimpleGeometry> closestNode.getGeometry()).getFirstCoordinate(),
-                pixels = [mouseCoordinate, closestNodeCoordinate].map(toPixel),
+                closestNodeCoordinate = firstCoordinate(closestNode),
+                startCoordinate = firstCoordinate(painter.sketchFeature_);
+
+            // never snap to the starting Coordinate
+            if (ol.coordinate.equals(closestNodeCoordinate, startCoordinate))
+                return mouseCoordinate;
+
+            var pixels = [mouseCoordinate, closestNodeCoordinate].map(toPixel),
                 distance = Math.sqrt(apply(ol.coordinate.squaredDistance)(pixels));
 
             return distance > painter.snapTolerance_ ? mouseCoordinate : closestNodeCoordinate;
+
+            function firstCoordinate(olFeature:ol.Feature):ol.Coordinate {
+                return olFeature ?
+                    (<ol.geometry.SimpleGeometry> olFeature.getGeometry()).getFirstCoordinate() :
+                    [NaN, NaN];
+            }
         }
 
         /**
@@ -122,10 +145,12 @@ module be.vmm.eenvplus.editor.snapping {
          * @param snappedCoordinate
          */
         function invalidateGeometrySnapping(mouseCoordinate:ol.Coordinate, snappedCoordinate:ol.Coordinate):void {
+            console.log('invalidate');
             if (!painter.sketchFeature_) return;
 
             if (ol.coordinate.equals(mouseCoordinate, snappedCoordinate)) {
-                if (snapping) unsnap();
+                // if (snappingStart) painter.abortDrawing_();
+                /* else */ if (endSnapping) unsnap();
             }
             else snap(mouseCoordinate);
         }
@@ -138,23 +163,29 @@ module be.vmm.eenvplus.editor.snapping {
          * @param mouseCoordinate
          */
         function snap(mouseCoordinate:ol.Coordinate):void {
+            console.log('snap');
             updateGeometryCoordinates((coordinates:ol.Coordinate[]):void => {
-                if (snapping) coordinates[coordinates.length - 2] = mouseCoordinate;
+                _.each(coordinates, console.log);
+                if (endSnapping) coordinates[coordinates.length - 2] = mouseCoordinate;
                 else coordinates.splice(coordinates.length - 1, 0, mouseCoordinate);
+                _.each(coordinates, console.log);
             });
 
-            snapping = true;
+            endSnapping = true;
         }
 
         /**
          * Remove the Coordinate at the before-last position and unset the `snapping` flag.
          */
         function unsnap():void {
+            console.log('unsnap');
             updateGeometryCoordinates((coordinates:ol.Coordinate[]):void => {
+                _.each(coordinates, console.log);
                 coordinates.splice(coordinates.length - 1, 1);
+                _.each(coordinates, console.log);
             });
 
-            snapping = false;
+            endSnapping = false;
         }
 
         /**
