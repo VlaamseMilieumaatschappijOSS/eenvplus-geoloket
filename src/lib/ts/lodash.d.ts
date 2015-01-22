@@ -74,6 +74,7 @@ declare module _ {
 
     /** Collections */
     interface Static {
+        clone(value:any, isDeep?:boolean, fn?:(value:any) => any, scope?:any):any;
         cloneDeep(value:any, fn?:(value:any) => any, scope?:any):any;
         contains(collection:any[], target:any, fromIndex?:number):boolean;
         contains(collection:Object, target:any, fromIndex?:number):boolean;
