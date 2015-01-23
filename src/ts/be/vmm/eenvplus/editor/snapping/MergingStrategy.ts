@@ -4,71 +4,31 @@
 module be.vmm.eenvplus.editor.snapping {
     'use strict';
 
-    MergingStrategy.$inject = ['epMap', 'epSnappingState', 'epSnappingMonitor'];
+    MergingStrategy.$inject = ['epDrawStrategy'];
 
-    function MergingStrategy(map:ol.Map, state:StateController<SnappingType>, monitor:SnappingMonitor):void {
-
-        /* ------------------ */
-        /* --- properties --- */
-        /* ------------------ */
-
-        var painter:DrawPrivate,
-            superPointerMove,
-            superAddToDrawing;
-
+    /**
+     * A snapping strategy that moves the projected vertex to the snapped Node.
+     *
+     * @param createDraw
+     * @constructor
+     */
+    function MergingStrategy(createDraw:DrawStrategyFactory):void {
 
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
-        state(SnappingType.MERGE, activate, deactivate);
+        var draw = createDraw(SnappingType.MERGE, activate, deactivate);
 
-        function activate() {
-            painter = _.find(map.getInteractions().getArray(), isActivePainter);
-            if (!painter) {
-                console.log('To be implemented');
-                return;
-            }
-
-            painter.snapTolerance_ = 1;
-            painter.handlePointerMove_ = handlePointerMove;
-            painter.addToDrawing_ = addToDrawing;
-
-            var proto = <DrawPrivate> ol.interaction.Draw.prototype;
-            superPointerMove = proto.handlePointerMove_.bind(painter);
-            superAddToDrawing = proto.addToDrawing_.bind(painter);
-
+        /**
+         * Only intercept when the mouse is moving within snapping range of any point.
+         *
+         * @param monitor
+         */
+        function activate(monitor:SnappingMonitor):void {
             monitor.moveAtEnd.add(moveAtPoint);
             monitor.moveAtStart.add(moveAtPoint);
-            monitor.moveOutside.add(superPointerMove);
-        }
-
-
-        /* ----------------- */
-        /* --- overrides --- */
-        /* ----------------- */
-
-        /**
-         * Pass all mouse move events down to the SnappingMonitor for analysis of current snapping possibilities.
-         *
-         * @override
-         * @see ol.interaction.Draw#handlePointerMove_
-         * @see SnappingMonitor#update
-         */
-        function handlePointerMove(event:ol.MapBrowserPointerEvent):void {
-            monitor.update(event, painter.sketchFeature_);
-        }
-
-        /**
-         * Finish drawing when the user single-snap-clicks to an end point.
-         *
-         * @override
-         * @see ol.interaction.Draw#addToDrawing_
-         * @see ol.interaction.Draw#finishDrawing_
-         */
-        function addToDrawing(event:SnappingPointerEvent):void {
-            superAddToDrawing(event);
-            if (event.end) painter.finishDrawing_();
+            monitor.moveOutside.add(draw.pointerMove);
         }
 
 
@@ -76,18 +36,15 @@ module be.vmm.eenvplus.editor.snapping {
         /* --- event handlers --- */
         /* ---------------------- */
 
+        /**
+         * Replace the original Coordinate with the snappedCoordinate
+         * so that Draw will place the vertex at the snapped position instead of the current mouse position.
+         *
+         * @param event
+         */
         function moveAtPoint(event:SnappingPointerEvent):void {
             event.coordinate = event.snappedCoordinate;
-            superPointerMove(event);
-        }
-
-
-        /* ----------------- */
-        /* --- behaviour --- */
-        /* ----------------- */
-
-        function isActivePainter(interaction:ol.interaction.Interaction):boolean {
-            return interaction instanceof ol.interaction.Draw && interaction.getActive();
+            draw.pointerMove(event);
         }
 
 
@@ -95,16 +52,15 @@ module be.vmm.eenvplus.editor.snapping {
         /* --- destruction --- */
         /* ------------------- */
 
-        function deactivate() {
+        /**
+         * Remove all listeners from the monitor.
+         *
+         * @param monitor
+         */
+        function deactivate(monitor:SnappingMonitor):void {
             monitor.moveAtEnd.remove(moveAtPoint);
             monitor.moveAtStart.remove(moveAtPoint);
-            monitor.moveOutside.remove(superPointerMove);
-
-            if (!painter) return;
-
-            if (painter.handlePointerMove_ === handlePointerMove) painter.handlePointerMove_ = superPointerMove;
-            if (painter.addToDrawing_ === addToDrawing) painter.addToDrawing_ = superAddToDrawing;
-            painter = null;
+            monitor.moveOutside.remove(draw.pointerMove);
         }
 
     }

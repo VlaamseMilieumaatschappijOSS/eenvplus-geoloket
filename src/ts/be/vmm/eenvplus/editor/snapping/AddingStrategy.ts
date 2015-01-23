@@ -4,89 +4,36 @@
 module be.vmm.eenvplus.editor.snapping {
     'use strict';
 
-    AddingStrategy.$inject = ['epMap', 'epSnappingState', 'epSnappingMonitor'];
+    AddingStrategy.$inject = ['epDrawStrategy'];
 
     /**
      * A snapping strategy that creates new segments between the current mouse position and the snapped Node.
      *
-     * @param map
-     * @param state
-     * @param monitor
+     * @param createDraw
      * @constructor
      */
-    function AddingStrategy(map:ol.Map, state:StateController<SnappingType>, monitor:SnappingMonitor):void {
-
-        /* ------------------ */
-        /* --- properties --- */
-        /* ------------------ */
-
-        var painter:DrawPrivate,
-            superPointerMove,
-            superAddToDrawing;
-
+    function AddingStrategy(createDraw:DrawStrategyFactory):void {
 
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
-        state(SnappingType.ADD, activate, deactivate);
+        var draw = createDraw(SnappingType.ADD, activate, deactivate);
 
         /**
-         * Find the interaction to add snapping abilities to and set up overrides and event listeners.
          * When the mouse moves within snapping range of a starting point or outside snapping range,
          * the original behaviour of the interaction is used. All other state changes are intercepted.
-         * Also turn off the original snapping behaviour by setting `snapTolerance_` to 1.
+         *
+         * @param monitor
          */
-        function activate() {
-            painter = _.find(map.getInteractions().getArray(), isActivePainter);
-            if (!painter) {
-                console.log('To be implemented');
-                return;
-            }
-
-            painter.snapTolerance_ = 1;
-            painter.handlePointerMove_ = handlePointerMove;
-            painter.addToDrawing_ = addToDrawing;
-
-            var proto = <DrawPrivate> ol.interaction.Draw.prototype;
-            superPointerMove = proto.handlePointerMove_.bind(painter);
-            superAddToDrawing = proto.addToDrawing_.bind(painter);
-
+        function activate(monitor:SnappingMonitor):void {
             monitor.moveAtEnd.add(moveAtEnd);
-            monitor.moveAtStart.add(superPointerMove);
-            monitor.moveOutside.add(superPointerMove);
+            monitor.moveAtStart.add(draw.pointerMove);
+            monitor.moveOutside.add(draw.pointerMove);
             monitor.snapInEnd.add(snapToEnd);
             monitor.snapInStart.add(snapToStart);
             monitor.snapOutEnd.add(unsnapEnd);
             monitor.snapOutStart.add(unsnapStart);
-        }
-
-
-        /* ----------------- */
-        /* --- overrides --- */
-        /* ----------------- */
-
-        /**
-         * Pass all mouse move events down to the SnappingMonitor for analysis of current snapping possibilities.
-         *
-         * @override
-         * @see ol.interaction.Draw#handlePointerMove_
-         * @see SnappingMonitor#update
-         */
-        function handlePointerMove(event:ol.MapBrowserPointerEvent):void {
-            monitor.update(event, painter.sketchFeature_);
-        }
-
-        /**
-         * Finish drawing when the user single-snap-clicks to an end point.
-         *
-         * @override
-         * @see ol.interaction.Draw#addToDrawing_
-         * @see ol.interaction.Draw#finishDrawing_
-         */
-        function addToDrawing(event:SnappingPointerEvent):void {
-            superAddToDrawing(event);
-            if (event.end) painter.finishDrawing_();
         }
 
 
@@ -102,11 +49,11 @@ module be.vmm.eenvplus.editor.snapping {
          */
         function snapToStart(event:SnappingPointerEvent):void {
             event.coordinate = event.snappedCoordinate;
-            superPointerMove(event);
+            draw.pointerMove(event);
 
-            if (!painter.finishCoordinate_) {
-                painter.startDrawing_(event);
-                updateGeometryCoordinates(_.partial(createStartSegment, event.mouseCoordinate));
+            if (draw.isPristine()) {
+                draw.startDrawing(event);
+                draw.updateCoordinates(_.partial(createStartSegment, event.mouseCoordinate));
             }
         }
 
@@ -114,7 +61,7 @@ module be.vmm.eenvplus.editor.snapping {
          * If no additional segments were added, discard the projected initial segment.
          */
         function unsnapStart():void {
-            if (numVertices() === 2) painter.abortDrawing_();
+            if (draw.numVertices() === 2) draw.abortDrawing();
         }
 
 
@@ -124,7 +71,7 @@ module be.vmm.eenvplus.editor.snapping {
          * @param event
          */
         function snapToEnd(event:SnappingPointerEvent):void {
-            updateGeometryCoordinates(_.partial(createEndSegment, event.mouseCoordinate));
+            draw.updateCoordinates(_.partial(createEndSegment, event.mouseCoordinate));
         }
 
         /**
@@ -135,29 +82,21 @@ module be.vmm.eenvplus.editor.snapping {
          */
         function moveAtEnd(event:SnappingPointerEvent):void {
             event.coordinate = event.snappedCoordinate;
-            updateGeometryCoordinates(_.partial(updateEndSegment, event.mouseCoordinate));
-            superPointerMove(event);
+            draw.updateCoordinates(_.partial(updateEndSegment, event.mouseCoordinate));
+            draw.pointerMove(event);
         }
 
         /**
          * If the Feature wasn't finished, we need to discard the projected end segment.
          */
         function unsnapEnd():void {
-            updateGeometryCoordinates(discardEndSegment);
+            draw.updateCoordinates(discardEndSegment);
         }
 
 
         /* ----------------- */
         /* --- behaviour --- */
         /* ----------------- */
-
-        /**
-         * @param interaction
-         * @returns Whether the given Interaction is a `Draw` and currently active.
-         */
-        function isActivePainter(interaction:ol.interaction.Interaction):boolean {
-            return interaction instanceof ol.interaction.Draw && interaction.getActive();
-        }
 
         /**
          * Create a projected start segment by replacing the last Coordinate with the current mouseCoordinate.
@@ -201,50 +140,24 @@ module be.vmm.eenvplus.editor.snapping {
             coordinates.splice(coordinates.length - 1, 1);
         }
 
-        /**
-         * Get the current Coordinate list from the LineString,
-         * modify it and re-apply it so that OL is aware of the change.
-         *
-         * @param update The callback that will apply modifications to the Coordinates.
-         */
-        function updateGeometryCoordinates(update:(coordinates:ol.Coordinate[]) => void):void {
-            var line = <ol.geometry.LineString> painter.sketchFeature_.getGeometry(),
-                coordinates = line.getCoordinates();
-
-            update(coordinates);
-            line.setCoordinates(coordinates);
-        }
-
-        /**
-         * @returns The current number of vertices in the LineString.
-         */
-        function numVertices():number {
-            var line = <ol.geometry.LineString> painter.sketchFeature_.getGeometry();
-            return line.getCoordinates().length;
-        }
-
 
         /* ------------------- */
         /* --- destruction --- */
         /* ------------------- */
 
         /**
-         * Remove all listeners and unset all overrides so that we don't leave any accidental references in memory.
+         * Remove all listeners from the monitor.
+         *
+         * @param monitor
          */
-        function deactivate() {
+        function deactivate(monitor:SnappingMonitor):void {
             monitor.moveAtEnd.remove(moveAtEnd);
-            monitor.moveAtStart.remove(superPointerMove);
-            monitor.moveOutside.remove(superPointerMove);
+            monitor.moveAtStart.remove(draw.pointerMove);
+            monitor.moveOutside.remove(draw.pointerMove);
             monitor.snapInEnd.remove(snapToEnd);
             monitor.snapInStart.remove(snapToStart);
             monitor.snapOutEnd.remove(unsnapEnd);
             monitor.snapOutStart.remove(unsnapStart);
-
-            if (!painter) return;
-
-            if (painter.handlePointerMove_ === handlePointerMove) painter.handlePointerMove_ = superPointerMove;
-            if (painter.addToDrawing_ === addToDrawing) painter.addToDrawing_ = superAddToDrawing;
-            painter = null;
         }
 
     }
