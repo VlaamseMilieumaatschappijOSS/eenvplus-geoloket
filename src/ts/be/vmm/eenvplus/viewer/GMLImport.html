@@ -50,4 +50,20 @@
         Validation of {{ctrl.file.name}} failed. Please check the list of validation results on the side of the screen.
     </div>
 
+    <div ng-if="ctrl.error" class="alert alert-danger" role="alert">
+        Upload failed. Please verify that it is a valid GML file.
+        <ul>
+            <li><strong>Error:&nbsp;</strong>{{ctrl.error.type}}</li>
+            <li><strong>Message:&nbsp;</strong>{{ctrl.error.message}}</li>
+        </ul>
+    </div>
+
+    <div ng-if="ctrl.error" class="alert alert-info" role="alert">
+        <ul>
+            <li><strong>File name:&nbsp;</strong>{{ctrl.error.file.name}}</li>
+            <li><strong>File type:&nbsp;</strong>{{ctrl.error.file.type}}</li>
+            <li><strong>File size:&nbsp;</strong>{{ctrl.error.file.size}} kB</li>
+        </ul>
+    </div>
+
 </div>

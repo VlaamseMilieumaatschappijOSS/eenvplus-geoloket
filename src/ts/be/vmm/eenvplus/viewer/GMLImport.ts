@@ -30,6 +30,7 @@ module be.vmm.eenvplus.viewer.GMLImport {
         public open:boolean;
         public complete:boolean;
         public valid:boolean;
+        public error:any;
         public progress:number = 0;
         public uploadUrl = '/rest/services/:mapId/DataServer/';
 
@@ -80,7 +81,7 @@ module be.vmm.eenvplus.viewer.GMLImport {
 
         public toggle():void {
             this.open = !this.open;
-            this.files = null;
+            this.files = this.error = null;
             this.complete = false;
             this.progress = 0;
         }
@@ -96,7 +97,7 @@ module be.vmm.eenvplus.viewer.GMLImport {
                 .success(this.featureManager.signal.push.fire)
                 .success(this.featureManager.signal.validate.fire)
                 .success(this.updateStatus)
-                .error(console.error.bind(console));
+                .error(this.handleError);
         }
 
         public updateStatus(result:editor.validation.ValidationResult):void {
@@ -112,6 +113,16 @@ module be.vmm.eenvplus.viewer.GMLImport {
 
             this.file.upload.abort();
             this.file.upload.aborted = true;
+        }
+
+        private handleError(error:Error,
+                            status:number,
+                            headers:ng.IHttpHeadersGetter,
+                            config:ng.fileUpload.IFileUploadConfig):void {
+
+            this.error = _.merge(error, {file: config.file});
+            this.error.type = this.error.type.replace('class ', '');
+            this.error.file.size = Math.round(this.error.file.size / 100);
         }
 
     }
