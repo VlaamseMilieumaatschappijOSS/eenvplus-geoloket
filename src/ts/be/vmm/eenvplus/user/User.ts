@@ -11,6 +11,7 @@ module be.vmm.eenvplus.user {
         name?:string;
 
         hasRole(role:string):boolean;
+        logout():void;
     }
 
     export module Model {

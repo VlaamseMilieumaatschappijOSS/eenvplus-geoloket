@@ -17,11 +17,12 @@ module be.vmm.eenvplus.user {
         }
 
 
-        factory.$inject = ['epUser'];
+        factory.$inject = ['$q', 'epUser'];
 
-        function factory(user:User):AuthInterceptor {
+        function factory(q:ng.IQService, user:User):AuthInterceptor {
             return {
-                request: request
+                request: request,
+                responseError: responseError
             };
 
             function request(config:ng.IRequestConfig):any {
@@ -33,6 +34,15 @@ module be.vmm.eenvplus.user {
                 config.headers.Authorization = user.authHeader;
                 return config;
             }
+
+            function responseError(rejection:ng.IHttpPromiseCallbackArg<string>):ng.IPromise<any> {
+                if (rejection.status === 401) {
+                    alert('Your session has timed out!');
+                    user.logout();
+                }
+                return q.reject(rejection);
+            }
+
         }
 
         angular

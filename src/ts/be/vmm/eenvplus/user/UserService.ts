@@ -57,6 +57,7 @@ module be.vmm.eenvplus.user {
                     user.username = keycloak.tokenParsed.preferred_username;
                     user.name = keycloak.tokenParsed.name;
                     user.hasRole = keycloak.hasRealmRole;
+                    user.logout = keycloak.logout;
                 }
                 else {
                     user.username = user.name = null;
