@@ -9,7 +9,7 @@ module be.vmm.eenvplus.editor.area.actions {
     export var NAME:string = PREFIX + 'EditActions';
 
     function configure():ng.IDirective {
-        ActionsController.$inject = ['epStateStore', 'epAreaStore', 'epFeatureManager'];
+        ActionsController.$inject = ['$timeout', 'epStateStore', 'epAreaStore', 'epFeatureManager'];
 
         return {
             restrict: 'A',
@@ -27,20 +27,29 @@ module be.vmm.eenvplus.editor.area.actions {
         /* --- properties --- */
         /* ------------------ */
 
+        public hasValidated:boolean;
+        public messageDelay:number = 3000;
+
         public get hasArea():boolean {
             return !!this.store.current;
         }
+
 
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(private state:state.StateStore,
+        constructor(private delay:ng.ITimeoutService,
+                    private state:state.StateStore,
                     private store:AreaStore,
                     manager:feature.FeatureManager) {
 
+            _.bindAll(this);
+
             this.validate = manager.validate;
-            this.save = _.compose(this.discard.bind(this), manager.push);
+            this.save = _.compose(this.discard, manager.push);
+
+            manager.signal.validate.add(_.compose(this.toggleValidationMessage, get('valid')));
         }
 
 
@@ -53,6 +62,11 @@ module be.vmm.eenvplus.editor.area.actions {
 
         public discard():void {
             this.state.currentMode = state.State.VIEW;
+        }
+
+        public toggleValidationMessage(show:boolean = false):void {
+            this.hasValidated = show;
+            if (show) this.delay(this.toggleValidationMessage, this.messageDelay);
         }
 
     }
