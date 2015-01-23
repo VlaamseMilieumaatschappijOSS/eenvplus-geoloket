@@ -101,7 +101,7 @@
                   };
                   for (i = 0; i < len; i++) {
                     gaHelpService.get(ids[i]).then(function(res) {
-                      results.push(res.rows[0]);
+                      if (res.rows.length) results.push(res.rows[0]);
                       resultReceived();
                     }, function() {
                       resultReceived();
