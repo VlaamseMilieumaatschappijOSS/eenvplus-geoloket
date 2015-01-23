@@ -18,7 +18,7 @@ module be.vmm.eenvplus.editor {
     ].map(toCSS);
 
     function toCSS(name:string):string {
-        return 'url("img/cursor/' + name + '.png"), default'
+        return 'url("img/cursor/' + name + '.cur"), url("img/cursor/' + name + '.png"), default'
     }
 
     function Cursor(map:ol.Map,
