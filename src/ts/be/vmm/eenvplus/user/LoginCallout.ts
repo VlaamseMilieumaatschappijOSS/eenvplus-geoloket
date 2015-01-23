@@ -64,6 +64,10 @@ module be.vmm.eenvplus.user.Login {
             this.service.login(this.username, this.password);
         }
 
+        public toggleStorage():void {
+            alert('Feature to be implemented!');
+        }
+
     }
 
     angular
