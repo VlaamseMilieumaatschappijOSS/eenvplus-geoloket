@@ -6,7 +6,7 @@ module be.vmm.eenvplus.user {
 
     export interface UserService {
         user:User;
-        login(username:string, password:string):void;
+        login(username:string, password:string):ng.IPromise<void>;
         logout():void;
     }
 
@@ -40,11 +40,10 @@ module be.vmm.eenvplus.user {
                 logout: keycloak.logout
             };
 
-            function login(username:string, password:string):void {
-                service
+            function login(username:string, password:string):ng.IPromise<void> {
+                return service
                     .login(jQuery.param(createRequest(username, password))).$promise
-                    .then(handleLogin)
-                    .catch(_.partial(alert, 'Login failed!'));
+                    .then(handleLogin);
             }
 
             function handleLogin(response:kc.rest.LoginResponse):void {

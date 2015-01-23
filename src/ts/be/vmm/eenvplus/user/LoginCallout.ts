@@ -26,6 +26,7 @@ module be.vmm.eenvplus.user.Login {
 
         public username:string;
         public password:string;
+        public error:string;
         public storeCredentials:boolean;
 
         public get loggedIn():boolean {
@@ -41,27 +42,28 @@ module be.vmm.eenvplus.user.Login {
         }
 
 
-        /* ---------------------- */
-        /* --- event handlers --- */
-        /* ---------------------- */
-
-        /**
-         * Prevent Bootstrap from closing the dropdown when clicking it, unless the submit Button was clicked.
-         *
-         * @param event
-         */
-        public handleDropDownClick(event:Event):void {
-            var target = <HTMLElement> event.target;
-            if (target.tagName !== 'BUTTON') event.stopImmediatePropagation();
-        }
-
-
         /* ----------------- */
         /* --- behaviour --- */
         /* ----------------- */
 
         public submit():void {
-            this.service.login(this.username, this.password);
+            var setError = this.setError.bind(this);
+
+            this.service
+                .login(this.username, this.password)
+                .then(_.partial(setError, undefined))
+                .catch(_.compose(setError, get('data.error')));
+        }
+
+        /**
+         * Update the error code.
+         * If there is none, we can close the dropdown.
+         *
+         * @param error
+         */
+        private setError(error:string):void {
+            this.error = error;
+            if (!error) $('body').trigger('click');
         }
 
         public toggleStorage():void {
