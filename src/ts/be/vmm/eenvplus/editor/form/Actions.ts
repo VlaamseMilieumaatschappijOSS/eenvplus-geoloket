@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.form.Actions {
     export var NAME:string = PREFIX + 'FormActions';
 
     function configure():ng.IDirective {
-        ActionsController.$inject = ['epFeatureManager'];
+        ActionsController.$inject = ['epFeatureStore', 'epFeatureManager'];
 
         return {
             restrict: 'A',
@@ -29,12 +29,16 @@ module be.vmm.eenvplus.editor.form.Actions {
         /** @inject */
         private validate:Validator;
 
+        public get isNode():boolean {
+            return feature.isType(feature.FeatureType.NODE, this.store.current.layerBodId);
+        }
+
 
         /* -------------------- */
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(private manager:feature.FeatureManager) {
+        constructor(private store:feature.FeatureStore, private manager:feature.FeatureManager) {
             this.discard = manager.discard;
             this.remove = manager.remove;
         }
