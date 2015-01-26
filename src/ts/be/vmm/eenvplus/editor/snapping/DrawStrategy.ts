@@ -80,7 +80,7 @@ module be.vmm.eenvplus.editor.snapping {
                  * Turn off the original snapping behaviour by setting `snapTolerance_` to 1.
                  * Activate the monitor.
                  */
-                function activate() {
+                function activate():void {
                     painter = _.find(map.getInteractions().getArray(), isActivePainter);
                     if (!painter) {
                         console.log('To be implemented');
@@ -114,7 +114,7 @@ module be.vmm.eenvplus.editor.snapping {
                 /* ----------------- */
 
                 /**
-                 * Pass all mouse move events down to the SnappingMonitor for analysis of current snapping possibilities.
+                 * Pass all mouse move events down to SnappingMonitor for analysis of current snapping possibilities.
                  *
                  * @override
                  * @see ol.interaction.Draw#handlePointerMove_
@@ -167,9 +167,10 @@ module be.vmm.eenvplus.editor.snapping {
                 /* ------------------- */
 
                 /**
-                 * Remove all listeners and unset all overrides so that we don't leave any accidental references in memory.
+                 * Remove all listeners and unset all overrides
+                 * so that we don't leave any accidental references in memory.
                  */
-                function deactivate() {
+                function deactivate():void {
                     deactivateMonitor(monitor);
                     if (!painter) return;
 
@@ -178,7 +179,7 @@ module be.vmm.eenvplus.editor.snapping {
                     painter = null;
                 }
 
-            }
+            };
         }
 
         angular

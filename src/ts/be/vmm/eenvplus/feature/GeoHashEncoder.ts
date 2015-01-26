@@ -22,6 +22,7 @@ module be.vmm.eenvplus.feature {
             if (even) {
                 var mx = (ix[0] + ix[1]) / 2.0;
                 if (x > mx) {
+                    /* tslint:disable */
                     ch |= BITS[bit];
                     ix[0] = mx;
                 } else {
@@ -30,6 +31,7 @@ module be.vmm.eenvplus.feature {
             } else {
                 var my = (iy[0] + iy[1]) / 2.0;
                 if (y > my) {
+                    /* tslint:disable */
                     ch |= BITS[bit];
                     iy[0] = my;
                 } else {

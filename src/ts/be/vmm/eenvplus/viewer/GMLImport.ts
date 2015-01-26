@@ -104,7 +104,7 @@ module be.vmm.eenvplus.viewer.GMLImport {
             // since upload progress isn't working, we need to show the upload bar for a little while
             this.delay(() => {
                 this.complete = true;
-                this.valid = result.valid
+                this.valid = result.valid;
             }, 1000);
         }
 

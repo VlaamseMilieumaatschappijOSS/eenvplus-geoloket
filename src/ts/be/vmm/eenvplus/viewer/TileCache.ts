@@ -34,7 +34,7 @@ module be.vmm.eenvplus.viewer {
         /* ----------------- */
         /* --- behaviour --- */
         /* ----------------- */
-        
+
         function refresh():void {
             _(map.getLayers().getArray())
                 .filter('displayInLayerManager')

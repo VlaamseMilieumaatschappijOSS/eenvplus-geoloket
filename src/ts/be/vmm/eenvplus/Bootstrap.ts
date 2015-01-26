@@ -84,7 +84,7 @@ module be.vmm.eenvplus.Bootstrap {
     catchAll.$inject = ['$log'];
 
     function catchAll(log:ng.ILogService):ng.IExceptionHandlerService {
-        return function (exception) {
+        return function (exception:Error):void {
             log.error.apply(log, arguments);
             alert(exception.message);
             throw exception;

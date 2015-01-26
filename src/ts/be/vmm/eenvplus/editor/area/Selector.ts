@@ -40,7 +40,7 @@ module be.vmm.eenvplus.editor.area {
         featureStore.emphasize.add(highlight);
         painterStore.selected.add(invalidateState);
 
-        function createInteraction(condition):ol.interaction.Select {
+        function createInteraction(condition:ol.interaction.handleMapBrowserEvent):ol.interaction.Select {
             var interaction = new ol.interaction.Select({
                 condition: condition,
                 style: getStyle

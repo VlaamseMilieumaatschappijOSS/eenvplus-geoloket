@@ -28,7 +28,9 @@ module be.vmm.eenvplus.feature {
             window.indexedDB || window['mozIndexedDB'] || window['webkitIndexedDB'] || window.msIndexedDB;
 
         var VERSION:number = 3,
+        /* tslint:disable */
             IDBTransaction = window['IDBTransaction'] || window['webkitIDBTransaction'] || window['msIDBTransaction'],
+        /* tslint:disable */
             IDBKeyRange = window['IDBKeyRange'] || window['webkitIDBKeyRange'] || window['msIDBKeyRange'];
 
         factory.$inject = ['$http', '$q', 'gaGlobalOptions', 'typeModelMap'];

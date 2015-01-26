@@ -40,7 +40,7 @@ module be.vmm.eenvplus.editor {
                     isActive = false;
                     deactivate();
                 }
-            }
+            };
         }
 
         function createFactory(name:string):void {

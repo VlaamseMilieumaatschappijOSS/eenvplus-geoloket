@@ -10,9 +10,10 @@ module be.vmm.eenvplus.config {
         whitelist:string[];
     }
 
-    var cacheAdd = '${version}' != '' ? '/' + '${version}' : '',
+    var cacheAdd = '${version}' !== '' ? '/' + '${version}' : '',
         pathname = location.pathname.replace(/(index.html)|(mobile.html)/g, '');
 
+    /* tslint:disable */
     export var GlobalOptions:GlobalOptions = {
         mapUrl: location['origin'] + '${apache_base_path}',
         apiUrl: location.protocol + '${api_url}',
@@ -22,6 +23,6 @@ module be.vmm.eenvplus.config {
         whitelist: [
             'http://www.kmlvalidator.org/validate.htm'
         ]
-    }
+    };
 
 }

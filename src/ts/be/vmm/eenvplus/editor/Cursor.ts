@@ -18,7 +18,7 @@ module be.vmm.eenvplus.editor {
     ].map(toCSS);
 
     function toCSS(name:string):string {
-        return 'url("img/cursor/' + name + '.cur"), url("img/cursor/' + name + '.png"), default'
+        return 'url("img/cursor/' + name + '.cur"), url("img/cursor/' + name + '.png"), default';
     }
 
     function Cursor(map:ol.Map,
@@ -80,15 +80,26 @@ module be.vmm.eenvplus.editor {
          * @param mouseCoordinate
          */
         function invalidateState(mouseCoordinate?:ol.Coordinate):void {
-            var isDrawing = stateStore.currentMode === state.State.EDIT &&
-                    (!areaStore.current || stateStore.currentGeometryMode === state.State.GEOMETRY_PAINTING && inArea(mouseCoordinate)),
-                isModifying = stateStore.currentGeometryMode === state.State.GEOMETRY_MODIFYING && inArea(mouseCoordinate),
+            var isDrawing = editing() && (!areaStore.current || painting() && inArea(mouseCoordinate)),
+                isModifying = modifying() && inArea(mouseCoordinate),
                 cursor = 'default';
 
             if (isModifying) cursor = actionCursor[action];
             else if (isDrawing) cursor = 'crosshair';
 
             el.css('cursor', cursor);
+        }
+
+        function editing():boolean {
+            return stateStore.currentMode === state.State.EDIT;
+        }
+
+        function painting():boolean {
+            return stateStore.currentGeometryMode === state.State.GEOMETRY_PAINTING;
+        }
+
+        function modifying():boolean {
+            return stateStore.currentGeometryMode === state.State.GEOMETRY_MODIFYING;
         }
 
         function inArea(mouseCoordinate:ol.Coordinate):boolean {
