@@ -33,7 +33,7 @@ module be.vmm.eenvplus.editor.geometry {
         /* ----------------- */
 
         function canActivate():boolean {
-            return feature.isType(feature.FeatureType.SEWER, featureStore.current.layerBodId);
+            return feature.isType(feature.FeatureType.SEWER, featureStore.current);
         }
 
         function activate():void {

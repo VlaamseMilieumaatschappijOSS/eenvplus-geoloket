@@ -46,7 +46,7 @@ module be.vmm.eenvplus.feature {
                     geometry: new ol.geom.Point(json.geometry.coordinates)
                 }), {
                     key: json.key,
-                    type: toType(json.layerBodId)
+                    type: toType(json)
                 });
             }
         }

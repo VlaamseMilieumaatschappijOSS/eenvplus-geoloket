@@ -26,11 +26,16 @@ module be.vmm.eenvplus.feature {
         return _.contains(model, editableModelPackage);
     }
 
-    export function isType(type:FeatureType, model:string):boolean {
+    export function isType(type:FeatureType, layerBodId:string):boolean;
+    export function isType(type:FeatureType, json:model.FeatureJSON):boolean;
+    export function isType(type:FeatureType, model:any):boolean {
         return toType(model) === type;
     }
 
-    export function toType(model:string):FeatureType {
+    export function toType(layerBodId:string):FeatureType;
+    export function toType(json:model.FeatureJSON):FeatureType;
+    export function toType(model:any):FeatureType {
+        if (typeof model !== 'string') model = model.layerBodId;
         return typeModelMap.indexOf(model.replace(bodIdPrefix, ''));
     }
 

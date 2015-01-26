@@ -235,7 +235,7 @@ module be.vmm.eenvplus.feature {
                     var json = store.current,
                         id = getId(newNode);
 
-                    if (isType(FeatureType.SEWER, json.layerBodId)) {
+                    if (isType(FeatureType.SEWER, json)) {
                         var props = <model.RioolLink> json.properties;
                         if (props.startKoppelPuntId === <any> node.id)
                             props.startKoppelPuntId = id;
@@ -251,7 +251,7 @@ module be.vmm.eenvplus.feature {
                 json = json || store.current;
 
                 if (json.id) {
-                    if (!isType(FeatureType.NODE, json.layerBodId))
+                    if (!isType(FeatureType.NODE, json))
                         getConnectedNodes(json).then(_.partialRight(_.each, unary(sync.toView)));
                     sync.toView(json);
                     deselect();
@@ -308,7 +308,7 @@ module be.vmm.eenvplus.feature {
             }
 
             function getConnectedNodeIds(json:model.FeatureJSON):string[] {
-                if (isType(FeatureType.SEWER, json.layerBodId)) {
+                if (isType(FeatureType.SEWER, json)) {
                     var props = <model.RioolLink> json.properties;
                     return [props.startKoppelPuntId, props.endKoppelPuntId];
                 }
@@ -334,9 +334,8 @@ module be.vmm.eenvplus.feature {
             function ensureProperties(json:model.FeatureJSON):model.FeatureJSON {
                 if (!json) return json;
 
-                var type = toType(json.layerBodId);
                 json.properties = json.properties || <model.FeatureProperties> {};
-                if (type !== FeatureType.NODE) // FIXME untyped
+                if (isType(FeatureType.NODE, json)) // FIXME untyped
                     json.properties['statussen'] = json.properties['statussen'] || [];
                 return json;
             }

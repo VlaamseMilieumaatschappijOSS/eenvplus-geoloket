@@ -30,7 +30,7 @@ module be.vmm.eenvplus.editor.form.Actions {
         private validate:Validator;
 
         public get isNode():boolean {
-            return feature.isType(feature.FeatureType.NODE, this.store.current.layerBodId);
+            return feature.isType(feature.FeatureType.NODE, this.store.current);
         }
 
 

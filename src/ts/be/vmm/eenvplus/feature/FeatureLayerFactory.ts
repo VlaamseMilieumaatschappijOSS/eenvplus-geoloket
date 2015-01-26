@@ -78,7 +78,7 @@ module be.vmm.eenvplus.feature {
     function addKey(fn:Function, json:model.FeatureJSON, options?:any):LocalFeature {
         var feature = fn(json, options);
         if (json.key) feature.key = json.key;
-        feature.type = toType(json.layerBodId);
+        feature.type = toType(json);
         return feature;
     }
 
