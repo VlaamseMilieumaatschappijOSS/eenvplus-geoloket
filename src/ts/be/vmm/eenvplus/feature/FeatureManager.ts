@@ -251,7 +251,8 @@ module be.vmm.eenvplus.feature {
                 json = json || store.current;
 
                 if (json.id) {
-                    getConnectedNodes(json).then(_.partialRight(_.each, unary(sync.toView)));
+                    if (!isType(FeatureType.NODE, json.layerBodId))
+                        getConnectedNodes(json).then(_.partialRight(_.each, unary(sync.toView)));
                     sync.toView(json);
                     deselect();
                 }
