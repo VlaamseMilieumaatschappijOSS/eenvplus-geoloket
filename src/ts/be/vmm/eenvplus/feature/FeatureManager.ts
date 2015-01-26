@@ -33,6 +33,7 @@ module be.vmm.eenvplus.feature {
         load: (extent:ol.Extent) => void;
         push: FeatureJSONHandler;
         remove: FeatureJSONHandler;
+        removeStatus: (status:model.Status, json?:model.FeatureJSON) => void;
         select: FeatureJSONHandler;
         signal: Signals;
         splitNode: (json?:model.FeatureJSON) => ng.IPromise<model.FeatureJSON>;
@@ -74,6 +75,7 @@ module be.vmm.eenvplus.feature {
                 load: load,
                 push: push,
                 remove: remove,
+                removeStatus: removeStatus,
                 select: select,
                 signal: _.mapValues(signals, unary(_.bindAll)),
                 splitNode: splitNode,
@@ -276,6 +278,16 @@ module be.vmm.eenvplus.feature {
                     .remove(json)
                     .then(signals.remove.fire)
                     .catch(handleError('remove', json));
+            }
+
+            function removeStatus(status:model.Status, json?:model.FeatureJSON):void {
+                json = json || store.current;
+
+                if (isType(FeatureType.NODE, json))
+                    throw new Error('Can\'t remove a status from a Node!');
+
+                var list = (<feature.model.RioolBase> json.properties).statussen;
+                list.splice(list.indexOf(status), 1);
             }
 
             function removeByIdOrKey(layerBodId:string, featureIdOrKey:string):void {

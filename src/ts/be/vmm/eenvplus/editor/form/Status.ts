@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.form.Status {
     export var NAME:string = PREFIX + 'FeatureStatus';
 
     function configure():ng.IDirective {
-        StatusController.$inject = ['epLabelService'];
+        StatusController.$inject = ['epFeatureManager', 'epLabelService'];
 
         return {
             restrict: 'A',
@@ -78,8 +78,9 @@ module be.vmm.eenvplus.editor.form.Status {
         /* --- construction --- */
         /* -------------------- */
 
-        constructor(labelService:label.LabelService) {
+        constructor(manager:feature.FeatureManager, labelService:label.LabelService) {
             this.types = labelService.getLabels(label.LabelType.STATUS);
+            this.remove = _.partial(manager.removeStatus, this.data);
 
             label.proxy(this, this.data)
                 .map(this.types, 'selectedStatus', 'statusId');
@@ -96,6 +97,8 @@ module be.vmm.eenvplus.editor.form.Status {
 
             this[name + 'Opened'] = !this[name + 'Opened'];
         }
+
+        public remove:() => void;
 
     }
 

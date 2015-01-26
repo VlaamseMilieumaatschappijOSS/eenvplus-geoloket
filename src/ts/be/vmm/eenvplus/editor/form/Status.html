@@ -13,6 +13,12 @@
             ng-model="ctrl.selectedStatus" required
             ng-options="type as type.label for type in ctrl.types">
     </select>
+    <button type="button"
+            ng-if="!ctrl.data.id"
+            ng-click="ctrl.remove()"
+            class="btn btn-default btn-remove">
+        Remove
+    </button>
 </div>
 
 <div class="form-group date-input-group">
