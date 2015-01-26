@@ -73,10 +73,18 @@
 // Iconography
 // -------------------------
 
-@icon-font-path:          "../../../eenvplus-geoloket/style/font-bootstrap/";
+@icon-font-path:          "font-bootstrap/";
 @icon-font-name:          "glyphicons-halflings-regular";
 @icon-img-path:           "../img/";
 @icon-edit-tools:         url("@{icon-img-path}edit-icons.png");
+
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url('@{icon-font-path}@{icon-font-name}.eot');
+  src: url('@{icon-font-path}@{icon-font-name}.eot?#iefix') format('embedded-opentype'),
+       url('@{icon-font-path}@{icon-font-name}.woff') format('woff'),
+       url('@{icon-font-path}@{icon-font-name}.ttf') format('truetype')
+}
 
 
 // Components

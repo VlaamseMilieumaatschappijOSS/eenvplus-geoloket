@@ -1,7 +1,7 @@
 module be.vmm.eenvplus.editor.geometry {
     'use strict';
 
-    interface ModifyPrivate extends ol.interaction.Modify {
+    export interface ModifyPrivate extends ol.interaction.Modify {
         dragSegments_:any[];
         overlay_:ol.Overlay;
         lastPixel_:ol.Pixel;
@@ -21,7 +21,7 @@ module be.vmm.eenvplus.editor.geometry {
         removeVertex_():void;
     }
 
-    interface SegmentMap {
+    export interface SegmentMap {
         [uid:string]: boolean;
     }
 
