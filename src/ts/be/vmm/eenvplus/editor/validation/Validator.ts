@@ -38,7 +38,7 @@ module be.vmm.eenvplus.editor.validation.validator {
         constructor(private manager:feature.FeatureManager,
                     private stateStore:state.StateStore) {
 
-            manager.signal.validate.add(this.handleValidation.bind(this));
+            manager.validated.add(this.handleValidation.bind(this));
         }
 
 

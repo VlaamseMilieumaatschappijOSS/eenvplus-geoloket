@@ -8,7 +8,7 @@ module be.vmm.eenvplus.viewer.GMLImport {
 
     function configure():ng.IDirective {
         GMLImportController.$inject = [
-            '$timeout', '$upload', 'epUser', 'epFeatureManager', 'gaGlobalOptions'
+            '$timeout', '$upload', 'epUser', 'epFeatureSignals', 'gaGlobalOptions'
         ];
 
         return {
@@ -58,7 +58,7 @@ module be.vmm.eenvplus.viewer.GMLImport {
         constructor(private delay:ng.ITimeoutService,
                     private fileUpload:ng.fileUpload.IUploadService,
                     private user:user.User,
-                    private featureManager:feature.FeatureManager,
+                    private featureSignals:feature.FeatureSignals,
                     config:ga.GlobalOptions) {
 
             _.bindAll(this);
@@ -94,8 +94,8 @@ module be.vmm.eenvplus.viewer.GMLImport {
                     file: this.file
                 })
                 .progress(this.handleProgress)
-                .success(this.featureManager.signal.push.fire)
-                .success(this.featureManager.signal.validate.fire)
+                .success(this.featureSignals.pushed.fire)
+                .success(this.featureSignals.validated.fire)
                 .success(this.updateStatus)
                 .error(this.handleError);
         }

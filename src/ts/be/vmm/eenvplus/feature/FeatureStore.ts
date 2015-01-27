@@ -9,25 +9,25 @@ module be.vmm.eenvplus.feature {
         emphasized:model.FeatureJSON;
         selectedView:ol.Feature;
         selection:ol.Collection<ol.Feature>;
-        selected:Trasys.Signals.ITypeSignal<model.FeatureJSON>;
-        selecting:Trasys.Signals.ITypeSignal<model.FeatureJSON>;
-        emphasize:Trasys.Signals.ITypeSignal<model.FeatureJSON>;
     }
 
     export module FeatureStore {
         export var NAME:string = PREFIX + 'FeatureStore';
 
-        var current,
-            emphasized,
-            store = {
+        factory.$inject = ['epFeatureSignals'];
+
+        function factory(signals:FeatureSignals):FeatureStore {
+            var store, current, emphasized;
+
+            return store = {
                 get current():model.FeatureJSON {
                     return current;
                 },
                 set current(value:model.FeatureJSON) {
                     if (value === current) return;
-                    store.selecting.fire(value);
+                    signals.selecting.fire(value);
                     current = value;
-                    store.selected.fire(value);
+                    signals.selected.fire(value);
                 },
                 get emphasized():model.FeatureJSON {
                     return emphasized;
@@ -35,21 +35,19 @@ module be.vmm.eenvplus.feature {
                 set emphasized(value:model.FeatureJSON) {
                     if (value === emphasized) return;
                     emphasized = value;
-                    store.emphasize.fire(value);
+                    signals.requestEmphasis.fire(value);
                 },
                 get selectedView():ol.Feature {
-                    if (!store.current || !store.selection) return undefined;
+                    if (!current || !store.selection) return undefined;
                     return _.find(store.selection.getArray(), {key: current.key});
                 },
-                selection: undefined,
-                selected: new Trasys.Signals.TypeSignal(),
-                selecting: new Trasys.Signals.TypeSignal(),
-                emphasize: new Trasys.Signals.TypeSignal()
+                selection: undefined
             };
+        }
 
         angular
             .module(MODULE)
-            .factory(NAME, factory(store));
+            .factory(NAME, factory);
     }
 
 }

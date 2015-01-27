@@ -49,7 +49,7 @@ module be.vmm.eenvplus.editor.area.actions {
             this.validate = manager.validate;
             this.save = _.compose(this.discard, manager.push);
 
-            manager.signal.validate.add(_.compose(this.toggleValidationMessage, get('valid')));
+            manager.validated.add(_.compose(this.toggleValidationMessage, get('valid')));
         }
 
 

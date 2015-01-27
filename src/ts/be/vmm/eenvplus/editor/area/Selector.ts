@@ -36,8 +36,8 @@ module be.vmm.eenvplus.editor.area {
         selection.on(ol.CollectionEventType.ADD, _.compose(selectFeature, get('element')));
 
         stateStore.modeChanged.add(invalidateState);
-        featureStore.selected.add(invalidateState);
-        featureStore.emphasize.add(highlight);
+        featureManager.selected.add(invalidateState);
+        featureManager.requestEmphasis.add(highlight);
         painterStore.selected.add(invalidateState);
 
         function createInteraction(condition:ol.interaction.handleMapBrowserEvent):ol.interaction.Select {

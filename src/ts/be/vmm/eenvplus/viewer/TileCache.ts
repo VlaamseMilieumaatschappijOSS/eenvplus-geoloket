@@ -4,9 +4,9 @@
 module be.vmm.eenvplus.viewer {
     'use strict';
 
-    TileCache.$inject = ['epMap', 'epFeatureManager'];
+    TileCache.$inject = ['epMap', 'epFeatureSignals'];
 
-    function TileCache(map:ol.Map, manager:feature.FeatureManager):void {
+    function TileCache(map:ol.Map, featureSignals:feature.FeatureSignals):void {
 
         /* -------------------- */
         /* --- construction --- */
@@ -15,7 +15,7 @@ module be.vmm.eenvplus.viewer {
         var debouncedRefresh = _.debounce(refresh, 300);
 
         map.getLayers().on(ol.CollectionEventType.ADD, handleLayerChange);
-        manager.signal.push.add(handleModifications);
+        featureSignals.pushed.add(handleModifications);
 
 
         /* ---------------------- */

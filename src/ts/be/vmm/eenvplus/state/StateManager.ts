@@ -4,16 +4,13 @@
 module be.vmm.eenvplus.state {
     'use strict';
 
-    StateManager.$inject = [
-        'epMap', 'epStateStore', 'epPainterStore', 'epGeometryEditorStore', 'epFeatureStore', 'epFeatureManager'
-    ];
+    StateManager.$inject = ['epMap', 'epStateStore', 'epPainterStore', 'epGeometryEditorStore', 'epFeatureSignals'];
 
     function StateManager(map:ol.Map,
                           store:StateStore,
                           painterStore:editor.paint.PainterStore,
                           editorStore:editor.geometry.EditorStore,
-                          featureStore:feature.FeatureStore,
-                          featureManager:feature.FeatureManager):void {
+                          featureSignals:feature.FeatureSignals):void {
 
         /* ------------------ */
         /* --- properties --- */
@@ -32,8 +29,8 @@ module be.vmm.eenvplus.state {
         layers.on(changeEvent(ol.CollectionProperty.LENGTH), _.debounce(setLevelThreshold, 200));
         painterStore.selected.add(_.partial(invalidateGeometryMode, State.GEOMETRY_PAINTING));
         editorStore.selected.add(_.partial(invalidateGeometryMode, State.GEOMETRY_MODIFYING));
-        featureStore.selected.add(invalidateFeatureSelection);
-        featureManager.signal.validate.add(invalidateValidity);
+        featureSignals.selected.add(invalidateFeatureSelection);
+        featureSignals.validated.add(invalidateValidity);
 
 
         /* ----------------- */

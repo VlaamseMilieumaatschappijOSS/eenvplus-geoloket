@@ -28,17 +28,17 @@ module be.vmm.eenvplus.editor.area.featureLayers {
         /* --- construction --- */
         /* -------------------- */
 
-        store.selected.add(handleFeatureSelection);
-        manager.signal.load.add(createLayers);
-        manager.signal.update.add(updateFeature);
-        manager.signal.remove.add(removeFromLayer);
+        store.selected.add(handleAreaSelection);
+        manager.loaded.add(createLayers);
+        manager.updated.add(updateFeature);
+        manager.removed.add(removeFromLayer);
 
 
         /* ---------------------- */
         /* --- event handlers --- */
         /* ---------------------- */
 
-        function handleFeatureSelection(extent:ol.Extent):void {
+        function handleAreaSelection(extent:ol.Extent):void {
             extent ? manager.load(extent) : clear();
         }
 

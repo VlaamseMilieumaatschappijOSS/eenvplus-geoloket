@@ -4,11 +4,12 @@
 module be.vmm.eenvplus.editor.geometry {
     'use strict';
 
-    VertexLayerController.$inject = ['epMap', 'epGeometryEditorState', 'epFeatureStore'];
+    VertexLayerController.$inject = ['epMap', 'epGeometryEditorState', 'epFeatureStore', 'epFeatureSignals'];
 
     export function VertexLayerController(map:ol.Map,
                                           state:StateController<EditorType>,
-                                          featureStore:feature.FeatureStore):void {
+                                          featureStore:feature.FeatureStore,
+                                          featureSignals:feature.FeatureSignals):void {
 
         /* ------------------ */
         /* --- properties --- */
@@ -39,7 +40,7 @@ module be.vmm.eenvplus.editor.geometry {
         function activate():void {
             layer.setMap(map);
 
-            featureStore.selected.add(updateGeometry);
+            featureSignals.selected.add(updateGeometry);
             getGeometry().on(goog.events.EventType.CHANGE, updateGeometry);
 
             updateGeometry();
@@ -57,7 +58,7 @@ module be.vmm.eenvplus.editor.geometry {
         function deactivate():void {
             layer.setMap(null);
 
-            featureStore.selected.remove(updateGeometry);
+            featureSignals.selected.remove(updateGeometry);
             getGeometry().un(goog.events.EventType.CHANGE, updateGeometry);
         }
 

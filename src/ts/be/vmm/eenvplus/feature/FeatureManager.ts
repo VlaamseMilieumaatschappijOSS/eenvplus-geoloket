@@ -1,8 +1,6 @@
 ///ts:ref=Module
 /// <reference path="../Module.ts"/> ///ts:ref:generated
 
-import signal = Trasys.Signals;
-
 module be.vmm.eenvplus.feature {
     'use strict';
 
@@ -10,16 +8,7 @@ module be.vmm.eenvplus.feature {
         (json?:model.FeatureJSON):void;
     }
 
-    export interface Signals {
-        create:signal.ITypeSignal<model.FeatureJSON>;
-        load:signal.ISignal;
-        push:signal.ITypeSignal<model.ModificationReport>;
-        remove:signal.ITypeSignal<model.FeatureJSON>;
-        update:signal.ITypeSignal<model.FeatureJSON>;
-        validate:signal.ITypeSignal<editor.validation.ValidationResult>;
-    }
-
-    export interface FeatureManager {
+    export interface FeatureManager extends FeatureSignals {
         clear: FeatureJSONHandler;
         create: FeatureJSONHandler;
         deselect():void;
@@ -36,7 +25,6 @@ module be.vmm.eenvplus.feature {
         remove: FeatureJSONHandler;
         removeStatus(status:model.Status, json?:model.FeatureJSON):void;
         select: FeatureJSONHandler;
-        signal: Signals;
         splitNode(json?:model.FeatureJSON):ng.IPromise<model.FeatureJSON>;
         update: FeatureJSONHandler;
         validate: FeatureJSONHandler;
@@ -45,24 +33,21 @@ module be.vmm.eenvplus.feature {
     export module FeatureManager {
         export var NAME:string = PREFIX + 'FeatureManager';
 
-        factory.$inject = ['$q', 'epFeatureService', 'epFeatureStore', 'epFeatureSync'];
+        factory.$inject = ['$q', 'epFeatureService', 'epFeatureStore', 'epFeatureSignals', 'epFeatureSync'];
 
-        function factory(q:ng.IQService, service:FeatureService, store:FeatureStore, sync:FeatureSync):FeatureManager {
+        function factory(q:ng.IQService,
+                         service:FeatureService,
+                         store:FeatureStore,
+                         signals:FeatureSignals,
+                         sync:FeatureSync):FeatureManager {
+
             var getNode = _.partial(getFeature, toLayerBodId(FeatureType.NODE)),
                 getNodeById = _.partial(getFeatureById, toLayerBodId(FeatureType.NODE)),
-                deselect = _.partial(select, undefined),
-                signals = {
-                    create: new signal.TypeSignal<model.FeatureJSON>(),
-                    load: new signal.Signal(),
-                    push: new signal.TypeSignal<model.ModificationReport>(),
-                    remove: new signal.TypeSignal<model.FeatureJSON>(),
-                    update: new signal.TypeSignal<model.FeatureJSON>(),
-                    validate: new signal.TypeSignal<editor.validation.ValidationResult>()
-                };
+                deselect = _.partial(select, undefined);
 
-            signals.remove.add(deselect);
+            signals.removed.add(deselect);
 
-            return {
+            return _.merge({
                 clear: service.clear,
                 create: create,
                 deselect: deselect,
@@ -83,7 +68,7 @@ module be.vmm.eenvplus.feature {
                 splitNode: splitNode,
                 update: update,
                 validate: validate
-            };
+            }, signals);
 
             function load(extent:ol.Extent):void {
                 service.clear().then(_.partial(pull, extent));
@@ -91,7 +76,7 @@ module be.vmm.eenvplus.feature {
 
             function pull(extent:ol.Extent):void {
                 service.pull(extent)
-                    .then(signals.load.fire)
+                    .then(signals.loaded.fire)
                     .catch(handleError('load'));
             }
 
@@ -188,7 +173,7 @@ module be.vmm.eenvplus.feature {
 
                 service
                     .update(json)
-                    .then(signals.update.fire)
+                    .then(signals.updated.fire)
                     .then(deselect)
                     .catch(handleError('update', json));
 
@@ -208,15 +193,15 @@ module be.vmm.eenvplus.feature {
             function validate():void {
                 service
                     .test()
-                    .then(signals.validate.fire)
+                    .then(signals.validated.fire)
                     .catch(handleError('validate'));
             }
 
             function push():void {
                 service
                     .push()
-                    .then(passThrough(signals.push.fire))
-                    .then(_.compose(signals.validate.fire, get('validation')))
+                    .then(passThrough(signals.pushed.fire))
+                    .then(_.compose(signals.validated.fire, get('validation')))
                     .catch(handleError('push'));
             }
 
@@ -278,7 +263,7 @@ module be.vmm.eenvplus.feature {
 
                 service
                     .remove(json)
-                    .then(signals.remove.fire)
+                    .then(signals.removed.fire)
                     .catch(handleError('remove', json));
             }
 
@@ -298,7 +283,7 @@ module be.vmm.eenvplus.feature {
 
                 call.call(service, layerBodId, numericIdOrKey)
                     .then(service.remove)
-                    .then(signals.remove.fire)
+                    .then(signals.removed.fire)
                     .catch(handleError('removeByIdOrKey'));
             }
 

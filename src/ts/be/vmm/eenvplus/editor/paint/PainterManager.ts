@@ -4,10 +4,10 @@
 module be.vmm.eenvplus.editor.paint {
     'use strict';
 
-    PainterManager.$inject = ['epPainterStore', 'epFeatureStore'];
+    PainterManager.$inject = ['epPainterStore', 'epFeatureSignals'];
 
-    function PainterManager(store:PainterStore, feature:feature.FeatureStore) {
-        feature.selected.add((json:feature.model.FeatureJSON):void => {
+    function PainterManager(store:PainterStore, featureSignals:feature.FeatureSignals) {
+        featureSignals.selected.add((json:feature.model.FeatureJSON):void => {
             if (json) store.current = undefined;
         });
     }
