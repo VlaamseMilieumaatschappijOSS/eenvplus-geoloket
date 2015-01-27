@@ -137,7 +137,7 @@ declare module _ {
 
     /** Utilities */
     interface Static {
-        constant(value:any):() => any;
+        constant(value:any):(...ignored:any[]) => any;
         now():number;
     }
 

@@ -8,8 +8,6 @@ module be.vmm.eenvplus.Bootstrap {
 
     export var APP_NAME:string = 'ga';
 
-    if (console) _.bindAll(console);
-
     /**
      * Initiate boot sequence.
      *

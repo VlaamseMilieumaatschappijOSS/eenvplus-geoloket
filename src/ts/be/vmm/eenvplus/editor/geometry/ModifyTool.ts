@@ -3,6 +3,7 @@ module be.vmm.eenvplus.editor.geometry {
 
     export interface ModifyPrivate extends ol.interaction.Modify {
         dragSegments_:any[];
+        features_:ol.Collection<ol.Feature>;
         overlay_:ol.Overlay;
         lastPixel_:ol.Pixel;
         pixelTolerance_:number;
@@ -12,13 +13,23 @@ module be.vmm.eenvplus.editor.geometry {
         vertexSegments_:SegmentMap;
 
         createOrUpdateVertexFeature_(vertex:ol.Coordinate):void;
-        handleDownEvent_(event:ol.MapBrowserPointerEvent):void; // OL 3.1.1
         handlePointerAtPixel_(pixel:ol.Pixel):void;
-        handlePointerDown(event:ol.MapBrowserPointerEvent):boolean; // OL 3.1.0
         handlePointerMove_(event:ol.MapBrowserPointerEvent):void;
-        handlePointerUp(event:ol.MapBrowserPointerEvent):boolean; // OL 3.1.0
-        handleUpEvent_(event:ol.MapBrowserPointerEvent):void; // OL 3.1.1
         removeVertex_():void;
+    }
+
+    // OL 3.1.0
+    export interface ModifyPrivate {
+        handlePointerDown(event:ol.MapBrowserPointerEvent):boolean;
+        handlePointerDrag(event:ol.MapBrowserPointerEvent):void;
+        handlePointerUp(event:ol.MapBrowserPointerEvent):boolean;
+    }
+
+    // OL 3.1.1
+    export interface ModifyPrivate {
+        handleDownEvent_(event:ol.MapBrowserPointerEvent):boolean;
+        handleDragEvent_(event:ol.MapBrowserPointerEvent):void;
+        handleUpEvent_(event:ol.MapBrowserPointerEvent):boolean;
     }
 
     export interface SegmentMap {

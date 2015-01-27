@@ -22,21 +22,22 @@ module be.vmm.eenvplus.feature {
     export interface FeatureManager {
         clear: FeatureJSONHandler;
         create: FeatureJSONHandler;
-        deselect: () => void;
+        deselect():void;
         discard: FeatureJSONHandler;
         emphasize: FeatureJSONHandler;
-        get: (layerBodId:string, key:number) => ng.IPromise<model.FeatureJSON>;
-        getNode: (id:number) => ng.IPromise<model.FeatureJSON>;
-        getConnectedFeatures: (json?:model.FeatureJSON) => ng.IPromise<model.FeatureJSON[]>;
-        getConnectedNodes:(json?:model.FeatureJSON) => ng.IPromise<model.FeatureJSON[]>;
-        link: (featureJson:model.FeatureJSON, nodeJsons:model.FeatureJSON[]) => void;
-        load: (extent:ol.Extent) => void;
+        get(layerBodId:string, key:number):ng.IPromise<model.FeatureJSON>;
+        getNode(id:number):ng.IPromise<model.FeatureJSON>;
+        getConnectedFeatures(json?:model.FeatureJSON):ng.IPromise<model.FeatureJSON[]>;
+        getConnectedNodes(json?:model.FeatureJSON):ng.IPromise<model.FeatureJSON[]>;
+        isConnectedNode(nodeId:any /* number | string */):boolean;
+        link(featureJson:model.FeatureJSON, nodeJsons:model.FeatureJSON[]):void;
+        load(extent:ol.Extent):void;
         push: FeatureJSONHandler;
         remove: FeatureJSONHandler;
-        removeStatus: (status:model.Status, json?:model.FeatureJSON) => void;
+        removeStatus(status:model.Status, json?:model.FeatureJSON):void;
         select: FeatureJSONHandler;
         signal: Signals;
-        splitNode: (json?:model.FeatureJSON) => ng.IPromise<model.FeatureJSON>;
+        splitNode(json?:model.FeatureJSON):ng.IPromise<model.FeatureJSON>;
         update: FeatureJSONHandler;
         validate: FeatureJSONHandler;
     }
@@ -71,6 +72,7 @@ module be.vmm.eenvplus.feature {
                 getNode: getNodeById,
                 getConnectedFeatures: getConnectedFeatures,
                 getConnectedNodes: getConnectedNodes,
+                isConnectedNode: isConnectedNode,
                 link: link,
                 load: load,
                 push: push,
@@ -300,6 +302,10 @@ module be.vmm.eenvplus.feature {
                     .catch(handleError('removeByIdOrKey'));
             }
 
+            function isConnectedNode(nodeId:string, json?:model.FeatureJSON):boolean {
+                return _.contains(getConnectedNodeIds(json), nodeId);
+            }
+
             function getConnectedNodes(json:model.FeatureJSON):ng.IPromise<model.FeatureJSON[]> {
                 json = json || store.current;
                 return q
@@ -319,12 +325,18 @@ module be.vmm.eenvplus.feature {
                 return json.id ? json.id.toString() : '#' + json.key;
             }
 
-            function getConnectedNodeIds(json:model.FeatureJSON):string[] {
-                if (isType(FeatureType.SEWER, json)) {
-                    var props = <model.RioolLink> json.properties;
-                    return [props.startKoppelPuntId, props.endKoppelPuntId];
+            function getConnectedNodeIds(json?:model.FeatureJSON):string[] {
+                json = json || store.current;
+
+                switch (toType(json)) {
+                    case FeatureType.SEWER:
+                        var props = <model.RioolLink> json.properties;
+                        return [props.startKoppelPuntId, props.endKoppelPuntId];
+                    case FeatureType.APPURTENANCE:
+                        return [(<model.RioolAppurtenance> json.properties).koppelPuntId];
+                    default:
+                        throw new Error(json.layerBodId + ' can\'t have connected Nodes!')
                 }
-                return [(<model.RioolAppurtenance> json.properties).koppelPuntId];
             }
 
             function keyToId(key:string):number {

@@ -37,6 +37,8 @@ declare module ol {
         Feature:Feature;
         FeatureOverlay:FeatureOverlay;
         Map:Map;
+        MapBrowserEvent:MapBrowserEvent;
+        MapBrowserPointerEvent:MapBrowserPointerEvent;
         ObjectEvent:ObjectEvent;
         Observable:Observable;
         View:View;
@@ -99,6 +101,7 @@ declare module ol {
     interface Feature extends Object {
         new (config:any):Feature;
 
+        getId():number;
         getGeometry():geometry.Geometry;
         setGeometry(geometry:geometry.Geometry):void;
     }
@@ -132,10 +135,19 @@ declare module ol {
     }
 
     interface MapBrowserEvent extends MapEvent {
+        EventType:MapBrowserEventType;
+
         browserEvent:goog.events.BrowserEvent;
         originalEvent:Event;
         pixel:ol.Pixel;
         type:string;
+    }
+
+    interface MapBrowserEventType {
+        POINTERDOWN:string;
+        POINTERDRAG:string;
+        POINTERMOVE:string;
+        POINTERUP:string;
     }
 
     interface MapBrowserPointerEvent extends MapBrowserEvent {
@@ -341,6 +353,7 @@ declare module ol {
         }
 
         interface Geometry extends Observable {
+            closestPointXY(x:number, y:number, closestPoint:ol.Coordinate, minSquaredDistance:number):number;
             getExtent():Extent;
         }
 
@@ -617,9 +630,11 @@ declare module ol {
 
             addFeature(feature:Feature):void;
             addFeatures(features:Feature[]):void;
+            forEachFeatureInExtent(extent:ol.Extent, callback:(feature:Feature) => void):void;
             getClosestFeatureToCoordinate(coordinate:Coordinate):Feature;
             getFeatureById(id:number):Feature;
             getFeatures():Feature[];
+            getFeaturesInExtent(extent:ol.Extent):Feature[];
             removeFeature(feature:Feature):void;
         }
 

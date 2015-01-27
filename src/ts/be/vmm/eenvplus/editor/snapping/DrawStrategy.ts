@@ -71,7 +71,7 @@ module be.vmm.eenvplus.editor.snapping {
                 /* --- construction --- */
                 /* -------------------- */
 
-                state(type, activate, deactivate);
+                state(type, activate, deactivate, canActivate);
 
                 return api;
 
@@ -81,12 +81,6 @@ module be.vmm.eenvplus.editor.snapping {
                  * Activate the monitor.
                  */
                 function activate():void {
-                    painter = _.find(map.getInteractions().getArray(), isActivePainter);
-                    if (!painter) {
-                        console.log('To be implemented');
-                        return;
-                    }
-
                     painter.snapTolerance_ = 1;
                     painter.handlePointerMove_ = handlePointerMove;
                     painter.addToDrawing_ = addToDrawing;
@@ -97,7 +91,18 @@ module be.vmm.eenvplus.editor.snapping {
                     api.abortDrawing = painter.abortDrawing_.bind(painter);
                     api.startDrawing = painter.startDrawing_.bind(painter);
 
+                    monitor.reset();
                     activateMonitor(monitor);
+                }
+
+                /**
+                 * Find and set the currently active Draw interaction.
+                 *
+                 * @returns {boolean} Whether there's an active Draw interaction.
+                 */
+                function canActivate():boolean {
+                    painter = _.find(map.getInteractions().getArray(), isActivePainter);
+                    return !!painter;
                 }
 
                 /**

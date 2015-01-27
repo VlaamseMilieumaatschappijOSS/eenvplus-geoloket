@@ -4,12 +4,18 @@
 module be.vmm.eenvplus.editor.snapping {
     'use strict';
 
-    MergingModifyStrategy.$inject = ['epMap', 'epSnappingState', 'epSnappingMonitor'];
+    MergingModifyStrategy.$inject = ['epMap', 'epSnappingState', 'epSnappingMonitor', 'epFeatureManager'];
 
-    function MergingModifyStrategy(map:ol.Map, state:StateController<SnappingType>, monitor:SnappingMonitor):void {
+    function MergingModifyStrategy(map:ol.Map,
+                                   state:StateController<SnappingType>,
+                                   monitor:SnappingMonitor,
+                                   featureManager:feature.FeatureManager):void {
 
         var modify:geometry.ModifyPrivate,
-            superPointerMove;
+            moddedFeature:ol.Feature,
+            updateMonitor,
+            superPointerMove,
+            superPointerDrag;
 
         state(SnappingType.MERGE, activate, deactivate, canActivate);
 
@@ -23,31 +29,48 @@ module be.vmm.eenvplus.editor.snapping {
         }
 
         function activate():void {
-            modify.handlePointerMove_ = handlePointerMove;
+            moddedFeature = modify.features_.item(0);
+
+            updateMonitor = _.partialRight(monitor.update, moddedFeature);
+            modify.handlePointerMove_ = updateMonitor;
+            modify.handlePointerDrag = updateMonitor;
 
             var proto = <geometry.ModifyPrivate> ol.interaction.Modify.prototype;
             superPointerMove = proto.handlePointerMove_.bind(modify);
+            superPointerDrag = proto.handlePointerDrag.bind(modify);
 
-            monitor.moveAtEnd.add(_.partial(console.log, 'moveAtEnd'));
-            monitor.moveAtStart.add(_.partial(console.log, 'moveAtStart'));
-            monitor.moveOutside.add(_.partial(console.log, 'moveOutside'));
-            monitor.snapInEnd.add(_.partial(console.log, 'snapInEnd'));
-            monitor.snapInStart.add(_.partial(console.log, 'snapInStart'));
-            monitor.snapOutEnd.add(_.partial(console.log, 'snapOutEnd'));
-            monitor.snapOutStart.add(_.partial(console.log, 'snapOutStart'));
+            monitor.setFilter(canSnap);
+            monitor.moveAtEnd.add(moveAtNode);
+            monitor.moveAtStart.add(moveAtNode);
+            monitor.moveOutside.add(moveOrDrag);
         }
 
-        function handlePointerMove(event:ol.MapBrowserPointerEvent):void {
-            console.log(modify.vertexFeature_ ?
-                    (<ol.geometry.LineString> modify.vertexFeature_.getGeometry()).getCoordinates() :
-                    undefined
-            );
-            monitor.update(event, modify.vertexFeature_);
-            superPointerMove(event);
+        function canSnap(node:ol.Feature):boolean {
+            return !featureManager.isConnectedNode(node.getId());
+        }
+
+        function moveAtNode(event:SnappingPointerEvent):void {
+            event.coordinate = event.snappedCoordinate;
+            moveOrDrag(event);
+        }
+
+        function moveOrDrag(event:SnappingPointerEvent):void {
+            event.type === ol.MapBrowserEvent.EventType.POINTERDRAG ?
+                superPointerDrag(event) :
+                superPointerMove(event);
         }
 
         function deactivate():void {
+            monitor.setFilter(null);
+            monitor.moveAtEnd.remove(moveAtNode);
+            monitor.moveAtStart.remove(moveAtNode);
+            monitor.moveOutside.remove(moveOrDrag);
 
+            if (!modify) return;
+
+            if (modify.handlePointerMove_ === updateMonitor) modify.handlePointerMove_ = superPointerMove;
+            if (modify.handlePointerDrag === updateMonitor) modify.handlePointerDrag = superPointerDrag;
+            modify = null;
         }
 
     }

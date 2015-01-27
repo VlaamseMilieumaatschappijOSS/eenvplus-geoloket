@@ -22,6 +22,19 @@ module be.vmm.eenvplus.editor.snapping {
         snapOutStart:Trasys.Signals.ITypeSignal<SnappingPointerEvent>;
 
         /**
+         * Reset the monitor to its initial state.
+         * This is necessary because we use a single instance of SnappingMonitor in multiple snapping
+         * strategy instances. When a strategy is activated, we need to be sure that we don't start with the state of
+         * the previously used strategy.
+         */
+        reset():void;
+        /**
+         * A filter function that is used to exclude some Nodes when scanning for the closest one.
+         *
+         * @param fn If this function returns false, the given Node will be excluded from the search.
+         */
+        setFilter(fn:(node:ol.Feature) => boolean):void;
+        /**
          * Pass mouse move events into the monitor for analysis.
          *
          * @param event
@@ -55,7 +68,8 @@ module be.vmm.eenvplus.editor.snapping {
             var nodes:ol.source.Vector,
                 toPixel = map.getPixelFromCoordinate.bind(map),
                 inStartRange:boolean = false,
-                inEndRange:boolean = false;
+                inEndRange:boolean = false,
+                filter:(node:ol.Feature) => boolean;
 
             var signal = {
                 moveAtStart: new Trasys.Signals.TypeSignal(),
@@ -67,14 +81,25 @@ module be.vmm.eenvplus.editor.snapping {
                 snapOutEnd: new Trasys.Signals.TypeSignal()
             };
 
-            return _.merge({update: update}, signal);
+            return _.merge({
+                update: update,
+                setFilter: setFilter,
+                reset: reset
+            }, signal);
+
+            /** @see SnappingMonitor#reset */
+            function reset():void {
+                inStartRange = inEndRange = false;
+            }
+
+            /** @see SnappingMonitor#setFilter */
+            function setFilter(fn:(node:ol.Feature) => boolean):void {
+                filter = fn || _.constant(true);
+            }
 
             /** @see SnappingMonitor#update */
             function update(event:ol.MapBrowserPointerEvent, sketchFeature:ol.Feature):void {
                 if (!nodes) nodes = feature.getLayer(map, feature.FeatureType.NODE).getSource();
-
-                // reset flags when at the start of a drawing procedure
-                if (!sketchFeature) inStartRange = inEndRange = false;
 
                 var snappingInfo = getSnappingInfo(event.coordinate, sketchFeature);
                 invalidateState(snappingInfo, event);
@@ -91,7 +116,7 @@ module be.vmm.eenvplus.editor.snapping {
              * @returns An object with snapping information.
              */
             function getSnappingInfo(mouseCoordinate:ol.Coordinate, sketchFeature:ol.Feature):SnappingInfo {
-                var closestNode = nodes.getClosestFeatureToCoordinate(mouseCoordinate),
+                var closestNode = getClosestNode(mouseCoordinate),
                     closestNodeCoordinate = firstCoordinate(closestNode),
                     startCoordinate = firstCoordinate(sketchFeature),
                     atStart = !sketchFeature || ol.coordinate.equals(closestNodeCoordinate, startCoordinate),
@@ -105,6 +130,44 @@ module be.vmm.eenvplus.editor.snapping {
                     start: atStart && snapping,
                     end: !atStart && snapping
                 };
+            }
+
+            /**
+             * A copy of `ol.source.Vector#getClosestFeatureToCoordinate` that adds the ability to filter out
+             * some Features while scanning.
+             *
+             * @param coordinate
+             * @returns {ol.Feature}
+             * @see ol.source.Vector#getClosestFeatureToCoordinate
+             */
+            function getClosestNode(coordinate:ol.Coordinate):ol.Feature {
+                var x = coordinate[0],
+                    y = coordinate[1],
+                    closestNode:ol.Feature = null,
+                    closestPoint = <ol.Coordinate> [NaN, NaN],
+                    minSquaredDistance = Infinity,
+                    extent = <ol.Coordinate> [-Infinity, -Infinity, Infinity, Infinity];
+
+                nodes.forEachFeatureInExtent(extent, (node:ol.Feature):void => {
+                    if (!filter(node)) return;
+
+                    var geometry = node.getGeometry(),
+                        previousMinSquaredDistance = minSquaredDistance;
+
+                    minSquaredDistance = geometry.closestPointXY(x, y, closestPoint, minSquaredDistance);
+
+                    if (minSquaredDistance < previousMinSquaredDistance) {
+                        closestNode = node;
+
+                        var minDistance = Math.sqrt(minSquaredDistance);
+                        extent[0] = x - minDistance;
+                        extent[1] = y - minDistance;
+                        extent[2] = x + minDistance;
+                        extent[3] = y + minDistance;
+                    }
+                });
+
+                return closestNode;
             }
 
             /**
