@@ -1,24 +1,18 @@
+branches:
+  only:
+    - develop
+
 language: node_js
 node_js:
     - "0.8"
 
-env:
-    global:
+before_install:
+    - npm install -g grunt-cli
 
 before_script:
-    - sudo pip install virtualenv
-    - sudo groupadd geodata
-    - make all
+    - grunt build
 
 notifications:
     email:
         recipients:
-            - re3-dev@googlegroups.com
-
-    webhooks:
-        urls:
-            - https://webhooks.gitter.im/e/bd09bf21de1072767c9d
-        on_success: always
-        on_failure: always
-        on_start: false
-
+            - maxime.cowez@trasysgroup.com
