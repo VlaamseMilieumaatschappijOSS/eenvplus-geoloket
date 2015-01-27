@@ -16,3 +16,4 @@ notifications:
     email:
         recipients:
             - maxime.cowez@trasysgroup.com
+            - s.vanmieghem@vmm.be
