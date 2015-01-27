@@ -14,9 +14,9 @@ module be.vmm.eenvplus.feature {
 
     describe('FeatureManager', () => {
 
-        var manager,
-            service,
-            ng;
+        var manager:FeatureManager,
+            service:FeatureService,
+            ng:ng.IRootScopeService;
 
         beforeEach(inject(function(_epFeatureManager_, _epFeatureService_, _$rootScope_) {
             ng = _$rootScope_;
@@ -33,7 +33,7 @@ module be.vmm.eenvplus.feature {
         // indexeddb mock doesn't support parallel access
         xit('removes a feature and connected nodes', (done) => {
             var i = 0;
-            manager.signal.remove.add((result:model.FeatureJSON):void => {
+            manager.removed.add((result:model.FeatureJSON):void => {
                 expect(result.action).to.equal('delete');
 
                 if (i === 3) {

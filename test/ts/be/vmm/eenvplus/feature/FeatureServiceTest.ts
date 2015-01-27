@@ -5,6 +5,9 @@ module be.vmm.eenvplus.feature {
     'use strict';
 
     beforeEach(module('ep_feature'));
+    beforeEach(module(($provide:ng.auto.IProvideService):void => {
+        $provide.constant('gaGlobalOptions', {});
+    }));
 
     describe('FeatureService', () => {
 
