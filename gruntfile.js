@@ -139,6 +139,10 @@ module.exports = function (grunt) {
         karma: {
             test: {
                 configFile: 'test/karma.conf.js'
+            },
+            test_ci: {
+                configFile: 'test/karma.conf.js',
+                singleRun: true
             }
         },
 
@@ -245,6 +249,7 @@ module.exports = function (grunt) {
         'Monitors source html, js and less files and executes their corresponding dev build tasks when needed',
         ['build-dev', 'ts:test', 'watch']
     );
+    grunt.registerTask('travis', 'Single run build/test for CI server', ['ts:dev', 'ts:test', 'karma:test_ci']);
     grunt.registerTask('default', 'Default task: build dev environment', ['dev']);
 
 };
