@@ -55,13 +55,6 @@ module be.vmm.eenvplus.editor.snapping {
 
             modify.insertVertex(getSegment(), event.mouseCoordinate);
             modify.dragSegments.shift();
-
-            //_.each(modify.rBush_.getAll(), (segment:ol.interaction.SegmentDataType) => {
-            //    console.log(segment.index);
-            //});
-            //_.each(modify.dragSegments_, (segment:any[]) => {
-            //    console.log(segment[0].index, segment[1]);
-            //});
         }
 
         /**

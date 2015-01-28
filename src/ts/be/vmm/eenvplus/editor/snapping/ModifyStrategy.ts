@@ -62,7 +62,7 @@ module be.vmm.eenvplus.editor.snapping {
                     superPointerUp,
                     api = {
                         pointerDrag: undefined,
-                        findSegment: undefined,
+                        findSegment: findSegment,
                         insertVertex: undefined,
                         removeVertex: undefined,
                         getGeometry: getGeometry,
@@ -94,7 +94,6 @@ module be.vmm.eenvplus.editor.snapping {
 
                     api.insertVertex = modify.insertVertex_.bind(modify);
                     api.removeVertex = modify.removeVertex_.bind(modify);
-                    api.findSegment = _.partial(_.find, modify.rBush_.getAll());
 
                     var atStart = _.compose(atIndex, _.constant(0)),
                         atEnd = _.compose(atIndex, () => {
@@ -129,6 +128,11 @@ module be.vmm.eenvplus.editor.snapping {
                 /* ----------------- */
                 /* --- overrides --- */
                 /* ----------------- */
+
+                /** @see ModifyStrategy#findSegment */
+                function findSegment(filter:Function):ol.interaction.SegmentDataType {
+                    return _.find(modify.rBush_.getAll(), filter);
+                }
 
                 /**
                  * @param index
