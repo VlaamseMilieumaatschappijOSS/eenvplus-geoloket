@@ -4,7 +4,7 @@
 module be.vmm.eenvplus.editor.snapping {
     'use strict';
 
-    MergingStrategy.$inject = ['epDrawStrategy'];
+    MergingDrawStrategy.$inject = ['epDrawStrategy'];
 
     /**
      * A snapping strategy that moves the projected vertex to the snapped Node.
@@ -12,7 +12,7 @@ module be.vmm.eenvplus.editor.snapping {
      * @param createDraw
      * @constructor
      */
-    function MergingStrategy(createDraw:DrawStrategyFactory):void {
+    function MergingDrawStrategy(createDraw:DrawStrategyFactory):void {
 
         /* -------------------- */
         /* --- construction --- */
@@ -67,6 +67,6 @@ module be.vmm.eenvplus.editor.snapping {
 
     angular
         .module(MODULE)
-        .run(MergingStrategy);
+        .run(MergingDrawStrategy);
 
 }

@@ -4,7 +4,7 @@
 module be.vmm.eenvplus.editor.snapping {
     'use strict';
 
-    AddingStrategy.$inject = ['epDrawStrategy'];
+    AddingDrawStrategy.$inject = ['epDrawStrategy'];
 
     /**
      * A snapping strategy that creates new segments between the current mouse position and the snapped Node.
@@ -12,7 +12,7 @@ module be.vmm.eenvplus.editor.snapping {
      * @param createDraw
      * @constructor
      */
-    function AddingStrategy(createDraw:DrawStrategyFactory):void {
+    function AddingDrawStrategy(createDraw:DrawStrategyFactory):void {
 
         /* -------------------- */
         /* --- construction --- */
@@ -164,6 +164,6 @@ module be.vmm.eenvplus.editor.snapping {
 
     angular
         .module(MODULE)
-        .run(AddingStrategy);
+        .run(AddingDrawStrategy);
 
 }
