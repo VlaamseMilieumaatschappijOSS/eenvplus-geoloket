@@ -4,66 +4,63 @@
 module be.vmm.eenvplus.editor.snapping {
     'use strict';
 
-    MergingModifyStrategy.$inject = ['epMap', 'epSnappingState', 'epSnappingMonitor'];
+    MergingModifyStrategy.$inject = ['epModifyStrategy'];
 
-    function MergingModifyStrategy(map:ol.Map,
-                                   state:StateController<SnappingType>,
-                                   monitor:SnappingMonitor):void {
+    /**
+     * A snapping strategy applied to the Modify interaction that moves ending vertices to a snapped Node.
+     *
+     * @param createModify
+     * @constructor
+     */
+    function MergingModifyStrategy(createModify:ModifyStrategyFactory):void {
 
-        var modify:geometry.ModifyPrivate,
-            moddedFeature:ol.Feature,
-            updateMonitor,
-            superPointerDrag;
+        /* -------------------- */
+        /* --- construction --- */
+        /* -------------------- */
 
-        state(SnappingType.MERGE, activate, deactivate, canActivate);
+        var modify = createModify(SnappingType.MERGE, activate, deactivate);
 
-        function canActivate():boolean {
-            modify = _.find(map.getInteractions().getArray(), isActiveModify);
-            return !!modify;
+        /**
+         * Only intercept when the mouse is being dragged within snapping range of any point.
+         *
+         * @param monitor
+         */
+        function activate(monitor:SnappingMonitor):void {
+            monitor.moveAtEnd.add(dragAtNode);
+            monitor.moveAtStart.add(dragAtNode);
+            monitor.moveOutside.add(modify.pointerDrag);
         }
 
-        function isActiveModify(interaction:ol.interaction.Interaction):boolean {
-            return interaction instanceof ol.interaction.Modify && interaction.getActive();
-        }
 
-        function activate():void {
-            moddedFeature = modify.features_.item(0);
+        /* ---------------------- */
+        /* --- event handlers --- */
+        /* ---------------------- */
 
-            updateMonitor = _.partialRight(monitor.update, atStart);
-            modify.handlePointerDrag = updateMonitor;
-
-            var proto = <geometry.ModifyPrivate> ol.interaction.Modify.prototype;
-            superPointerDrag = proto.handlePointerDrag.bind(modify);
-
-            monitor.reset();
-            monitor.moveAtEnd.add(moveAtNode);
-            monitor.moveAtStart.add(moveAtNode);
-            monitor.moveOutside.add(superPointerDrag);
-        }
-
-        function atStart():boolean {
-            if (modify.dragSegments_.length !== 1) return false;
-
-            var dragSegment = modify.dragSegments_[0],
-                index = dragSegment[0].index + dragSegment[1];
-
-            return !index;
-        }
-
-        function moveAtNode(event:SnappingPointerEvent):void {
+        /**
+         * Replace the original Coordinate with the snappedCoordinate
+         * so that Modify will place the vertex at the snapped position instead of the current mouse position.
+         *
+         * @param event
+         */
+        function dragAtNode(event:SnappingPointerEvent):void {
             event.coordinate = event.snappedCoordinate;
-            superPointerDrag(event);
+            modify.pointerDrag(event);
         }
 
-        function deactivate():void {
-            monitor.moveAtEnd.remove(moveAtNode);
-            monitor.moveAtStart.remove(moveAtNode);
-            monitor.moveOutside.remove(superPointerDrag);
 
-            if (!modify) return;
+        /* ------------------- */
+        /* --- destruction --- */
+        /* ------------------- */
 
-            if (modify.handlePointerDrag === updateMonitor) modify.handlePointerDrag = superPointerDrag;
-            modify = null;
+        /**
+         * Remove all listeners from the monitor.
+         *
+         * @param monitor
+         */
+        function deactivate(monitor:SnappingMonitor):void {
+            monitor.moveAtEnd.remove(dragAtNode);
+            monitor.moveAtStart.remove(dragAtNode);
+            monitor.moveOutside.remove(modify.pointerDrag);
         }
 
     }

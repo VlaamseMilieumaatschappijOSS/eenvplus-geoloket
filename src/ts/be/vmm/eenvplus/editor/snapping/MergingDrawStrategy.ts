@@ -7,7 +7,7 @@ module be.vmm.eenvplus.editor.snapping {
     MergingDrawStrategy.$inject = ['epDrawStrategy'];
 
     /**
-     * A snapping strategy that moves the projected vertex to the snapped Node.
+     * A snapping strategy applied to a Draw interaction that moves the projected vertex to a snapped Node.
      *
      * @param createDraw
      * @constructor
