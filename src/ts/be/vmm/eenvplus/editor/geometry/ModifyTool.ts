@@ -13,8 +13,9 @@ module be.vmm.eenvplus.editor.geometry {
         vertexSegments_:SegmentMap;
 
         createOrUpdateVertexFeature_(vertex:ol.Coordinate):void;
-        handlePointerAtPixel_(pixel:ol.Pixel):void;
+        handlePointerAtPixel_(pixel:ol.Pixel, map:ol.Map):void;
         handlePointerMove_(event:ol.MapBrowserPointerEvent):void;
+        insertVertex_(segmentData:ol.interaction.SegmentDataType, vertex:ol.Coordinate):void;
         removeVertex_():void;
     }
 

@@ -649,6 +649,7 @@ declare module ol {
         }
 
         interface RBush<T> {
+            getAll():T[];
             getInExtent(extent:Extent):T[];
         }
 

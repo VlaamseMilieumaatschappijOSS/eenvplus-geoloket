@@ -4,17 +4,15 @@
 module be.vmm.eenvplus.editor.snapping {
     'use strict';
 
-    MergingModifyStrategy.$inject = ['epMap', 'epSnappingState', 'epSnappingMonitor', 'epFeatureManager'];
+    MergingModifyStrategy.$inject = ['epMap', 'epSnappingState', 'epSnappingMonitor'];
 
     function MergingModifyStrategy(map:ol.Map,
                                    state:StateController<SnappingType>,
-                                   monitor:SnappingMonitor,
-                                   featureManager:feature.FeatureManager):void {
+                                   monitor:SnappingMonitor):void {
 
         var modify:geometry.ModifyPrivate,
             moddedFeature:ol.Feature,
             updateMonitor,
-            superPointerMove,
             superPointerDrag;
 
         state(SnappingType.MERGE, activate, deactivate, canActivate);
@@ -31,44 +29,39 @@ module be.vmm.eenvplus.editor.snapping {
         function activate():void {
             moddedFeature = modify.features_.item(0);
 
-            updateMonitor = _.partialRight(monitor.update, moddedFeature);
-            modify.handlePointerMove_ = updateMonitor;
+            updateMonitor = _.partialRight(monitor.update, atStart);
             modify.handlePointerDrag = updateMonitor;
 
             var proto = <geometry.ModifyPrivate> ol.interaction.Modify.prototype;
-            superPointerMove = proto.handlePointerMove_.bind(modify);
             superPointerDrag = proto.handlePointerDrag.bind(modify);
 
-            monitor.setFilter(canSnap);
+            monitor.reset();
             monitor.moveAtEnd.add(moveAtNode);
             monitor.moveAtStart.add(moveAtNode);
-            monitor.moveOutside.add(moveOrDrag);
+            monitor.moveOutside.add(superPointerDrag);
         }
 
-        function canSnap(node:ol.Feature):boolean {
-            return !featureManager.isConnectedNode(node.getId());
+        function atStart():boolean {
+            if (modify.dragSegments_.length !== 1) return false;
+
+            var dragSegment = modify.dragSegments_[0],
+                index = dragSegment[0].index + dragSegment[1];
+
+            return !index;
         }
 
         function moveAtNode(event:SnappingPointerEvent):void {
             event.coordinate = event.snappedCoordinate;
-            moveOrDrag(event);
-        }
-
-        function moveOrDrag(event:SnappingPointerEvent):void {
-            event.type === ol.MapBrowserEvent.EventType.POINTERDRAG ?
-                superPointerDrag(event) :
-                superPointerMove(event);
+            superPointerDrag(event);
         }
 
         function deactivate():void {
-            monitor.setFilter(null);
             monitor.moveAtEnd.remove(moveAtNode);
             monitor.moveAtStart.remove(moveAtNode);
-            monitor.moveOutside.remove(moveOrDrag);
+            monitor.moveOutside.remove(superPointerDrag);
 
             if (!modify) return;
 
-            if (modify.handlePointerMove_ === updateMonitor) modify.handlePointerMove_ = superPointerMove;
             if (modify.handlePointerDrag === updateMonitor) modify.handlePointerDrag = superPointerDrag;
             modify = null;
         }

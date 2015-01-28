@@ -29,18 +29,13 @@ module be.vmm.eenvplus.editor.snapping {
          */
         reset():void;
         /**
-         * A filter function that is used to exclude some Nodes when scanning for the closest one.
-         *
-         * @param fn If this function returns false, the given Node will be excluded from the search.
-         */
-        setFilter(fn:(node:ol.Feature) => boolean):void;
-        /**
          * Pass mouse move events into the monitor for analysis.
          *
          * @param event
-         * @param sketchFeature
+         * @param atStart
+         * @param atEnd If not provided, it defaults to the inverse of `atStart`.
          */
-        update(event:ol.MapBrowserPointerEvent, sketchFeature:ol.Feature):ol.Coordinate;
+        update(event:ol.MapBrowserPointerEvent, atStart:atCoordinateFn, atEnd?:atCoordinateFn):ol.Coordinate;
     }
 
     /** Contains information pertaining to snapping possibilities of the current mouse position. */
@@ -59,17 +54,20 @@ module be.vmm.eenvplus.editor.snapping {
     export interface SnappingPointerEvent extends ol.MapBrowserPointerEvent, SnappingInfo {
     }
 
+    export interface atCoordinateFn {
+        (coordinate?:ol.Coordinate):boolean;
+    }
+
     export module SnappingMonitor {
         export var NAME:string = PREFIX + 'SnappingMonitor';
 
-        factory.$inject = ['epMap', 'epSnappingStore'];
+        factory.$inject = ['epMap', 'epSnappingStore', 'epFeatureManager'];
 
-        function factory(map:ol.Map, store:SnappingStore):SnappingMonitor {
+        function factory(map:ol.Map, store:SnappingStore, featureManager:feature.FeatureManager):SnappingMonitor {
             var nodes:ol.source.Vector,
                 toPixel = map.getPixelFromCoordinate.bind(map),
                 inStartRange:boolean = false,
-                inEndRange:boolean = false,
-                filter:(node:ol.Feature) => boolean;
+                inEndRange:boolean = false;
 
             var signal = {
                 moveAtStart: new Trasys.Signals.TypeSignal(),
@@ -83,7 +81,6 @@ module be.vmm.eenvplus.editor.snapping {
 
             return _.merge({
                 update: update,
-                setFilter: setFilter,
                 reset: reset
             }, signal);
 
@@ -92,16 +89,11 @@ module be.vmm.eenvplus.editor.snapping {
                 inStartRange = inEndRange = false;
             }
 
-            /** @see SnappingMonitor#setFilter */
-            function setFilter(fn:(node:ol.Feature) => boolean):void {
-                filter = fn || _.constant(true);
-            }
-
             /** @see SnappingMonitor#update */
-            function update(event:ol.MapBrowserPointerEvent, sketchFeature:ol.Feature):void {
+            function update(event:ol.MapBrowserPointerEvent, atStart:atCoordinateFn, atEnd?:atCoordinateFn):void {
                 if (!nodes) nodes = feature.getLayer(map, feature.FeatureType.NODE).getSource();
 
-                var snappingInfo = getSnappingInfo(event.coordinate, sketchFeature);
+                var snappingInfo = getSnappingInfo(event.coordinate, atStart, atEnd || _.constant(true));
                 invalidateState(snappingInfo, event);
             }
 
@@ -112,14 +104,17 @@ module be.vmm.eenvplus.editor.snapping {
              * and compare its distance to the snapping resolution.
              *
              * @param mouseCoordinate
-             * @param sketchFeature
+             * @param atStartFn
+             * @param atEndFn
              * @returns An object with snapping information.
              */
-            function getSnappingInfo(mouseCoordinate:ol.Coordinate, sketchFeature:ol.Feature):SnappingInfo {
-                var closestNode = getClosestNode(mouseCoordinate),
-                    closestNodeCoordinate = firstCoordinate(closestNode),
-                    startCoordinate = firstCoordinate(sketchFeature),
-                    atStart = !sketchFeature || ol.coordinate.equals(closestNodeCoordinate, startCoordinate),
+            function getSnappingInfo(mouseCoordinate:ol.Coordinate,
+                                     atStartFn:atCoordinateFn,
+                                     atEndFn:atCoordinateFn):SnappingInfo {
+
+                var closestNodeCoordinate = firstCoordinate(getClosestNode(mouseCoordinate)),
+                    atStart = inStartRange || atStartFn(closestNodeCoordinate),
+                    atEnd = inEndRange || !atStart && atEndFn(closestNodeCoordinate),
                     pixels = [mouseCoordinate, closestNodeCoordinate].map(toPixel),
                     distance = Math.sqrt(apply(ol.coordinate.squaredDistance)(pixels)),
                     snapping = distance <= store.resolution;
@@ -128,13 +123,13 @@ module be.vmm.eenvplus.editor.snapping {
                     mouseCoordinate: _.clone(mouseCoordinate),
                     snappedCoordinate: snapping ? closestNodeCoordinate : mouseCoordinate,
                     start: atStart && snapping,
-                    end: !atStart && snapping
+                    end: atEnd && snapping
                 };
             }
 
             /**
              * A copy of `ol.source.Vector#getClosestFeatureToCoordinate` that adds the ability to filter out
-             * some Features while scanning.
+             * connected nodes while scanning.
              *
              * @param coordinate
              * @returns {ol.Feature}
@@ -146,10 +141,11 @@ module be.vmm.eenvplus.editor.snapping {
                     closestNode:ol.Feature = null,
                     closestPoint = <ol.Coordinate> [NaN, NaN],
                     minSquaredDistance = Infinity,
-                    extent = <ol.Coordinate> [-Infinity, -Infinity, Infinity, Infinity];
+                    extent = <ol.Coordinate> [-Infinity, -Infinity, Infinity, Infinity],
+                    connectedNodeIds = featureManager.getConnectedNodeIds();
 
                 nodes.forEachFeatureInExtent(extent, (node:ol.Feature):void => {
-                    if (!filter(node)) return;
+                    if (_.contains(connectedNodeIds, node.getId())) return;
 
                     var geometry = node.getGeometry(),
                         previousMinSquaredDistance = minSquaredDistance;
@@ -207,7 +203,7 @@ module be.vmm.eenvplus.editor.snapping {
 
             /**
              * @param olFeature
-             * @returns The first Coordinate of te given Feature. A NaN Coordinate if the Feature is undefined.
+             * @returns The first Coordinate of the given Feature. A NaN Coordinate if the Feature is undefined.
              */
             function firstCoordinate(olFeature:ol.Feature):ol.Coordinate {
                 return olFeature ?

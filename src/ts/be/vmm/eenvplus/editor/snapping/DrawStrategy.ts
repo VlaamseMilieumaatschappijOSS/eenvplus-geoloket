@@ -66,6 +66,15 @@ module be.vmm.eenvplus.editor.snapping {
                         numVertices: numVertices
                     };
 
+                /**
+                 * @returns A type-safe instance of the sketch feature's Geometry.
+                 */
+                function getGeometry():ol.geometry.SimpleGeometry {
+                    return painter.sketchFeature_ ?
+                        <ol.geometry.SimpleGeometry> painter.sketchFeature_.getGeometry() :
+                        undefined;
+                }
+
 
                 /* -------------------- */
                 /* --- construction --- */
@@ -126,7 +135,7 @@ module be.vmm.eenvplus.editor.snapping {
                  * @see SnappingMonitor#update
                  */
                 function handlePointerMove(event:ol.MapBrowserPointerEvent):void {
-                    monitor.update(event, painter.sketchFeature_);
+                    monitor.update(event, isAtStart);
                 }
 
                 /**
@@ -146,6 +155,17 @@ module be.vmm.eenvplus.editor.snapping {
                 /* --- behaviour --- */
                 /* ----------------- */
 
+                /**
+                 * @param coordinate
+                 * @returns Whether the given coordinate is at the start of the sketch feature.
+                 * If we don't have a sketch feature yet, we assume we're operating at the start.
+                 * @see atStartFn
+                 */
+                function isAtStart(coordinate:ol.Coordinate):boolean {
+                    var geometry = getGeometry();
+                    return !geometry || ol.coordinate.equals(coordinate, geometry.getFirstCoordinate());
+                }
+
                 /** @see DrawStrategy#isPristine */
                 function isPristine():boolean {
                     return !painter.finishCoordinate_;
@@ -153,7 +173,7 @@ module be.vmm.eenvplus.editor.snapping {
 
                 /** @see DrawStrategy#updateCoordinates */
                 function updateCoordinates(update:(coordinates:ol.Coordinate[]) => void):void {
-                    var line = <ol.geometry.LineString> painter.sketchFeature_.getGeometry(),
+                    var line = <ol.geometry.LineString> getGeometry(),
                         coordinates = line.getCoordinates();
 
                     update(coordinates);
@@ -162,7 +182,7 @@ module be.vmm.eenvplus.editor.snapping {
 
                 /** @see DrawStrategy#numVertices */
                 function numVertices():number {
-                    var line = <ol.geometry.LineString> painter.sketchFeature_.getGeometry();
+                    var line = <ol.geometry.LineString> getGeometry();
                     return line.getCoordinates().length;
                 }
 

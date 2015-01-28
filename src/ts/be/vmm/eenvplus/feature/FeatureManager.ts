@@ -18,7 +18,7 @@ module be.vmm.eenvplus.feature {
         getNode(id:number):ng.IPromise<model.FeatureJSON>;
         getConnectedFeatures(json?:model.FeatureJSON):ng.IPromise<model.FeatureJSON[]>;
         getConnectedNodes(json?:model.FeatureJSON):ng.IPromise<model.FeatureJSON[]>;
-        isConnectedNode(nodeId:any /* number | string */):boolean;
+        getConnectedNodeIds(json?:model.FeatureJSON):string[];
         link(featureJson:model.FeatureJSON, nodeJsons:model.FeatureJSON[]):void;
         load(extent:ol.Extent):void;
         push: FeatureJSONHandler;
@@ -57,7 +57,7 @@ module be.vmm.eenvplus.feature {
                 getNode: getNodeById,
                 getConnectedFeatures: getConnectedFeatures,
                 getConnectedNodes: getConnectedNodes,
-                isConnectedNode: isConnectedNode,
+                getConnectedNodeIds: getConnectedNodeIds,
                 link: link,
                 load: load,
                 push: push,
@@ -287,10 +287,6 @@ module be.vmm.eenvplus.feature {
                     .catch(handleError('removeByIdOrKey'));
             }
 
-            function isConnectedNode(nodeId:string, json?:model.FeatureJSON):boolean {
-                return _.contains(getConnectedNodeIds(json), nodeId);
-            }
-
             function getConnectedNodes(json:model.FeatureJSON):ng.IPromise<model.FeatureJSON[]> {
                 json = json || store.current;
                 return q
@@ -312,6 +308,7 @@ module be.vmm.eenvplus.feature {
 
             function getConnectedNodeIds(json?:model.FeatureJSON):string[] {
                 json = json || store.current;
+                if (!json) return [];
 
                 switch (toType(json)) {
                     case FeatureType.SEWER:
