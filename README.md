@@ -1,174 +1,57 @@
-mf-geoadmin3
-============
+# eenvplus-geoloket [![Travis Build Status](https://travis-ci.org/VlaamseMilieumaatschappij/eenvplus-geoloket.png?branch=master)](https://travis-ci.org/VlaamseMilieumaatschappij/eenvplus-geoloket)
 
-next generation map.geo.admin.ch
+Based on [mf-geoadmin3](https://github.com/geoadmin/mf-geoadmin3), this application allows Flemish cities to edit their
+sewer network.
 
-Jenkins build status: [![Jenkins Build Status](https://jenkins.dev.bgdi.ch/buildStatus/icon?job=geoadmin3)](https://jenkins.dev.bgdi.ch/job/geoadmin3/)
+## Key differences with mf-geoadmin3
 
-Travis build status: [![Jenkins Build Status](https://travis-ci.org/geoadmin/mf-geoadmin3.png?branch=master)](https://travis-ci.org/geoadmin/mf-geoadmin3)
+- Tailored to the Flemish region
+- Limited scope of the viewer: for the time being only layers pertaining to the Flemish sewer system are available
+- Enhanced editing features:
+    - editing only allowed for authenticated users
+    - advanced drawing tools to create and modify sewers and appurtenances
+    - editing feature metadata
+    - advanced validation of the modifications made to the sewer network
+    - upload of [INSPIRE](http://inspire.ec.europa.eu/) compliant GML files
+- A cross-platform build chain using [Grunt](http://gruntjs.com/)
+- [TypeScript](http://www.typescriptlang.org/) as the main development language
 
-# Getting started
+**A sample sewer network editing session:**
+
+[![geoloket screenshot](screenshot.png)]
+
+## Getting started
 
 Checkout the source code:
 
-    $ git clone https://github.com/geoadmin/mf-geoadmin3.git
+    $ git clone git@github.com:VlaamseMilieumaatschappij/eenvplus-geoloket.git
 
-or when you're using ssh key (see https://help.github.com/articles/generating-ssh-keys):
+Install build tools:
 
-    $ git clone git@github.com:geoadmin/mf-geoadmin3.git
+    $ yum install nodejs     --- or whatever nodejs installer you have available for your OS
+    $ npm install -g grunt-cli
 
 Build:
 
-    $ make all
+    $ cd eenvplus-geoloket
+    $ grunt build-dev
 
-Use `make help` to know about the possible `make` targets and the currently set variables:
+or to build a .war file for Java servers
 
-    $ make help
+    $ maven clean install
 
-Use `make translate` to import directly translations from the googlespreadshhet. Don't forget to set up first these 2 following environment parameter:
-    
-    export DRIVE_USER=your_login
-    export DRIVE_PWD=your_password
+Test:
 
-Variables have sensible default values for development. Anyhow, they can be set as make macros or envvars. For example:
+    $ grunt karma:test
 
-    $ make APACHE_BASE_PATH=/elemoine apache 
-    $ APACHE_BASE_PATH=/elemoine make 
+Continuous build & test:
 
-You can customize the build by creating an `rc` file that you source once. Ex:  
+    $ grunt dev
 
-    $ cat rc_elemoine 
-    export APACHE_BASE_PATH=/mypath
-    export APACHE_BASE_DIRECTORY=/home/elemoine/mf-geoadmin3
-    export API_URL=//mf-chsdi.3dev.bgdi.ch
-    export DEPLOY_TARGET=dev
-    $ source rc_elemoine 
-    $ make  
+Continuous integration:
 
-For builds on test (rc_dev), integration (rc_int) and production (rc_prod), you
-should source the corresponding `rc` file.
+[https://travis-ci.org/VlaamseMilieumaatschappij/eenvplus-geoloket](https://travis-ci.org/VlaamseMilieumaatschappij/eenvplus-geoloket)
 
-On mf0t, create an Apache configuration file for your environment. Ex:
+Server side code:
 
-    $ cat /var/www/vhosts/mf-geoadmin3/conf/00-elemoine.conf
-    Include /home/elemoine/mf-geoadmin3/apache/*.conf 
-
-## Dependencies
-
-The GeoAdmin team development servers all contain the necessary dependencies
-to develop mf-geoadmin3. Even if developement of the project outside of the
-GeoAdmin infrastructure is not fully supported (e.g. you would need to
-setup your own web server with correct configurations), you should still
-be able to build the project on a different, Linux based infrastructure. For
-this to work, you need to make sure to install the following dependencies:
-
-    sudo apt-get install python-software-properties 
-    sudo add-apt-repository ppa:chris-lea/node.js 
-    sudo apt-get update
-    sudo apt-get install make gcc+ git unzip openjdk-6-jre openjdk-6-jdk g++ npm python-virtualenv
-    npm install phantomjs
-
-### Caveats
-
-You might get an error similar to:
-    /usr/bin/env: node: No such file or directory
-This can be fixed by running:
-    sudo ln -s /usr/bin/nodejs /usr/bin/node 
-    #see https://github.com/joyent/node/issues/3911
-
-# Automated tests
-
-## Unit tests
-
-We use Karma to configure our unit tests and PhantomJS to run them in.  They
-are defined in `test/specs`. They are run as part of the standard build.
-
-Ideally, each component is fully tested with unit tests.
-
-## Crosser browser end-to-end tests with browserstack.com
-
-To run the e2e browserstack tests, a view things need to be set up in your 
-environment. You need to have the BROWSERSTACK_USER and BROWSERSTACK_KEY 
-variables set. As they are sesitive, they should not be accessible in public 
-(don't add them to github). Recommended way is via a protected file on your 
-system (readable only by you):
-    
-    echo "export BROWSERSTACK_USER=***" >> ~/.browserstack
-    echo "export BROWSERSTACK_KEY=***" >> ~/.browserstack
-    chmod 600 ~/.browserstack
-
-Then add `source ~/.browserstack` to your `.bashrc` file. The infos can be found
-here: https://www.browserstack.com/accounts/automate . Please use the credentials
-in our keypass file to log in.
-
-Run it using make:
-
-    make teste2e
-
-This uses the BROWSERSTACK_TARGET environment variable (part of rc_* files) to
-determine which URL to test.
-
-Run it manually:
-
-    node test/selenium/tests.js -t http://map.geo.admin.ch
-
-This runs it with the given target URL.
-
-These tests are not part of the normal build. They need to be launched manually.
-
-# Deploying project and branches
-
-## Deploying the project to dev, int and prod
-
-Do the following **inside your working directory**:
-
-`make deploydev SNAPSHOT=true`
-
-This updates the source in /var/www...to the latest master branch from github,
-builds it from scratch, runs the tests and creates a snapshot. The snapshot directory
-will be shown when the script is done. *Note*: you can omit the `SNAPSHOT=true` parameter if
-you don't want to create a snapshot e.g. for intermediate releases on dev main.
-
-A snapshot (e.g. 201407031411) can be deployed to integration with:
-
-`make deployint SNAPSHOT=201407031411`
-
-This will do the corresponding thing for prod:
-
-`make deployprod SNAPSHOT=201407031411`
-
-
-Note: we should NOT manually adapt code in /var/www/vhosts/mf-geoadmin3 directory
-
-## Deploying a branch
-
-Use `make deploybranch` *in your working directory* to deploy your current 
-branch to test (Use `make deploybranchint` to also deploy it to integration).
-The code for deployment, however, does not come from your working directory,
-but does get cloned (first time) or pulled (if done once) *directly from github*.
-So you'll likely use this command *after* you push your branch to github.
-
-Use `make deploybranch GIT_BRANCH=dev_other_branch` to deploy a different 
-branch than the one you are currently working on. Make sure that the branch 
-specified exists on github.
-
-The first time you use the command will take some time to execute.
-
-The code of the deployed branch is in a specific directory 
-`/var/www/vhosts/mf-geoadmin3/private/branch` on both test and integration.
-The command adds a branch specific configuration to
-`/var/www/vhosts/mf-geoadmin3/conf`. This way, the deployed branch
-behaves exactly the same as any user specific deploy.
-
-Sample path:
-http://mf-geoadmin3.int.bgdi.ch/dev_bottombar/prod
-
-Please only use integration url for external communication (including here on 
-github), even though the exact same structure is also available on our test 
-instances.
-
-### Get correct link the API
-Per default, the API used in the **main** instance of mf-chsdi3. If you want
-to target a specific branch of mf-chsdi3, please adapt the `API_URL` variable
-in the `rc_branch.mako` file on **your branch**
-
+See [eenvplus-sdi](https://github.com/VlaamseMilieumaatschappij/eenvplus-sdi)
